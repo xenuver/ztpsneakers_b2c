@@ -1,0 +1,46 @@
+<form hx-post="{% url 'userauths:login_tab' %}" hx-target="#auth-form-container" class="space-y-4">
+    {% csrf_token %}
+    
+    {% if login_form.non_field_errors %}
+    <div class="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded text-sm">
+        {% for error in login_form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div>
+        {{ login_form.email }}
+        {% if login_form.email.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ login_form.email.errors.0 }}</p>
+        {% endif %}
+    </div>
+
+    <div>
+        {{ login_form.password }}
+        {% if login_form.password.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ login_form.password.errors.0 }}</p>
+        {% endif %}
+    </div>
+
+    <div class="flex items-center justify-between">
+        <div class="flex items-center">
+            {{ login_form.remember_me }}
+            <label for="{{ login_form.remember_me.id_for_label }}" class="ml-2 block text-sm text-gray-400">
+                Ingat Saya
+            </label>
+        </div>
+
+        <div class="text-sm">
+            <a href="#" class="font-medium text-accent hover:text-yellow-400 transition-colors">
+                Lupa kata sandi?
+            </a>
+        </div>
+    </div>
+
+    <div>
+        <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-md text-black bg-accent hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition-colors uppercase tracking-wider">
+            Masuk
+        </button>
+    </div>
+</form>

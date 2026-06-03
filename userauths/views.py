@@ -1,110 +1,84 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.db.models import Q
-from .models import User
-from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-# Import ketiga form yang ada di forms.py
-from .forms import UserRegisterForm, UserEntryForm, UserLoginForm 
+from .forms import UserRegisterForm, UserLoginForm
+from .models import User
 
-# 1. HALAMAN ENTRY
-def entry_view(request):
-    if request.method == "POST":
-        form = UserEntryForm(request.POST)
-        if form.is_valid():
-            # Mengambil data yang sudah dibersihkan dari form
-            identifier = form.cleaned_data.get("identifier")
-            
-            user_exists = User.objects.filter(Q(email=identifier) | Q(phone_number=identifier)).exists()
-            request.session['auth_identifier'] = identifier
-            
-            if user_exists:
-                return redirect("userauths:login")
-            else:
-                return redirect("userauths:register")
-    else:
-        form = UserEntryForm()
-        
-    return render(request, "userauths/entry.html", {"form": form})
+def get_redirect_url_for_role(user):
+    if user.role == 'admin_toko':
+        return '/admin-toko/'
+    elif user.role == 'owner' or user.is_superuser:
+        return '/jasmine/'
+    return '/'
 
-# 2. HALAMAN LOGIN
-def login_view(request):
-    identifier = request.session.get('auth_identifier')
+def auth_view(request):
+    if request.user.is_authenticated:
+        return redirect(get_redirect_url_for_role(request.user))
     
-    if not identifier:
-        return redirect("userauths:entry")
+    login_form = UserLoginForm()
+    register_form = UserRegisterForm()
+    
+    context = {
+        'login_form': login_form,
+        'register_form': register_form,
+        'active_tab': 'login'
+    }
+    return render(request, "userauths/auth.html", context)
 
+def login_tab(request):
+    """HTMX view to render just the login form."""
     if request.method == "POST":
         form = UserLoginForm(request.POST)
         if form.is_valid():
+            email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
+            remember_me = form.cleaned_data.get("remember_me")
             
-            user_obj = User.objects.filter(Q(email=identifier) | Q(phone_number=identifier)).first()
-            
-            if user_obj:
-                user = authenticate(request, email=user_obj.email, password=password)
-                if user is not None:
-                    login(request, user)
-                    if 'auth_identifier' in request.session:
-                        del request.session['auth_identifier']
-                    messages.success(request, f"Selamat datang kembali, {user.username}!")
-                    return redirect("/")
-                else:
-                    messages.error(request, "Kata sandi salah!")
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                if not remember_me:
+                    request.session.set_expiry(0) # Expire on browser close
+                
+                response = render(request, "userauths/partials/login_form.html", {"login_form": form})
+                response['HX-Redirect'] = get_redirect_url_for_role(user)
+                return response
             else:
-                messages.error(request, "Akun tidak ditemukan.")
+                form.add_error(None, "Email atau kata sandi salah!")
     else:
         form = UserLoginForm()
         
-    context = {
-        'form': form,
-        'identifier': identifier
-    }
-    return render(request, "userauths/login.html", context)
+    return render(request, "userauths/partials/login_form.html", {"login_form": form})
 
-def register_view(request):
-    identifier = request.session.get('auth_identifier')
-    
-    if not identifier:
-        return redirect("userauths:entry")
-
+def register_tab(request):
+    """HTMX view to render just the register form."""
     if request.method == "POST":
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            user = form.save() # Simpan user baru
-            login(request, user) # Langsung login
-            del request.session['auth_identifier']
-            messages.success(request, "Registrasi berhasil!")
-            return redirect("core:home")
-        else:
-            # Jika ada error (misal password kurang kuat atau email sudah ada)
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{error}")
+            password = form.cleaned_data.get("password")
+            password_confirm = form.cleaned_data.get("password_confirm")
+            if password != password_confirm:
+                form.add_error("password_confirm", "Password tidak cocok.")
+            else:
+                user = form.save(commit=False)
+                user.set_password(password)
+                user.role = 'customer'
+                user.save()
+                
+                login(request, user)
+                response = render(request, "userauths/partials/register_form.html", {"register_form": form})
+                response['HX-Redirect'] = get_redirect_url_for_role(user)
+                return response
     else:
-        # UX: Mengisi otomatis field email atau no HP dari halaman Entry
-        initial_data = {}
-        if '@' in identifier:
-            initial_data['email'] = identifier
-        else:
-            initial_data['phone_number'] = identifier
-            
-        form = UserRegisterForm(initial=initial_data)
-
-    context = {
-        'form': form,
-        'identifier': identifier
-    }
-    return render(request, "userauths/register.html", context)
+        form = UserRegisterForm()
+        
+    return render(request, "userauths/partials/register_form.html", {"register_form": form})
 
 def logout_view(request):
     logout(request)
-    messages.success(request, "Anda telah berhasil keluar.")
     return redirect("core:home")
 
-@login_required(login_url='userauths:login')
+@login_required(login_url='/auth/')
 def profile_view(request):
-    # Sementara merender halaman kosong atau tulisan "Ini halaman profil"
-    # Nanti kamu bisa buat file profile.html di folder templates/userauths/
     return render(request, "userauths/profile.html")

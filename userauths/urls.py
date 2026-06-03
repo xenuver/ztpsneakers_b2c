@@ -4,9 +4,9 @@ from . import views
 app_name = "userauths"
 
 urlpatterns = [
-    path("entry/", views.entry_view, name="entry"),
-    path("login/", views.login_view, name="login"),
-    path("register/", views.register_view, name="register"),
-    path("logout/", views.logout_view, name="logout"),
-    path("profile/", views.profile_view, name="profile"),
+    path('auth/', views.auth_view, name='auth'),
+    path('auth/login-tab/', views.login_tab, name='login_tab'),
+    path('auth/register-tab/', views.register_tab, name='register_tab'),
+    path('logout/', views.logout_view, name='logout'),
+    path('profile/', views.profile_view, name='profile'),
 ]

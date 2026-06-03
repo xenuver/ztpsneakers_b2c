@@ -1,0 +1,15 @@
+Django>=5.0
+psycopg2
+mysqlclient
+django-allauth
+PyJWT
+cryptography
+django-htmx
+whitenoise
+midtransclient
+requests
+openpyxl
+django-apscheduler
+Pillow
+python-dotenv
+django-widget-tweaks
