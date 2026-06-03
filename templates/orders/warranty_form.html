@@ -38,7 +38,18 @@
             {% csrf_token %}
             
             <div class="mb-6">
-                <label class="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">Alasan Klaim</label>
+                <label class="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">Kategori Masalah</label>
+                <select name="kategori" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black">
+                    <option value="">Pilih Kategori</option>
+                    <option value="cacat_produk">Cacat Produk</option>
+                    <option value="salah_ukuran">Salah Ukuran / Barang Berbeda</option>
+                    <option value="tidak_sesuai_foto">Tidak Sesuai Foto</option>
+                    <option value="lainnya">Lainnya</option>
+                </select>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">Detail Alasan Klaim</label>
                 <textarea name="reason" rows="5" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black placeholder-gray-400" placeholder="Jelaskan secara detail masalah pada produk..."></textarea>
             </div>
             

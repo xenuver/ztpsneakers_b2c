@@ -178,6 +178,9 @@ class Review(models.Model):
     rating = models.PositiveSmallIntegerField(choices=[(i, i) for i in range(1, 6)])
     comment = models.TextField()
     image = models.ImageField(upload_to='reviews/', null=True, blank=True)
+    image2 = models.ImageField(upload_to='reviews/', null=True, blank=True)
+    image3 = models.ImageField(upload_to='reviews/', null=True, blank=True)
+    is_visible = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:

@@ -81,6 +81,14 @@ class Order(models.Model):
     def has_shipping_address(self):
         return hasattr(self, 'shipping_address')
 
+    @property
+    def is_warranty_expired(self):
+        if self.status != 'completed':
+            return False
+        from django.utils import timezone
+        from datetime import timedelta
+        return self.updated_at < timezone.now() - timedelta(days=7)
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
@@ -125,8 +133,15 @@ class WarrantyClaim(models.Model):
         ('rejected', 'Ditolak'),
         ('resolved', 'Selesai'),
     ]
+    KATEGORI_CHOICES = [
+        ('cacat_produk', 'Cacat Produk'),
+        ('salah_ukuran', 'Salah Ukuran / Barang Berbeda'),
+        ('tidak_sesuai_foto', 'Tidak Sesuai Foto'),
+        ('lainnya', 'Lainnya'),
+    ]
     order_item = models.OneToOneField(OrderItem, on_delete=models.CASCADE, related_name='warranty_claim')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    kategori = models.CharField(max_length=50, choices=KATEGORI_CHOICES, default='lainnya')
     reason = models.TextField()
     evidence_image = models.ImageField(upload_to='warranties/')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')

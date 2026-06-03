@@ -99,10 +99,24 @@ def product_detail_view(request, slug):
         from orders.models import Wishlist
         wishlist_product_ids = list(Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True))
     
+    reviews = product.reviews.filter(is_visible=True)
+    total_reviews = reviews.count()
+    
+    rating_distribution = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0}
+    if total_reviews > 0:
+        for r in reviews:
+            if r.rating in rating_distribution:
+                rating_distribution[r.rating] += 1
+        
+        # Calculate percentages
+        for k in rating_distribution:
+            rating_distribution[k] = int((rating_distribution[k] / total_reviews) * 100)
+
     context = {
         'product': product,
         'related_products': related_products,
         'wishlist_product_ids': wishlist_product_ids,
+        'rating_distribution': rating_distribution,
     }
     return render(request, "storefront/detail.html", context)
 

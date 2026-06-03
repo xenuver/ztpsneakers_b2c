@@ -476,6 +476,8 @@ def create_review(request, item_id):
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
         image = request.FILES.get('image')
+        image2 = request.FILES.get('image2')
+        image3 = request.FILES.get('image3')
         
         Review.objects.create(
             product=order_item.product,
@@ -483,7 +485,9 @@ def create_review(request, item_id):
             order_item=order_item,
             rating=rating,
             comment=comment,
-            image=image
+            image=image,
+            image2=image2,
+            image3=image3
         )
         
         from django.contrib import messages
@@ -501,18 +505,27 @@ def create_warranty_claim(request, item_id):
     if order_item.order.status != 'completed':
         return HttpResponseForbidden("Klaim garansi hanya bisa dilakukan untuk pesanan yang sudah selesai.")
         
+    from django.utils import timezone
+    from datetime import timedelta
+    if order_item.order.updated_at < timezone.now() - timedelta(days=7):
+        from django.contrib import messages
+        messages.error(request, "Batas waktu klaim garansi (7 hari sejak pesanan selesai) telah berakhir.")
+        return redirect('orders:order_detail', order_number=order_item.order.order_number)
+        
     if order_item.has_warranty_claim:
         from django.contrib import messages
         messages.info(request, "Anda sudah mengajukan klaim garansi untuk produk ini.")
         return redirect('orders:order_detail', order_number=order_item.order.order_number)
         
     if request.method == 'POST':
+        kategori = request.POST.get('kategori', 'lainnya')
         reason = request.POST.get('reason')
         evidence_image = request.FILES.get('evidence_image')
         
         claim = WarrantyClaim.objects.create(
             order_item=order_item,
             user=request.user,
+            kategori=kategori,
             reason=reason,
             evidence_image=evidence_image
         )

@@ -106,6 +106,10 @@
                     <p class="text-xs text-gray-500">Size: {{ claim.order_item.size_str }}</p>
                 </div>
             </div>
+            <div class="border-t border-gray-100 pt-4 mb-4">
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Kategori Masalah</p>
+                <p class="text-sm font-bold text-black">{{ claim.get_kategori_display }}</p>
+            </div>
             <div class="border-t border-gray-100 pt-4">
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Alasan Klaim</p>
                 <p class="text-sm text-gray-700">{{ claim.reason }}</p>
