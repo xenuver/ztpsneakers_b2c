@@ -288,3 +288,22 @@
 | 🟠 Penting | Purna Jual (Ulasan + Garansi), Admin Toko, Crisp |
 | 🟡 Penting | Jasmine Dashboard, RajaOngkir, Notifikasi Email |
 | 🟢 Bonus | Rekomendasi Produk, Wishlist Notif, Analytics heatmap |
+
+---
+
+## B2C UI/UX System Design Improvements (Analysis Results)
+
+### 1. Animasi & Interaktivitas UI
+- [ ] **Carousel Banner Otomatis:** Integrasikan Swiper.js/Alpine.js pada Hero Banner untuk transisi *slide* otomatis.
+- [ ] **Micro-interactions:** Tambahkan animasi *zoom-in* lambat (scale 1.05) pada _card_ produk saat di-_hover_, dan efek interaktif pada ikon profil/keranjang.
+
+### 2. Pengelolaan Keranjang (Cart Drawer)
+- [ ] **Toast Notifications:** Tampilkan notifikasi kecil di pojok kanan atas layar saat produk berhasil ditambahkan ke keranjang (hilang otomatis).
+
+### 3. Sistem Filter & Pencarian
+- [ ] **Mobile Filter Modal:** Pindahkan saringan kategori/urutan ke *modal* atau *bottom-sheet* saat dilihat melalui layar *mobile*.
+- [ ] **Live Search Results:** Buat hasil pencarian langsung muncul sebagai _dropdown_ seketika saat pengguna mengetik (menggunakan `hx-trigger`).
+
+### 4. Alur Checkout & Pembayaran
+- [ ] **Validasi Ongkir Dinamis:** Integrasikan RajaOngkir API pada halaman *Checkout* untuk kalkulasi otomatis tarif pengiriman tanpa *reload*.
+- [ ] **Integrasi Payment Gateway:** Pasang Midtrans Snap pada tombol "Buat Pesanan" agar *popup* pembayaran instan muncul.

@@ -15,7 +15,7 @@
         <div id="auth-container">
             <div id="auth-error"></div>
             <!-- Form Awal: Input Identifier (Email/HP) -->
-            <form hx-post="{% url 'userauths:auth_check' %}" hx-target="#auth-container" hx-swap="innerHTML" class="mt-8 space-y-6">
+            <form action="{% url 'userauths:auth_check' %}" method="POST" hx-post="{% url 'userauths:auth_check' %}" hx-target="#auth-container" hx-swap="innerHTML" class="mt-8 space-y-6">
                 {% csrf_token %}
                 <div class="rounded-md shadow-sm -space-y-px">
                     <div>

@@ -1,9 +1,17 @@
 <form hx-post="{% url 'userauths:auth_register' %}" hx-target="#auth-error" hx-swap="innerHTML" class="mt-8 space-y-4">
     {% csrf_token %}
-    <input type="hidden" name="identifier" value="{{ identifier }}">
-    
-    <div class="text-sm text-gray-600 mb-4">
-        Sepertinya <strong>{{ identifier }}</strong> belum terdaftar. Lengkapi data di bawah untuk bergabung.
+    <div class="text-sm text-gray-600 mb-4 text-center">
+        Lengkapi data di bawah untuk mendaftar
+    </div>
+
+    <div>
+        <label for="email" class="sr-only">Email</label>
+        <input id="email" name="email" type="email" value="{{ email }}" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black sm:text-sm transition-all" placeholder="Email">
+    </div>
+
+    <div>
+        <label for="phone_number" class="sr-only">Nomor HP</label>
+        <input id="phone_number" name="phone_number" type="text" value="{{ phone_number }}" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black sm:text-sm transition-all" placeholder="Nomor HP">
     </div>
 
     <div>
@@ -14,6 +22,11 @@
     <div>
         <label for="password" class="sr-only">Buat Password</label>
         <input id="password" name="password" type="password" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black sm:text-sm transition-all" placeholder="Buat Password">
+    </div>
+    
+    <div>
+        <label for="password_confirm" class="sr-only">Konfirmasi Password</label>
+        <input id="password_confirm" name="password_confirm" type="password" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black sm:text-sm transition-all" placeholder="Konfirmasi Password">
     </div>
     
     <div id="auth-error"></div>

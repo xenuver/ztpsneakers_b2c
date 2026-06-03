@@ -29,7 +29,12 @@ def auth_check(request):
             return render(request, "userauths/partials/login_password.html", {"identifier": identifier})
         else:
             # Pindah ke input detail pendaftaran
-            return render(request, "userauths/partials/register_details.html", {"identifier": identifier})
+            is_email = '@' in identifier
+            context = {
+                "email": identifier if is_email else "",
+                "phone_number": identifier if not is_email else ""
+            }
+            return render(request, "userauths/partials/register_details.html", context)
             
     return HttpResponse("Method not allowed", status=405)
 
@@ -41,34 +46,43 @@ def auth_login(request):
         user = User.objects.filter(Q(email=identifier) | Q(phone_number=identifier)).first()
         if user and user.check_password(password):
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            return HttpResponse("""<script>window.location.href='/';</script>""")
+            response = HttpResponse("Berhasil masuk")
+            response['HX-Redirect'] = '/'
+            return response
         else:
-            return HttpResponse("""<div class="text-red-500 text-sm mt-2">Password salah</div>""", status=400)
+            return HttpResponse("""<div class="text-red-500 text-sm mt-2">Password salah</div>""")
             
     return HttpResponse("Method not allowed", status=405)
 
 def auth_register(request):
     if request.method == "POST":
-        identifier = request.POST.get("identifier")
+        email = request.POST.get("email", "").strip()
+        phone_number = request.POST.get("phone_number", "").strip()
         password = request.POST.get("password")
+        password_confirm = request.POST.get("password_confirm")
         name = request.POST.get("name")
         
-        # Cek apakah identifier adalah email atau hp (sederhana)
-        is_email = '@' in identifier
+        if password != password_confirm:
+            return HttpResponse("""<div class="text-red-500 text-sm mt-2">Password tidak cocok</div>""")
         
-        if User.objects.filter(Q(email=identifier) | Q(phone_number=identifier)).exists():
-            return HttpResponse("""<div class="text-red-500 text-sm mt-2">Email/No HP sudah terdaftar</div>""", status=400)
+        if not email or not phone_number:
+            return HttpResponse("""<div class="text-red-500 text-sm mt-2">Email dan Nomor HP wajib diisi</div>""")
+            
+        if User.objects.filter(Q(email=email) | Q(phone_number=phone_number)).exists():
+            return HttpResponse("""<div class="text-red-500 text-sm mt-2">Email/No HP sudah terdaftar</div>""")
             
         user = User.objects.create_user(
-            username=identifier.split('@')[0] if is_email else identifier,
-            email=identifier if is_email else f"{identifier}@placeholder.com",
+            username=email.split('@')[0],
+            email=email,
             password=password,
-            phone_number=identifier if not is_email else ""
+            phone_number=phone_number,
+            first_name=name
         )
-        # Boleh tambahkan logic first_name/last_name = name
         
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-        return HttpResponse("""<script>window.location.href='/';</script>""")
+        response = HttpResponse("Berhasil daftar")
+        response['HX-Redirect'] = '/'
+        return response
         
     return HttpResponse("Method not allowed", status=405)
 
