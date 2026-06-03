@@ -335,15 +335,6 @@ def midtrans_webhook(request):
                 if order:
                     if transaction_status in ['capture', 'settlement']:
                         order.status = 'paid'
-                        # Notify user
-                        from django.apps import apps
-                        Notification = apps.get_model('core', 'Notification')
-                        Notification.objects.create(
-                            user=order.user,
-                            title="Pembayaran Berhasil",
-                            message=f"Pembayaran untuk pesanan {order.order_number} telah berhasil dikonfirmasi.",
-                            link=f"/pesanan/history/"
-                        )
                     elif transaction_status in ['deny', 'cancel', 'expire']:
                         order.status = 'cancelled'
                     order.save()
@@ -351,4 +342,33 @@ def midtrans_webhook(request):
         except Exception as e:
             print(f"Webhook error: {e}")
             return HttpResponse("Error", status=400)
+    return HttpResponseForbidden()
+
+@login_required
+def order_history_view(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, "orders/history.html", {'orders': orders})
+
+@login_required
+def order_detail_view(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number, user=request.user)
+    return render(request, "orders/detail.html", {'order': order})
+
+@login_required
+def print_invoice(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number, user=request.user)
+    return render(request, "orders/invoice.html", {'order': order})
+
+@login_required
+def complete_order(request, order_number):
+    if request.method == 'POST':
+        order = get_object_or_404(Order, order_number=order_number, user=request.user)
+        if order.status == 'shipped':
+            order.status = 'completed'
+            order.save()
+            
+            from django.contrib import messages
+            messages.success(request, f"Pesanan {order.order_number} telah ditandai selesai.")
+            
+        return redirect('orders:order_detail', order_number=order.order_number)
     return HttpResponseForbidden()

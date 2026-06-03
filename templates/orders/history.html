@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Riwayat Pesanan - ZTPSneakers{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-12">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-extrabold text-black uppercase tracking-tight mb-8">Riwayat Pesanan</h1>
+        
+        {% if orders %}
+        <div class="space-y-6">
+            {% for order in orders %}
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">{{ order.created_at|date:"d M Y, H:i" }}</p>
+                    <h3 class="text-lg font-bold text-black uppercase tracking-wider mb-2">Order #{{ order.order_number }}</h3>
+                    <div class="flex items-center gap-3 text-sm">
+                        {% if order.status == 'pending' %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800 uppercase">Menunggu Pembayaran</span>
+                        {% elif order.status == 'paid' %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 uppercase">Dibayar</span>
+                        {% elif order.status == 'shipped' %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800 uppercase">Dikirim</span>
+                        {% elif order.status == 'completed' %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-800 uppercase">Selesai</span>
+                        {% else %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800 uppercase">Dibatalkan</span>
+                        {% endif %}
+                        <span class="font-bold text-gray-900">Rp {{ order.total|floatformat:"0" }}</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'orders:order_detail' order.order_number %}" class="inline-flex justify-center items-center px-4 py-2 border border-black rounded-md shadow-sm text-sm font-bold text-black bg-white hover:bg-gray-50 transition uppercase tracking-wider">
+                        Lihat Detail
+                    </a>
+                    {% if order.status == 'pending' %}
+                    <a href="{% url 'orders:checkout_success' order.order_number %}" class="inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-primary hover:bg-green-800 transition uppercase tracking-wider">
+                        Bayar
+                    </a>
+                    {% elif order.status == 'shipped' %}
+                    <form method="POST" action="{% url 'orders:complete_order' order.order_number %}">
+                        {% csrf_token %}
+                        <button type="submit" class="inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-black hover:bg-gray-800 transition uppercase tracking-wider">
+                            Tandai Selesai
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+            <svg class="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Belum Ada Pesanan</h3>
+            <p class="text-sm text-gray-500 mb-6">Anda belum pernah melakukan pemesanan.</p>
+            <a href="{% url 'storefront:catalog' %}" class="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-primary hover:bg-green-800 transition uppercase tracking-wider">
+                Mulai Belanja
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

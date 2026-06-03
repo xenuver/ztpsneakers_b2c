@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice #{{ order.order_number }}</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; line-height: 1.5; margin: 0; padding: 20px; }
+        .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); font-size: 14px; background: #fff; }
+        .header { display: flex; justify-content: space-between; margin-bottom: 40px; border-bottom: 2px solid #000; padding-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
+        .header .company-info { text-align: right; color: #666; font-size: 12px; }
+        .info-section { display: flex; justify-content: space-between; margin-bottom: 40px; }
+        .info-block { width: 48%; }
+        .info-block h3 { margin-top: 0; font-size: 12px; text-transform: uppercase; color: #666; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 10px; }
+        table { width: 100%; text-align: left; border-collapse: collapse; margin-bottom: 30px; }
+        th { border-bottom: 2px solid #000; padding: 10px; text-transform: uppercase; font-size: 12px; color: #666; }
+        td { border-bottom: 1px solid #eee; padding: 10px; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .total-row td { font-weight: bold; border-top: 2px solid #000; border-bottom: none; font-size: 16px; }
+        .status { display: inline-block; padding: 5px 10px; background: #f0f0f0; border-radius: 3px; font-weight: bold; text-transform: uppercase; font-size: 12px; margin-bottom: 10px; }
+        @media print {
+            body { padding: 0; background: #fff; }
+            .invoice-box { box-shadow: none; border: none; padding: 0; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-box">
+        <div class="no-print" style="margin-bottom: 20px; text-align: right;">
+            <button onclick="window.print()" style="padding: 10px 20px; background: #000; color: #fff; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase;">Cetak Invoice</button>
+        </div>
+        
+        <div class="header">
+            <div>
+                <h1>ZTPSneakers</h1>
+                <p style="margin-top: 5px; color: #666;">INVOICE</p>
+            </div>
+            <div class="company-info">
+                <strong>ZTPSneakers</strong><br>
+                Senayan Park Mall, UG - 69<br>
+                Jakarta Pusat, 10270<br>
+                contact@ztpsneakers.com
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+            <div class="status">Status: {{ order.get_status_display }}</div>
+            <h2 style="margin: 0; font-size: 18px;">Order #{{ order.order_number }}</h2>
+            <p style="margin: 5px 0 0; color: #666; font-size: 12px;">Tanggal: {{ order.created_at|date:"d M Y, H:i" }}</p>
+        </div>
+        
+        <div class="info-section">
+            <div class="info-block">
+                <h3>Ditagihkan Kepada</h3>
+                <strong>{{ order.user.first_name }} {{ order.user.last_name }}</strong><br>
+                {{ order.user.email }}
+            </div>
+            <div class="info-block">
+                <h3>Dikirim Ke</h3>
+                {% if order.has_shipping_address %}
+                <strong>{{ order.shipping_address.recipient_name }}</strong><br>
+                {{ order.shipping_address.phone_number }}<br>
+                {{ order.shipping_address.full_address }}<br>
+                {{ order.shipping_address.district_name }}, {{ order.shipping_address.city_name }}<br>
+                {{ order.shipping_address.province_name }} {{ order.shipping_address.postal_code }}
+                {% else %}
+                -
+                {% endif %}
+            </div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Deskripsi Item</th>
+                    <th class="text-center">Size</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-right">Harga</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                    <td><strong>{{ item.product_name }}</strong></td>
+                    <td class="text-center">{{ item.size_str }}</td>
+                    <td class="text-center">{{ item.quantity }}</td>
+                    <td class="text-right">Rp {{ item.price|floatformat:"0" }}</td>
+                    <td class="text-right">Rp {{ item.get_cost|floatformat:"0" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-right" style="padding-top: 20px;">Subtotal</td>
+                    <td class="text-right" style="padding-top: 20px;">Rp {{ order.subtotal|floatformat:"0" }}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="text-right">Ongkos Kirim ({{ order.courier|upper }} - {{ order.shipping_service }})</td>
+                    <td class="text-right">Rp {{ order.shipping_cost|floatformat:"0" }}</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4" class="text-right">TOTAL</td>
+                    <td class="text-right">Rp {{ order.total|floatformat:"0" }}</td>
+                </tr>
+            </tfoot>
+        </table>
+        
+        <div style="text-align: center; margin-top: 60px; color: #666; font-size: 12px; border-top: 1px solid #eee; padding-top: 20px;">
+            Terima kasih telah berbelanja di ZTPSneakers!
+        </div>
+    </div>
+    
+    <script>
+        // Auto print jika status bukan pending
+        {% if order.status != 'pending' %}
+        window.onload = function() {
+            // window.print();
+        }
+        {% endif %}
+    </script>
+</body>
+</html>

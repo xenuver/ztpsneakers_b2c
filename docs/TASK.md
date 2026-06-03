@@ -149,10 +149,10 @@
 ## Sprint 4 — Manajemen Pesanan & Notifikasi
 
 ### Order Management (Customer)
-- [ ] Halaman `/orders/` — daftar pesanan + status badge berwarna
-- [ ] Detail pesanan: item, harga, ongkir, total, status timeline, info resi
-- [ ] Tombol "Tandai Selesai" (customer konfirmasi penerimaan)
-- [ ] Status flow: `pending → paid → processing → shipped → delivered → completed`
+- [x] Daftar Pesanan (`/orders/`): riwayat transaksi, filter status (Semua, Belum Bayar, Dikirim, Selesai)
+- [x] Detail Pesanan (`/orders/<id>/`): resi kurir, item dibeli, rincian pembayaran
+- [ ] Tombol "Tandai Selesai" (muncul saat status Shipped)
+- [x] Cetak Invoice sederhana (PDF / Print view)
 
 ### Notifikasi Email
 - [ ] Template email HTML branded (logo, dark theme, CTA button)
