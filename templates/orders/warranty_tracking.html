@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Tracking Klaim Garansi - ZTPSneakers{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-12">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center mb-6">
+            <a href="{% url 'orders:order_detail' claim.order_item.order.order_number %}" class="text-sm font-bold text-gray-500 hover:text-black transition flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                Kembali ke Pesanan
+            </a>
+        </div>
+
+        <h1 class="text-2xl font-extrabold text-black uppercase tracking-tight mb-2">Tracking Klaim Garansi</h1>
+        <p class="text-gray-500 text-sm mb-8">ID Klaim: #{{ claim.id }} &bull; Diajukan: {{ claim.created_at|date:"d M Y, H:i" }}</p>
+
+        <!-- Status Badge -->
+        <div class="mb-8">
+            {% if claim.status == 'pending' %}
+            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-yellow-100 text-yellow-800">
+                <span class="w-2 h-2 rounded-full bg-yellow-400 mr-2"></span>Menunggu Pengecekan
+            </span>
+            {% elif claim.status == 'approved' %}
+            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-blue-100 text-blue-800">
+                <span class="w-2 h-2 rounded-full bg-blue-400 mr-2"></span>Disetujui — Sedang Diproses
+            </span>
+            {% elif claim.status == 'rejected' %}
+            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-red-100 text-red-800">
+                <span class="w-2 h-2 rounded-full bg-red-400 mr-2"></span>Ditolak
+            </span>
+            {% elif claim.status == 'resolved' %}
+            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-green-100 text-green-800">
+                <span class="w-2 h-2 rounded-full bg-green-400 mr-2"></span>Selesai
+            </span>
+            {% endif %}
+        </div>
+
+        <!-- Timeline -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+            <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Status Timeline</h2>
+            <ol class="relative border-l border-gray-200 ml-2">
+                <li class="mb-6 ml-6">
+                    <span class="absolute flex items-center justify-center w-6 h-6 rounded-full -left-3 ring-4 ring-white bg-blue-100">
+                        <svg class="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                    </span>
+                    <h3 class="font-bold text-sm text-gray-900">Klaim Diterima</h3>
+                    <p class="text-xs text-gray-500">{{ claim.created_at|date:"d M Y, H:i" }}</p>
+                </li>
+                
+                <li class="mb-6 ml-6">
+                    <span class="absolute flex items-center justify-center w-6 h-6 rounded-full -left-3 ring-4 ring-white {% if claim.status != 'pending' %}bg-blue-100{% else %}bg-gray-100{% endif %}">
+                        {% if claim.status != 'pending' %}
+                        <svg class="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        {% else %}
+                        <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="5"/></svg>
+                        {% endif %}
+                    </span>
+                    <h3 class="font-bold text-sm {% if claim.status != 'pending' %}text-gray-900{% else %}text-gray-400{% endif %}">Sedang Ditinjau Admin</h3>
+                    {% if claim.status != 'pending' %}
+                    <p class="text-xs text-gray-500">{{ claim.updated_at|date:"d M Y, H:i" }}</p>
+                    {% endif %}
+                </li>
+                
+                <li class="ml-6">
+                    <span class="absolute flex items-center justify-center w-6 h-6 rounded-full -left-3 ring-4 ring-white 
+                        {% if claim.status == 'resolved' %}bg-green-100{% elif claim.status == 'rejected' %}bg-red-100{% else %}bg-gray-100{% endif %}">
+                        {% if claim.status == 'resolved' %}
+                        <svg class="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        {% elif claim.status == 'rejected' %}
+                        <svg class="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        {% else %}
+                        <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="5"/></svg>
+                        {% endif %}
+                    </span>
+                    <h3 class="font-bold text-sm 
+                        {% if claim.status == 'resolved' %}text-green-700{% elif claim.status == 'rejected' %}text-red-700{% else %}text-gray-400{% endif %}">
+                        {% if claim.status == 'rejected' %}Klaim Ditolak{% else %}Selesai{% endif %}
+                    </h3>
+                    {% if claim.status in 'resolved,rejected' %}
+                    <p class="text-xs text-gray-500">{{ claim.updated_at|date:"d M Y, H:i" }}</p>
+                    {% endif %}
+                </li>
+            </ol>
+        </div>
+
+        <!-- Admin Notes -->
+        {% if claim.admin_notes %}
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+            <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Catatan dari Admin</h2>
+            <p class="text-sm text-gray-600 leading-relaxed">{{ claim.admin_notes }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Klaim Detail -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+            <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Detail Klaim</h2>
+            <div class="flex items-start mb-4">
+                <div class="w-14 h-14 bg-gray-50 rounded-md border border-gray-100 mr-4 flex-shrink-0 overflow-hidden">
+                    {% if claim.order_item.product and claim.order_item.product.get_primary_image %}
+                    <img src="{{ claim.order_item.product.get_primary_image }}" alt="{{ claim.order_item.product_name }}" class="w-full h-full object-contain">
+                    {% endif %}
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-black">{{ claim.order_item.product_name }}</p>
+                    <p class="text-xs text-gray-500">Size: {{ claim.order_item.size_str }}</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-100 pt-4">
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Alasan Klaim</p>
+                <p class="text-sm text-gray-700">{{ claim.reason }}</p>
+            </div>
+            {% if claim.evidence_image %}
+            <div class="border-t border-gray-100 pt-4 mt-4">
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Foto Bukti</p>
+                <a href="{{ claim.evidence_image.url }}" target="_blank" class="inline-block">
+                    <img src="{{ claim.evidence_image.url }}" alt="Bukti" class="w-32 h-32 object-cover rounded-md border border-gray-200 hover:opacity-90 transition">
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- CTA Crisp Chat -->
+        <div class="bg-black text-white p-6 rounded-xl text-center">
+            <p class="text-sm font-bold mb-3">Butuh bantuan lebih lanjut?</p>
+            <button onclick="window.$crisp && $crisp.push(['do', 'chat:open'])" class="inline-flex items-center px-6 py-2 bg-white text-black text-sm font-bold rounded-md hover:bg-gray-100 transition uppercase tracking-wider">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                Chat dengan CS
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

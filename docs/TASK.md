@@ -97,21 +97,25 @@
 
 ### Storefront — Katalog
 - [x] Halaman `/katalog/` — grid produk 4 kolom desktop, 2 mobile
-- [x] Filter sidebar/drawer: brand (checkbox), ukuran (pill toggle), harga (range slider), kondisi
+- [ ] Filter sidebar/drawer: brand (checkbox), ukuran (pill toggle: 38–46), harga (range slider), kondisi
+- [x] Filter brand via HTMX (update grid tanpa reload)
 - [x] Sort dropdown: Terbaru, Terlaris, Harga ↑, Harga ↓
 - [x] Filter + sort via HTMX (update grid tanpa reload halaman)
 - [x] HTMX live search (debounce 300ms)
 - [x] Produk card: foto hover scale, nama, harga, badge SOLD OUT / NEW
+- [ ] Badge "LAST PAIR" otomatis jika stok = 1 (penting untuk sepatu second!)
+- [x] Cart badge count di navbar (update via HTMX)
 - [x] Pagination infinite scroll via HTMX `hx-trigger="revealed"`
 
 ### Storefront — Detail Produk
 - [x] Galeri foto: foto utama besar + thumbnail kecil, klik ganti foto utama
 - [x] Pilih ukuran: pill button, disabled jika stok 0
-- [x] Tampilan stok: "Tersisa X" jika stok ≤ 3
+- [ ] Tampilan stok: "Tersisa X" jika stok ≤ 3 (real-time dari DB)
 - [x] Tombol "Tambah ke Keranjang" (HTMX, update cart badge navbar)
 - [x] Tombol "Tambah ke Wishlist" (HTMX, toggle heart icon)
-- [x] Tab: Deskripsi | Ulasan (count) | Garansi & Return
-- [ ] Tab Ulasan: tampilkan review + rata-rata bintang + distribusi bintang
+- [ ] Breadcrumb navigasi: Home > Katalog > Brand > Nama Produk
+- [ ] Tab UI: Deskripsi | Ulasan (count) | Garansi & Return (bukan accordion)
+- [ ] Tab Ulasan: rata-rata bintang + distribusi progress bar + list ulasan dengan foto
 - [x] Tab Garansi: teks kebijakan garansi toko
 - [x] Section "Produk Terkait" (brand sama, 4 card)
 
@@ -123,7 +127,7 @@
 - [x] Model `Wishlist`: customer (FK), product (FK), created_at
 - [x] HTMX toggle wishlist dari card produk dan halaman detail
 - [x] Halaman `/wishlist/` — grid produk + tombol hapus
-- [x] Kirim email notifikasi jika produk di wishlist stok hampir habis (≤ 2)
+- [ ] Notif in-app: produk di wishlist stok hampir habis (≤ 2) — via signal ProductSize save
 
 ### Keranjang
 - [x] Model `Cart` + `CartItem`
@@ -141,8 +145,8 @@
 - [x] Generate Snap Token untuk pesanan
 - [x] Popup Midtrans Snap di halaman checkout sukses
 - [x] Webhook endpoint untuk update status otomatis (Pending → Paid)
-- [x] Kirim email notifikasi / in-app notif setelah bayar sukses pembayaran + redirect ke detail order
-- [ ] Email konfirmasi order (HTML template branded)
+- [x] In-app notif setelah bayar sukses + redirect ke detail order
+- [ ] Merge cart guest → user saat login (session cart dipindah ke user cart)
 
 ---
 
@@ -150,32 +154,52 @@
 
 ### Order Management (Customer)
 - [x] Daftar Pesanan (`/orders/`): riwayat transaksi, filter status (Semua, Belum Bayar, Dikirim, Selesai)
+- [ ] Filter tab status di halaman riwayat pesanan (Semua, Menunggu Bayar, Diproses, Dikirim, Selesai)
 - [x] Detail Pesanan (`/orders/<id>/`): resi kurir, item dibeli, rincian pembayaran
 - [x] Tombol "Tandai Selesai" (muncul saat status Shipped)
 - [x] Cetak Invoice sederhana (PDF / Print view)
+- [ ] Tombol "Bayar Sekarang" di riwayat pesanan untuk order status `pending` (re-trigger Midtrans Snap)
 
-### Notifikasi Email
-- [ ] Template email HTML branded (logo, dark theme, CTA button)
-- [ ] Email: konfirmasi order (paid)
-- [ ] Email: pesanan diproses (processing)
-- [ ] Email: pesanan dikirim + nomor resi (shipped)
-- [ ] Email: pesanan selesai + ajakan ulasan (completed, delay 1 hari via apscheduler)
-- [ ] Email: update status laporan garansi
-- [ ] SMTP config di `settings.py` (cPanel SMTP atau Gmail)
+### Sistem Notifikasi In-App (Pengganti Email — Built-in)
+> Karena tidak menggunakan SMTP, seluruh notifikasi berbasis in-app via model `core.Notification`
+- [x] Model `Notification`: user, title, message, link, is_read, created_at
+- [x] Signal `pre_save` Order → auto-create notifikasi saat status berubah
+- [x] Notif: Pembayaran Berhasil (paid)
+- [x] Notif: Pesanan Diproses (processing)
+- [x] Notif: Pesanan Dikirim + nomor resi (shipped)
+- [x] Notif: Pesanan Selesai + ajakan ulasan (completed)
+- [ ] Notif: Klaim Garansi Diterima (saat user submit klaim)
+- [ ] Notif: Update status klaim garansi (pending→approved/rejected/resolved)
+- [ ] Notif: Produk di wishlist stok hampir habis (≤ 2)
+- [ ] Halaman notifikasi penuh `/notifications/` — list semua notif + tandai sudah dibaca
+- [ ] Navbar bell: badge count in-app (auto refresh via HTMX polling setiap 60 detik)
+- [x] Tombol "Tandai Semua Dibaca" di dropdown notifikasi
+- [ ] Notif: Pesanan dibatalkan (cancelled) — ketika admin batalkan
 
 ---
 
 ## Sprint 5 — Layanan Purna Jual & Penyempurnaan
 
 ### Ulasan & Rating
-- [x] Halaman tracking laporan garansi untuk customer (`/orders/garansi/[id]/`)
-- [x] Status badge: Diterima → Ditinjau → Diselesaikan / Ditolak
-- [x] Email notifikasi ke customer setiap perubahan status
+- [x] Model `Review` + form ulasan (rating 1-5, komentar, 1 foto)
+- [x] Tampil ulasan di halaman detail produk (accordion)
+- [x] Rata-rata bintang di card produk dan halaman detail
+- [x] Hanya order status `completed` yang bisa review
+- [ ] Distribusi bintang per rating (progress bar 1★–5★) di halaman detail produk
+- [ ] Upload hingga 3 foto per ulasan (sesuai PRD), bukan hanya 1
+- [ ] Field `is_visible` di model Review untuk moderasi admin
+
+### Laporan Garansi
+- [x] Model `WarrantyClaim` + form klaim + upload foto bukti
+- [x] Status klaim: pending → approved → rejected → resolved
+- [ ] Field `kategori` di model WarrantyClaim (choices: cacat_produk/salah_ukuran/tidak_sesuai_foto/lainnya)
+- [ ] Validasi batas 7 hari sejak order `completed` untuk klaim garansi
+- [ ] Halaman tracking klaim garansi (`/orders/garansi/<id>/`) — timeline status + catatan resolusi admin
 
 ### Crisp Live Chat
-- [ ] Embed Crisp widget script di `base.html` (`window.$crisp`)
-- [ ] Set Crisp user identity jika login (nama, email via JS)
-- [ ] Widget muncul di semua halaman storefront
+- [x] Embed Crisp widget script di `base.html` (`window.$crisp`)
+- [x] Set Crisp user identity jika login (nama, email via JS)
+- [x] Widget muncul di semua halaman storefront
 - [ ] Tombol "Chat dengan Kami" di halaman detail produk dan pesanan
 
 ---

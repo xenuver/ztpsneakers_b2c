@@ -46,7 +46,7 @@
                 </div>
 
                 <!-- Sizes & Actions Form -->
-                <form id="add-to-cart-form" hx-post="{% url 'orders:add_to_cart' product.id %}" hx-swap="outerHTML" hx-target="#cart-drawer-container">
+                <form id="add-to-cart-form" hx-post="{% url 'orders:add_to_cart' product.id %}" hx-swap="innerHTML" hx-target="#cart-drawer-container">
                     
                     <!-- Color Selection (Mockup) -->
                     <div class="mb-6 border-b border-gray-200 pb-6">
@@ -67,7 +67,7 @@
                             {% for psize in product.sizes.all %}
                             <label class="border border-gray-300 rounded-md flex items-center justify-center py-2 px-3 text-sm font-medium uppercase cursor-pointer hover:border-black transition focus-within:ring-1 focus-within:ring-black
                                 {% if psize.stock == 0 %}bg-gray-50 text-gray-400 cursor-not-allowed{% endif %}">
-                                <input type="radio" name="size_choice" value="{{ psize.id }}" class="sr-only" {% if psize.stock == 0 %}disabled{% endif %}>
+                                <input type="radio" name="size_choice" value="{{ psize.id }}" class="sr-only" required {% if psize.stock == 0 %}disabled{% endif %}>
                                 <span>{{ psize.size }}</span>
                             </label>
                             {% empty %}
@@ -77,9 +77,23 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex flex-col gap-4 mb-8">
-                        <button type="submit" class="w-full bg-primary border border-primary rounded-md py-4 px-8 flex items-center justify-center text-sm font-bold text-white hover:bg-green-800 transition uppercase tracking-widest">
+                    <div class="flex gap-4 mb-8">
+                        <button type="submit" class="flex-1 bg-primary border border-primary rounded-md py-4 px-8 flex items-center justify-center text-sm font-bold text-white hover:bg-green-800 transition uppercase tracking-widest">
                             Tambah ke Keranjang
+                        </button>
+                        <button type="button" 
+                                hx-post="{% url 'orders:toggle_wishlist' product.id %}" 
+                                hx-swap="innerHTML"
+                                class="flex-shrink-0 w-14 h-14 bg-white border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition">
+                            {% if product.id in wishlist_product_ids %}
+                            <svg class="w-6 h-6 text-red-500" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                            {% else %}
+                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                            {% endif %}
                         </button>
                     </div>
                 </form>

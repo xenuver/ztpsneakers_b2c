@@ -62,7 +62,9 @@
                 <div class="flex items-center space-x-5">
                     <!-- Cart -->
                     <button type="button" class="text-black hover:text-primary transition relative"
-                        onclick="openCart()">
+                        hx-get="{% url 'orders:cart_drawer' %}"
+                        hx-target="#cart-drawer-container"
+                        hx-swap="innerHTML">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
@@ -79,33 +81,43 @@
                     </a>
                     <!-- Bell -->
                     {% if user.is_authenticated %}
-                    <div class="relative">
+                    <div class="relative" id="notif-wrapper">
                         <button type="button" class="text-black hover:text-primary transition relative" onclick="document.getElementById('notif-dropdown').classList.toggle('hidden')">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
+                            <span id="notif-badge-wrapper">
                             {% if unread_notifications_count > 0 %}
                             <span class="absolute -top-1 -right-1 flex h-3 w-3">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 text-[8px] text-white justify-center items-center font-bold">{{ unread_notifications_count }}</span>
                             </span>
                             {% endif %}
+                            </span>
                         </button>
                         
                         <!-- Dropdown -->
                         <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg border border-gray-100 z-50">
                             <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
                                 <h3 class="text-sm font-bold text-gray-900">Notifikasi</h3>
-                                {% if unread_notifications_count > 0 %}
-                                <a href="{% url 'core:mark_notifications_read' %}" class="text-xs text-primary hover:underline">Tandai sudah dibaca</a>
-                                {% endif %}
+                                <div class="flex items-center gap-3">
+                                    {% if unread_notifications_count > 0 %}
+                                    <a href="{% url 'core:mark_notifications_read' %}" class="text-xs text-primary hover:underline">Baca Semua</a>
+                                    {% endif %}
+                                    <a href="{% url 'core:all_notifications' %}" class="text-xs font-bold text-black hover:underline">Lihat Semua</a>
+                                </div>
                             </div>
                             <div class="max-h-64 overflow-y-auto">
                                 {% for notif in latest_notifications %}
-                                <div class="px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition {% if not notif.is_read %}bg-blue-50/30{% endif %}">
+                                <div class="px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition {% if not notif.is_read %}bg-blue-50/30 border-l-2 border-l-black{% endif %}">
                                     <p class="text-xs font-bold text-gray-900">{{ notif.title }}</p>
                                     <p class="text-xs text-gray-600 mt-1">{{ notif.message }}</p>
-                                    <p class="text-[10px] text-gray-400 mt-1">{{ notif.created_at|timesince }} yang lalu</p>
+                                    <div class="flex items-center justify-between mt-1">
+                                        <p class="text-[10px] text-gray-400">{{ notif.created_at|timesince }} yang lalu</p>
+                                        {% if notif.link %}
+                                        <a href="{{ notif.link }}" class="text-[10px] font-bold text-black hover:underline">Lihat →</a>
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 {% empty %}
                                 <div class="px-4 py-6 text-center text-sm text-gray-500">
@@ -116,7 +128,7 @@
                         </div>
                     </div>
                     {% else %}
-                    <button type="button" class="text-black hover:text-primary transition" onclick="window.location.href='{% url \'userauths:auth_main\' %}'">
+                    <button type="button" class="text-black hover:text-primary transition" onclick="window.location.href='{% url 'userauths:auth_main' %}'">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                         </svg>

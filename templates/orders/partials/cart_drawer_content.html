@@ -1,4 +1,3 @@
-<div id="cart-drawer-container" class="fixed inset-0 z-[100] hidden overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
     <!-- Background overlay -->
     <div class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeCart()"></div>
 
@@ -77,32 +76,3 @@
             </div>
         </div>
     </div>
-</div>
-
-<script>
-    // Buka drawer (slide-in)
-    function openCart() {
-        const container = document.getElementById('cart-drawer-container');
-        const drawer = document.getElementById('cart-drawer');
-        container.classList.remove('hidden');
-        // biarkan reflow
-        setTimeout(() => {
-            drawer.classList.remove('translate-x-full');
-            drawer.classList.add('translate-x-0');
-        }, 10);
-    }
-    // Tutup drawer
-    function closeCart() {
-        const container = document.getElementById('cart-drawer-container');
-        const drawer = document.getElementById('cart-drawer');
-        drawer.classList.remove('translate-x-0');
-        drawer.classList.add('translate-x-full');
-        setTimeout(() => {
-            container.classList.add('hidden');
-        }, 500);
-    }
-    // Listen event dari HTMX
-    document.body.addEventListener('openCart', function() {
-        openCart();
-    });
-</script>

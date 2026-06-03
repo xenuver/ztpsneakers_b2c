@@ -79,7 +79,9 @@ def add_to_cart(request, product_id):
 
 def cart_drawer(request):
     cart = get_or_create_cart(request)
-    return render(request, "orders/partials/cart_drawer_content.html", {'cart': cart})
+    response = render(request, "orders/partials/cart_drawer_content.html", {'cart': cart})
+    response['HX-Trigger'] = 'openCart'
+    return response
 
 def update_cart_item(request, item_id):
     if request.method == 'POST':
@@ -425,11 +427,21 @@ def create_warranty_claim(request, item_id):
         reason = request.POST.get('reason')
         evidence_image = request.FILES.get('evidence_image')
         
-        WarrantyClaim.objects.create(
+        claim = WarrantyClaim.objects.create(
             order_item=order_item,
             user=request.user,
             reason=reason,
             evidence_image=evidence_image
+        )
+        
+        # Kirim notifikasi in-app
+        from django.apps import apps
+        Notification = apps.get_model('core', 'Notification')
+        Notification.objects.create(
+            user=request.user,
+            title="Klaim Garansi Diterima",
+            message=f"Klaim garansi untuk produk {order_item.product_name} telah kami terima dan akan segera diproses.",
+            link=f"/orders/garansi/{claim.id}/"
         )
         
         from django.contrib import messages
@@ -437,3 +449,11 @@ def create_warranty_claim(request, item_id):
         return redirect('orders:order_detail', order_number=order_item.order.order_number)
         
     return render(request, "orders/warranty_form.html", {'item': order_item})
+
+
+@login_required
+def warranty_tracking(request, claim_id):
+    """Halaman tracking status klaim garansi."""
+    claim = get_object_or_404(WarrantyClaim, id=claim_id, user=request.user)
+    return render(request, "orders/warranty_tracking.html", {'claim': claim})
+

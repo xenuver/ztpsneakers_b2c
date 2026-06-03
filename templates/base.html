@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 
+    <script
+        type="text/javascript">window.$crisp = []; window.CRISP_WEBSITE_ID = "fb6ee011-d83f-4903-a864-5ddce8aa5572"; (function () { d = document; s = d.createElement("script"); s.src = "https://client.crisp.chat/l.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();</script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -80,13 +83,45 @@
     </main>
 
     <!-- Cart Drawer Container -->
-    <div id="cart-drawer-container"></div>
+    <div id="cart-drawer-container" class="fixed inset-0 z-[100] hidden overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true"></div>
+
+    <script>
+        function openCart() {
+            const container = document.getElementById('cart-drawer-container');
+            container.classList.remove('hidden');
+            setTimeout(() => {
+                const drawer = document.getElementById('cart-drawer');
+                if (drawer) {
+                    drawer.classList.remove('translate-x-full');
+                    drawer.classList.add('translate-x-0');
+                }
+            }, 10);
+        }
+        
+        function closeCart() {
+            const container = document.getElementById('cart-drawer-container');
+            const drawer = document.getElementById('cart-drawer');
+            if (drawer) {
+                drawer.classList.remove('translate-x-0');
+                drawer.classList.add('translate-x-full');
+            }
+            setTimeout(() => {
+                container.classList.add('hidden');
+            }, 500);
+        }
+
+        document.body.addEventListener('openCart', function() {
+            openCart();
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
 
     <!-- Crisp Live Chat Integration -->
     <script type="text/javascript">
         window.$crisp = [];
         window.CRISP_WEBSITE_ID = "YOUR_CRISP_WEBSITE_ID"; // Ganti dengan Website ID asli
-        (function() {
+        (function () {
             d = document;
             s = d.createElement("script");
             s.src = "https://client.crisp.chat/l.js";
@@ -103,7 +138,7 @@
         {% endif %}
     </script>
 
-    {% block extra_scripts %}{% endblock %}
+
 </body>
 
 </html>

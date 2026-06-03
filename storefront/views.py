@@ -6,10 +6,16 @@ def home_view(request):
     featured_products = Product.objects.filter(is_active=True).order_by('-created_at')[:8]
     categories = Category.objects.all().order_by('order')
 
+    wishlist_product_ids = []
+    if request.user.is_authenticated:
+        from orders.models import Wishlist
+        wishlist_product_ids = list(Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True))
+
     context = {
         'banners': banners,
         'featured_products': featured_products,
         'categories': categories,
+        'wishlist_product_ids': wishlist_product_ids,
     }
     return render(request, "storefront/home.html", context)
 
@@ -39,6 +45,11 @@ def catalog_view(request):
 
     brands = Brand.objects.all()
     categories = Category.objects.all()
+    
+    wishlist_product_ids = []
+    if request.user.is_authenticated:
+        from orders.models import Wishlist
+        wishlist_product_ids = list(Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True))
 
     context = {
         'products': page_obj,
@@ -48,6 +59,7 @@ def catalog_view(request):
         'query': query,
         'brand_id': brand_id,
         'category_id': category_id,
+        'wishlist_product_ids': wishlist_product_ids,
     }
 
     if request.headers.get('HX-Request'):
@@ -59,8 +71,14 @@ def product_detail_view(request, slug):
     product = Product.objects.get(slug=slug, is_active=True)
     related_products = Product.objects.filter(brand=product.brand, is_active=True).exclude(id=product.id)[:4]
     
+    wishlist_product_ids = []
+    if request.user.is_authenticated:
+        from orders.models import Wishlist
+        wishlist_product_ids = list(Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True))
+    
     context = {
         'product': product,
         'related_products': related_products,
+        'wishlist_product_ids': wishlist_product_ids,
     }
     return render(request, "storefront/detail.html", context)
