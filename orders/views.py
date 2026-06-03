@@ -11,6 +11,7 @@ def get_or_create_cart(request):
         session_key = request.session.session_key
         if not session_key:
             request.session.create()
+            request.session['cart_initialized'] = True
             session_key = request.session.session_key
         cart, created = Cart.objects.get_or_create(session_key=session_key, user=None)
         return cart
@@ -82,6 +83,12 @@ def cart_drawer(request):
     response = render(request, "orders/partials/cart_drawer_content.html", {'cart': cart})
     response['HX-Trigger'] = 'openCart'
     return response
+
+def cart_count(request):
+    """HTMX endpoint: kembalikan badge count keranjang."""
+    cart = get_or_create_cart(request)
+    total_items = sum(item.quantity for item in cart.items.all())
+    return render(request, "orders/partials/cart_count_badge.html", {'total_items': total_items})
 
 def update_cart_item(request, item_id):
     if request.method == 'POST':

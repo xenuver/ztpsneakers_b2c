@@ -87,39 +87,139 @@
 - [x] Model `Banner`: judul, subtitle, gambar, link, urutan, is_active
 
 ### Storefront — Homepage
-- [x] Layout base template dark theme:
-  - Navbar sticky: logo kiri, menu tengah (Katalog, Brand, Tentang), search + cart icon + avatar kanan
+- [x] Layout base template:
+  - Navbar sticky: logo kiri, menu tengah, search + cart icon + avatar kanan
   - Footer: info toko, link, sosial media
-- [x] Hero carousel: full-width, dark overlay, teks bold, numbered bullets, auto-slide 5s
+- [x] Hero carousel: full-width, dark overlay, teks bold, numbered bullets
 - [x] Trust badge strip: 5 badge horizontal (ikon + teks singkat)
-- [x] Section "Produk Featured" — grid 4 kolom dari `is_featured=True`
-- [x] Section "Pilihan Untukmu" — rekomendasi berdasarkan rating tertinggi
+- [x] Section "Koleksi Terbaru" — grid 4 kolom dari produk terbaru
+
+#### 🎨 [UI POLISH] Homepage — Browse All / Hot Items
+> **Architectural & Design Vision (Senior System Designer):**
+> Kita harus memberikan kesan *premium, eksklusif, dan dinamis* ala brand hypebeast global (seperti StockX atau SNKRS). Pengalaman *scrolling* harus diselingi dengan micro-animations yang halus, hover state yang memberi *feedback* instan, dan tipografi yang kuat (menggunakan Outfit). 
+
+**A. "Browse All" / Koleksi Terbaru (The Discovery Section)**
+- [ ] **Section Header:** Tipografi tebal (Extrabold) uppercase "KOLEKSI TERBARU" di sebelah kiri, dengan sub-label berwarna abu-abu (gray-500) "Diperbarui setiap minggu.".
+- [ ] **Tombol "Lihat Semua":** Posisi rata kanan, dengan efek *underline* yang mengembang (*expand on hover*) menggunakan warna primer (`#0B6A42`).
+- [ ] **Card Produk (Grid):**
+  - **Elevasi & Shadow:** Default state tanpa shadow (flat), saat di-*hover* card sedikit terangkat (`translate-y-[-4px]`) dengan `shadow-xl` yang lembut (blur tinggi, opacity rendah).
+  - **Image Container:** Aspek rasio 1:1, latar belakang `#F9F9F9`. Gambar sepatu harus di-crop presisi di tengah. Saat di-*hover*, gambar sepatu melakukan *scale-up* 105% perlahan (`duration-500 ease-out`).
+  - **Interaksi Beli (Add to Cart):** Pada *mobile*, user klik untuk masuk ke detail. Pada *desktop*, hover ke gambar akan memunculkan overlay gradien dari bawah yang membawa tombol "Pilih Ukuran" atau "Lihat Detail" (karena sepatu wajib pilih ukuran sebelum masuk keranjang).
+  - **Wishlist Toggle:** Icon *Heart* di pojok kanan atas card. Gunakan micro-interaction (efek *bounce* kecil) saat diklik, dengan HTMX agar state langsung berubah (merah) tanpa *reload*. (Saat ini sudah ada, pastikan animasinya *smooth*).
+  - **Status Badges:** Label "BARU" (hijau) atau "SECOND" (abu-abu gelap) di kiri atas.
+
+**B. "Hot Items" / Trending (The FOMO Section)**
+- [ ] **Layout Berbeda:** Jangan gunakan grid statis. Gunakan *horizontal scroll* (*carousel-like* tapi berbasis *native CSS scroll snap*) agar terasa beda dari "Koleksi Terbaru".
+- [ ] **Algoritma "Hot":** Secara *backend*, *query* produk dengan kombinasi (Paling Banyak Dilihat + Rating Tinggi + Terjual). Filter: `review_count >= 3`, `average_rating >= 4.5`, atau fallback ke `is_featured=True`.
+- [ ] **Visual "Hot":**
+  - Tambahkan badge "🔥 TRENDING" dengan aksen warna merah/oranye gradien (`bg-gradient-to-r from-red-500 to-orange-500`) di kiri atas card.
+  - Tampilkan elemen *social proof*: Teks kecil di bawah harga "⭐ 4.9 | 24 Terjual bulan ini" untuk memancing rasa *Fear Of Missing Out* (FOMO).
+
+**C. Categories Section (The Gateway)**
+- [ ] **Grid Layout Dinamis:** Gunakan grid 3 kolom (Desktop) atau *Bento Box Layout* di mana salah satu kategori prioritas (misal: "Nike") mendapat ukuran *span* lebih besar (2 kolom).
+- [ ] **Visual Card Kategori:** 
+  - Tinggi card konsisten (`h-96`).
+  - Gambar menggunakan *full-cover background* dengan filter *dark overlay* (`bg-black/40`).
+  - Saat card di-*hover*, gambar belakang perlahan membesar (`scale-110`) dan *overlay* menjadi sedikit lebih terang, sementara panah "Shop Collection →" bergeser sedikit ke kanan (`translate-x-2`).
+- [ ] **Tipografi Kategori:** Teks nama kategori besar (3XL-4XL), *bold uppercase*, di posisi tengah atau kiri bawah. Tampilkan jumlah produk secara dinamis di bawahnya (misal: "128 Styles").
+- [ ] **Fallback Elegan:** Jika gambar kategori kosong, jangan gunakan abu-abu mati. Gunakan *subtle gradient mesh* (gabungan warna utama toko) atau pattern geometri minimalis.
+
+**D. Brand Strip / Brand Logos**
+- [ ] Tambah section "BRAND TERPOPULER" setelah hero, sebelum koleksi terbaru
+- [ ] Layout: logo brand horizontal, scrollable di mobile, centered di desktop
+- [ ] Setiap logo: klik → filter katalog by brand
+- [ ] Style: logo grayscale, hover → full color + pointer scale(1.05)
+
+**E. Trust Badge Strip**
+- [ ] Pastikan 5 badge tampil: 🛡 Garansi Puas | ↩ 7 Hari Return | 🚚 Free Ongkir | ✓ 100% Authentic | 👟 Koleksi Terlengkap
+- [ ] Mobile: scrollable horizontal
+- [ ] Animasi marquee/scrolling otomatis di mobile
 
 ### Storefront — Katalog
 - [x] Halaman `/katalog/` — grid produk 4 kolom desktop, 2 mobile
-- [ ] Filter sidebar/drawer: brand (checkbox), ukuran (pill toggle: 38–46), harga (range slider), kondisi
 - [x] Filter brand via HTMX (update grid tanpa reload)
 - [x] Sort dropdown: Terbaru, Terlaris, Harga ↑, Harga ↓
 - [x] Filter + sort via HTMX (update grid tanpa reload halaman)
 - [x] HTMX live search (debounce 300ms)
-- [x] Produk card: foto hover scale, nama, harga, badge SOLD OUT / NEW
-- [ ] Badge "LAST PAIR" otomatis jika stok = 1 (penting untuk sepatu second!)
-- [x] Cart badge count di navbar (update via HTMX)
+- [x] Produk card: foto hover scale, nama, harga
 - [x] Pagination infinite scroll via HTMX `hx-trigger="revealed"`
+
+#### 🎨 [UI POLISH] Katalog — Filter Sidebar
+> Filter yang ada di sidebar sudah partial. Berikut desain lengkapnya:
+
+**Filter yang perlu diimplementasikan:**
+- [ ] Filter ukuran (Size): pill toggle interaktif, ukuran dari data DB (`ProductSize`), bukan hardcode
+  - Query: `ProductSize.objects.values_list('size', flat=True).distinct().order_by('size')`
+  - Tampil sebagai grid pill: `[38] [39] [40] [41] [42]` — hitam jika aktif
+- [ ] Filter harga: range slider dual-handle (min-max), format Rp
+  - Range: Rp 0 – Rp 5.000.000
+  - Gunakan `<input type="range">` native HTML + JS update label harga real-time
+- [ ] Filter kondisi: radio (Semua / Baru / Second)
+- [ ] Tombol "Reset Filter" — clear semua filter sekaligus
+- [ ] Filter count: tampilkan jumlah produk per filter aktif `(12)`
+- [ ] Mobile: sidebar → bottom sheet drawer (toggle tombol "Filter")
+- [ ] Badge aktif: "3 Filter Aktif" di header katalog saat ada filter
+
+#### 🎨 [UI POLISH] Katalog — Card Produk
+- [ ] Badge "LAST PAIR" (merah) otomatis jika total stok = 1
+- [ ] Badge "SOLD OUT" (abu-abu) overlay jika semua stok = 0 dan `is_active=False`
+- [ ] Badge "BARU" jika produk dibuat < 7 hari yang lalu
+- [ ] Badge "HOT" jika `average_rating >= 4.0` dan `review_count >= 3`
+- [ ] Wishlist toggle di card: heart icon pojok kanan atas (sudah ada, pastikan fungsional)
+- [ ] Hover: add-to-cart quick button muncul dari bawah (overlay) — pilih ukuran dulu di detail
+- [ ] Rating stars kecil di bawah nama produk jika ada review
 
 ### Storefront — Detail Produk
 - [x] Galeri foto: foto utama besar + thumbnail kecil, klik ganti foto utama
 - [x] Pilih ukuran: pill button, disabled jika stok 0
-- [ ] Tampilan stok: "Tersisa X" jika stok ≤ 3 (real-time dari DB)
-- [x] Tombol "Tambah ke Keranjang" (HTMX, update cart badge navbar)
-- [x] Tombol "Tambah ke Wishlist" (HTMX, toggle heart icon)
-- [ ] Breadcrumb navigasi: Home > Katalog > Brand > Nama Produk
-- [ ] Tab UI: Deskripsi | Ulasan (count) | Garansi & Return (bukan accordion)
-- [ ] Tab Ulasan: rata-rata bintang + distribusi progress bar + list ulasan dengan foto
-- [x] Tab Garansi: teks kebijakan garansi toko
+- [x] Tombol "Tambah ke Keranjang" (HTMX) + Tombol Wishlist (HTMX toggle)
 - [x] Section "Produk Terkait" (brand sama, 4 card)
+- [ ] Tampilkan stok real-time per ukuran: "Tersisa 2" jika stok ≤ 3 (via template tag)
+- [ ] Badge "LAST PAIR" jika 1 pasang, "SOLD OUT" jika stok 0 semua ukuran
+- [ ] Breadcrumb: Home > Katalog > [Brand] > [Nama Produk]
+- [ ] Ganti accordion jadi Tab UI: [Deskripsi] [Ulasan (N)] [Garansi & Return]
+- [ ] Tab Ulasan: ringkasan bintang 1-5 progress bar + list ulasan + foto pembeli
 
 ---
+
+## 🎨 [ANALISIS] Sistem Warna Produk — Keputusan & Desain Teknis (Senior System Designer)
+
+> **Keputusan Mutlak:** YA, sistem warna sangat krusial dan wajib diimplementasikan.
+> 
+> **Rasionalisasi Bisnis & UX:** Di industri *sneakers*, *colorway* adalah identitas produk. Pengguna mencari sepatu secara spesifik berdasarkan warna (misal: "Air Jordan 1 Chicago" merah vs "Panda" hitam-putih). Tanpa sistem warna yang *database-driven*:
+> 1. Filter sidebar di katalog tidak akan berfungsi nyata.
+> 2. UX akan buruk karena pengguna harus menebak warna dari foto.
+> 3. *Data structuring* berantakan; sulit melakukan analitik tren penjualan berdasarkan warna.
+
+### Rancangan Sistem Warna (Color System Architecture)
+
+#### A. Model Schema (Database Layer)
+Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering* akurat.
+- [ ] Tambahkan field `color` di model `Product` menggunakan `CharField` dengan `choices` warna *fixed* (Putih, Hitam, Abu, Merah, Biru, dll).
+- [ ] *(Opsional tapi direkomendasikan)* Tambahkan `color_secondary` untuk sepatu dengan kombinasi warna ikonik (misal: Hitam & Merah).
+- [ ] Mapping kode HEX di *frontend* harus merujuk pada nilai statis dari *choices* ini.
+
+#### B. Filter Katalog (UX Layer)
+- [ ] **UI Filter Interaktif:** Jangan gunakan *dropdown* standar. Gunakan bulatan warna (*color swatches*) berjejer membentuk grid di sidebar.
+- [ ] **State Active:** Saat diklik, bulatan warna akan memiliki *ring border* hitam tebal (`ring-2 ring-black ring-offset-2`).
+- [ ] **Multiple Selection:** Pengguna harus bisa memilih >1 warna (misal: filter Hitam ATAU Putih). Integrasikan *state*-nya ke URL query parameter (contoh: `?color=black,white`) via HTMX agar URL *shareable*.
+- [ ] **Dynamic Tooltip:** Tambahkan atribut `title` atau tooltip CSS murni untuk menampilkan nama teks warna saat di-*hover* (membantu aksesibilitas).
+
+#### C. Card Produk (Homepage & Katalog)
+- [ ] **Indikator Visual Ringkas:** Tampilkan 1-2 titik warna kecil (ukuran `w-3 h-3`) sejajar secara horizontal tepat di bawah nama produk atau di sebelah harga.
+- [ ] Jika `color_secondary` tersedia, titik kedua agak saling tumpang tindih (*overlap*) dengan titik pertama.
+
+#### D. Detail Produk (Conversion Layer)
+- [ ] **Section Pilihan Warna:** Sebelum pemilihan ukuran (Size), tampilkan section "WARNA" dengan informasi teks yang jelas. Contoh: `WARNA: Putih / Varsity Red`.
+- [ ] **Cross-Linking Colorways (Advanced):** Di skenario masa depan, jika ada produk dengan model sama namun warna beda (misal produk A hitam, produk B putih), kita bisa me-render *thumbnail* produk B di halaman produk A sebagai *alternative colorways*. Saat ini, cukup fokuskan pada penampilan spesifikasi warna produk yang sedang dilihat.
+
+#### E. Admin Panel (Backend Layer)
+- [ ] **Form Produk:** Admin wajib memilih *color* dari dropdown (required) saat membuat/mengedit produk.
+- [ ] Sediakan fitur migrasi data (satu kali) untuk memberikan *default value* (misal: 'multi') pada semua data sepatu lama di database agar web tidak error saat implementasi.
+
+---
+
+
 
 ## Sprint 3 — Wishlist, Keranjang & Checkout
 
@@ -147,6 +247,45 @@
 - [x] Webhook endpoint untuk update status otomatis (Pending → Paid)
 - [x] In-app notif setelah bayar sukses + redirect ke detail order
 - [ ] Merge cart guest → user saat login (session cart dipindah ke user cart)
+
+---
+
+## 🛒 [ANALISIS ARCHITECTURE] Sistem Checkout, Cart Persistance & Voucher (Senior System Designer)
+
+> **Evaluasi Sistem Saat Ini:** Berdasarkan audit sistem, ditemukan beberapa *bottleneck* kritis pada alur checkout yang menyebabkan performa lambat, *state* keranjang hilang, dan disfungsi pada API pihak ketiga. Berikut adalah rancangan arsitektur perbaikannya:
+
+### A. Persistensi Keranjang (Cart Session Fix)
+- **Masalah:** Saat ini *guest user* (belum login) kehilangan keranjang belanja saat kembali ke halaman utama (*homepage*). Ini terjadi karena `request.session.create()` di Django tidak otomatis mengirimkan *cookie* jika tidak ada data sesi yang secara spesifik dimodifikasi (aturan *session.modified*).
+- **Desain Solusi:** 
+  - Modifikasi fungsi `get_or_create_cart` di `orders/views.py`.
+  - Berikan trigger mutasi sesi: `request.session['cart_initialized'] = True` tepat setelah membuat sesi baru. Hal ini memaksa *middleware* Django untuk menyimpan *cookie* `sessionid` di peramban (browser) pengguna.
+
+### B. Optimasi Kecepatan Checkout & Integrasi RajaOngkir
+- **Masalah:** Halaman `/checkout/` memuat sangat lambat karena melakukan panggilan API *Synchronous* ke RajaOngkir (`get_rajaongkir_provinces`) setiap kali halaman di-*load*.
+- **Desain Solusi:**
+  1. **Caching Layer:** Terapkan `django.core.cache` (Memcached/Redis atau FileBasedCache) untuk menyimpan data Provinsi dan Kota selama minimal 24 jam. Hal ini akan memangkas waktu muat dari 2000ms menjadi 10ms.
+  2. **Validasi Kredensial:** Pastikan `RAJAONGKIR_API_KEY` di *Environment* (`.env`) adalah kunci yang valid (bukan *dummy*), karena API tidak akan membalas dengan JSON yang benar jika kuncinya ditolak.
+  3. **Error Handling UI:** Tambahkan *fallback* teks merah di UI menggunakan HTMX jika API RajaOngkir *timeout* atau gagal (saat ini error *backend* hanya ditangkap oleh `print()`).
+
+### C. Pembayaran Midtrans Snap
+- **Masalah:** *Popup* Midtrans belum muncul dengan benar.
+- **Desain Solusi:**
+  - Kunci `MIDTRANS_SERVER_KEY` dan `MIDTRANS_CLIENT_KEY` di `.env` harus valid (gunakan *sandbox* untuk pengujian).
+  - Pastikan di `checkout_success.html` sudah me-render `<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ client_key }}"></script>` dan otomatis men-trigger `window.snap.pay('{{ order.midtrans_transaction_id }}')`.
+
+### D. Sistem Voucher (Ekspansi Masa Depan)
+> Fitur ini ditambahkan ke antrean *backlog* (*task list*) untuk dieksekusi agar pembeli bisa menggunakan kode promo (karena fitur "ZTP Point" telah resmi dihapus untuk menyederhanakan UX).
+
+- **Skema Database (`Voucher` Model):**
+  - `code` (CharField, unique)
+  - `discount_type` (Choices: 'percentage' atau 'nominal')
+  - `discount_value` (DecimalField)
+  - `min_purchase` (DecimalField)
+  - `valid_from` & `valid_to` (DateTimeField)
+  - `quota` (IntegerField)
+  - `is_active` (BooleanField)
+- **Modifikasi Cart:** Tambahkan relasi `voucher = models.ForeignKey(Voucher, null=True, blank=True)` pada model `Cart`.
+- **API HTMX (`/api/apply-voucher/`):** Endpoint yang menerima input teks, memvalidasi aturan voucher, mengunci *state* ke keranjang pengguna, dan mengembalikan *swap* nilai pada blok `#total-payment` beserta diskonnya.
 
 ---
 
