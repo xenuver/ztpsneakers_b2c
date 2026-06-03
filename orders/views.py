@@ -143,12 +143,13 @@ def checkout_view(request):
             
         shipping_service_raw = request.POST.get('shipping_service', '')
         shipping_service = ""
-        shipping_cost = 0
+        from decimal import Decimal
+        shipping_cost = Decimal('0')
         if shipping_service_raw:
             try:
                 parts = shipping_service_raw.split('|')
                 shipping_service = parts[0]
-                shipping_cost = float(parts[1])
+                shipping_cost = Decimal(parts[1])
             except:
                 pass
                 
@@ -166,7 +167,8 @@ def checkout_view(request):
         
         # Buat Order
         order_number = f"ZTP-{get_random_string(10).upper()}"
-        selected_courier = request.POST.get('courier', 'jne')
+        # Extract courier from "JNE CTC"
+        selected_courier = shipping_service.split(' ')[0] if shipping_service else "UNKNOWN"
         
         order = Order.objects.create(
             user=request.user,
@@ -331,10 +333,11 @@ def update_total(request):
     cart = get_or_create_cart(request)
     shipping_service = request.POST.get('shipping_service')
     subtotal = cart.get_total_price()
-    shipping_cost = 0
+    from decimal import Decimal
+    shipping_cost = Decimal('0')
     if shipping_service:
         try:
-            shipping_cost = float(shipping_service.split('|')[1])
+            shipping_cost = Decimal(shipping_service.split('|')[1])
         except:
             pass
             
