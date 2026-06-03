@@ -98,6 +98,11 @@ def auth_profile(request):
         request.user.username = request.POST.get("username", request.user.username)
         request.user.phone_number = request.POST.get("phone_number", request.user.phone_number)
         request.user.address = request.POST.get("address", request.user.address)
+        
+        avatar = request.FILES.get("avatar")
+        if avatar:
+            request.user.avatar = avatar
+            
         request.user.save()
         return redirect("userauths:profile")
         

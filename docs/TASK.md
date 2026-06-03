@@ -64,11 +64,11 @@
   - Form login: email, password + "Ingat Saya"
   - Tab switch tanpa reload (HTMX `hx-swap`)
 - [x] Google OAuth via `django-allauth` — tombol "Masuk dengan Google"
-- [ ] Lupa password — flow: email input → OTP/link → reset password
+- [x] Lupa password — flow: email input → OTP/link → reset password
 - [x] Redirect setelah login: customer → `/`, admin toko → `/admin-toko/`, owner → `/jasmine/`
-- [ ] Setup Django Permission Groups: `AdminToko`, `Owner`
+- [x] Setup Django Permission Groups: `AdminToko`, `Owner`
 - [x] Buat `OwnerRequiredMixin` dan `AdminTokoRequiredMixin`
-- [/] Halaman profil customer: edit nama, telepon, alamat default, ganti password, avatar
+- [x] Halaman profil customer: edit nama, telepon, alamat default, ganti password, avatar
 
 ---
 
