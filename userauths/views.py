@@ -46,6 +46,10 @@ def auth_login(request):
         user = User.objects.filter(Q(email=identifier) | Q(phone_number=identifier)).first()
         if user and user.check_password(password):
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            
+            from orders.utils import merge_guest_cart
+            merge_guest_cart(request, user)
+            
             response = HttpResponse("Berhasil masuk")
             response['HX-Redirect'] = '/'
             return response
@@ -80,6 +84,10 @@ def auth_register(request):
         )
         
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        
+        from orders.utils import merge_guest_cart
+        merge_guest_cart(request, user)
+        
         response = HttpResponse("Berhasil daftar")
         response['HX-Redirect'] = '/'
         return response

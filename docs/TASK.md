@@ -445,7 +445,7 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 - [x] Webhook endpoint untuk update status otomatis (Pending → Paid)
 - [x] In-app notif setelah bayar sukses + redirect ke detail order
 - [x] Form checkout unified (`id="checkout-form"`) — semua input (alamat, kurir, pengiriman) dalam satu form
-- [ ] Merge cart guest → user saat login (session cart dipindah ke user cart)
+- [x] Merge cart guest → user saat login (session cart dipindah ke user cart)
 
 ---
 
@@ -464,7 +464,7 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 - [x] **Desain Solusi:**
   - [x] **Caching Layer:** Terapkan `django.core.cache` (Memcached/Redis atau FileBasedCache) untuk menyimpan data Provinsi dan Kota selama minimal 24 jam. Hal ini akan memangkas waktu muat dari 2000ms menjadi 10ms.
   - [ ] **Validasi Kredensial:** Pastikan `RAJAONGKIR_API_KEY` di *Environment* (`.env`) adalah kunci yang valid (bukan *dummy*), karena API tidak akan membalas dengan JSON yang benar jika kuncinya ditolak.
-  - [ ] **Error Handling UI:** Tambahkan *fallback* teks merah di UI menggunakan HTMX jika API RajaOngkir *timeout* atau gagal (saat ini error *backend* hanya ditangkap oleh `print()`).
+  - [x] **Error Handling UI:** Tambahkan *fallback* teks merah di UI menggunakan HTMX jika API RajaOngkir *timeout* atau gagal (saat ini error *backend* hanya ditangkap oleh `print()`).
 
 ### C. Pembayaran Midtrans Snap
 - [ ] **Masalah:** *Popup* Midtrans belum muncul dengan benar.
@@ -492,11 +492,11 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 
 ### Order Management (Customer)
 - [x] Daftar Pesanan (`/orders/`): riwayat transaksi, filter status (Semua, Belum Bayar, Dikirim, Selesai)
-- [ ] Filter tab status di halaman riwayat pesanan (Semua, Menunggu Bayar, Diproses, Dikirim, Selesai)
+- [x] Filter tab status di halaman riwayat pesanan (Semua, Menunggu Bayar, Diproses, Dikirim, Selesai)
 - [x] Detail Pesanan (`/orders/<id>/`): resi kurir, item dibeli, rincian pembayaran
 - [x] Tombol "Tandai Selesai" (muncul saat status Shipped)
 - [x] Cetak Invoice sederhana (PDF / Print view)
-- [ ] Tombol "Bayar Sekarang" di riwayat pesanan untuk order status `pending` (re-trigger Midtrans Snap)
+- [x] Tombol "Bayar Sekarang" di riwayat pesanan untuk order status `pending` (re-trigger Midtrans Snap)
 
 ### Sistem Notifikasi In-App (Pengganti Email — Built-in)
 > Karena tidak menggunakan SMTP, seluruh notifikasi berbasis in-app via model `core.Notification`
@@ -506,13 +506,13 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 - [x] Notif: Pesanan Diproses (processing)
 - [x] Notif: Pesanan Dikirim + nomor resi (shipped)
 - [x] Notif: Pesanan Selesai + ajakan ulasan (completed)
-- [ ] Notif: Klaim Garansi Diterima (saat user submit klaim)
-- [ ] Notif: Update status klaim garansi (pending→approved/rejected/resolved)
+- [x] Notif: Klaim Garansi Diterima (saat user submit klaim)
+- [x] Notif: Update status klaim garansi (pending→approved/rejected/resolved)
 - [ ] Notif: Produk di wishlist stok hampir habis (≤ 2)
-- [ ] Halaman notifikasi penuh `/notifications/` — list semua notif + tandai sudah dibaca
-- [ ] Navbar bell: badge count in-app (auto refresh via HTMX polling setiap 60 detik)
+- [x] Halaman notifikasi penuh `/notifications/` — list semua notif + tandai sudah dibaca
+- [x] Navbar bell: badge count in-app (auto refresh via HTMX polling setiap 60 detik)
 - [x] Tombol "Tandai Semua Dibaca" di dropdown notifikasi
-- [ ] Notif: Pesanan dibatalkan (cancelled) — ketika admin batalkan
+- [x] Notif: Pesanan dibatalkan (cancelled) — ketika admin batalkan
 
 ---
 

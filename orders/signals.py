@@ -71,3 +71,16 @@ def warranty_status_changed(sender, instance, **kwargs):
                     )
         except WarrantyClaim.DoesNotExist:
             pass
+
+from django.db.models.signals import post_save
+
+@receiver(post_save, sender=WarrantyClaim)
+def warranty_created(sender, instance, created, **kwargs):
+    if created:
+        Notification = apps.get_model('core', 'Notification')
+        Notification.objects.create(
+            user=instance.user,
+            title="Klaim Garansi Diterima 🛡️",
+            message=f"Laporan garansi untuk {instance.order_item.product_name} telah kami terima dan akan segera ditinjau.",
+            link=f"/orders/garansi/{instance.pk}/"
+        )

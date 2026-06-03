@@ -8,7 +8,7 @@ def index(request):
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 @login_required
 def mark_notifications_read(request):
@@ -28,5 +28,6 @@ def notification_count(request):
     """HTMX endpoint: kembalikan badge count notif belum dibaca."""
     count = request.user.notifications.filter(is_read=False).count()
     if count > 0:
-        return JsonResponse({'count': count, 'html': f'<span class="absolute -top-1 -right-1 flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 text-[8px] text-white justify-center items-center font-bold">{count}</span></span>'})
-    return JsonResponse({'count': 0, 'html': ''})
+        html = f'<span class="absolute -top-1 -right-1 flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 text-[8px] text-white justify-center items-center font-bold">{count}</span></span>'
+        return HttpResponse(html)
+    return HttpResponse('')

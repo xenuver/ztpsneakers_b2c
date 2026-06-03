@@ -84,13 +84,8 @@ def calculate_shipping_cost(origin_city, destination_city, weight, courier):
     except Exception as e:
         print(f"RajaOngkir (Komerce) error: {e}")
         
-    # Fallback dummy shipping cost for Komerce structure
-    dummy_costs = {
-        'jne': [{'code': 'jne', 'service': 'REG', 'cost': 15000, 'etd': '2-3'}, {'code': 'jne', 'service': 'YES', 'cost': 25000, 'etd': '1'}],
-        'pos': [{'code': 'pos', 'service': 'Kilat Khusus', 'cost': 14000, 'etd': '2-4'}],
-        'tiki': [{'code': 'tiki', 'service': 'ECO', 'cost': 12000, 'etd': '3-5'}, {'code': 'tiki', 'service': 'ONS', 'cost': 22000, 'etd': '1'}]
-    }
-    return dummy_costs.get(courier, [])
+    # Return None jika API gagal, jangan pakai fallback dummy
+    return None
 
 def generate_midtrans_snap_token(order):
     server_key = getattr(settings, 'MIDTRANS_SERVER_KEY', '')
@@ -138,4 +133,39 @@ def check_midtrans_payment_status(order):
     except Exception as e:
         print(f'Midtrans status error: {e}')
         return None
+
+def merge_guest_cart(request, user):
+    """
+    Memindahkan item dari keranjang session (guest) ke keranjang user yang baru login.
+    """
+    from orders.models import Cart, CartItem
+    session_key = request.session.session_key
+    if not session_key:
+        return
+        
+    try:
+        guest_cart = Cart.objects.get(session_key=session_key, user=None)
+        user_cart, created = Cart.objects.get_or_create(user=user)
+        
+        # Pindahkan item-item
+        for guest_item in guest_cart.items.all():
+            user_item, item_created = CartItem.objects.get_or_create(
+                cart=user_cart,
+                product=guest_item.product,
+                size=guest_item.size,
+                defaults={'quantity': guest_item.quantity}
+            )
+            if not item_created:
+                # Tambahkan quantity tapi jangan sampai melebihi stok
+                new_qty = user_item.quantity + guest_item.quantity
+                if new_qty > guest_item.size.stock:
+                    new_qty = guest_item.size.stock
+                user_item.quantity = new_qty
+                user_item.save()
+            
+            guest_item.delete()
+            
+        guest_cart.delete()
+    except Cart.DoesNotExist:
+        pass
 

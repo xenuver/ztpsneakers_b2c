@@ -86,14 +86,23 @@
 
                 <!-- Tab: Pesanan Saya -->
                 <div id="tab-orders" class="tab-content hidden bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                    <div class="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
                         <h1 class="text-2xl font-extrabold text-black uppercase tracking-tight">Pesanan Saya</h1>
                     </div>
                     
+                    <!-- Filter Tabs -->
+                    <div class="flex space-x-2 overflow-x-auto pb-4 mb-4 hide-scrollbar">
+                        <button onclick="filterOrders('all', this)" class="order-filter-btn px-4 py-2 bg-black text-white text-xs font-bold rounded-full whitespace-nowrap uppercase tracking-wider transition">Semua</button>
+                        <button onclick="filterOrders('pending', this)" class="order-filter-btn px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-bold rounded-full whitespace-nowrap uppercase tracking-wider transition">Menunggu Bayar</button>
+                        <button onclick="filterOrders('processing', this)" class="order-filter-btn px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-bold rounded-full whitespace-nowrap uppercase tracking-wider transition">Diproses</button>
+                        <button onclick="filterOrders('shipped', this)" class="order-filter-btn px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-bold rounded-full whitespace-nowrap uppercase tracking-wider transition">Dikirim</button>
+                        <button onclick="filterOrders('completed', this)" class="order-filter-btn px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-bold rounded-full whitespace-nowrap uppercase tracking-wider transition">Selesai</button>
+                    </div>
+                    
                     {% if recent_orders %}
-                    <div class="space-y-4">
+                    <div class="space-y-4" id="orders-list">
                         {% for order in recent_orders %}
-                        <div class="flex items-center justify-between border-b border-gray-100 pb-4 last:border-0">
+                        <div class="order-item flex items-center justify-between border-b border-gray-100 pb-4 last:border-0" data-status="{{ order.status }}">
                             <div>
                                 <p class="text-xs text-gray-500 mb-1">{{ order.created_at|date:"d M Y, H:i" }}</p>
                                 <h3 class="text-sm font-bold text-black uppercase">#{{ order.order_number }}</h3>
@@ -102,6 +111,8 @@
                                         <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800 uppercase">Menunggu Pembayaran</span>
                                     {% elif order.status == 'paid' %}
                                         <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-800 uppercase">Dibayar</span>
+                                    {% elif order.status == 'processing' %}
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 uppercase">Diproses</span>
                                     {% elif order.status == 'shipped' %}
                                         <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 uppercase">Dikirim</span>
                                     {% elif order.status == 'completed' %}
@@ -111,12 +122,21 @@
                                     {% endif %}
                                 </div>
                             </div>
-                            <div class="text-right">
+                            <div class="text-right flex flex-col items-end">
                                 <p class="text-sm font-bold text-primary">Rp {{ order.total|floatformat:"0" }}</p>
-                                <a href="{% url 'orders:order_detail' order.order_number %}" class="inline-block mt-2 text-[11px] font-bold uppercase text-gray-600 border border-gray-300 rounded px-3 py-1 hover:bg-gray-50">Detail</a>
+                                <div class="flex gap-2 mt-2">
+                                    <a href="{% url 'orders:order_detail' order.order_number %}" class="inline-block text-[11px] font-bold uppercase text-gray-600 border border-gray-300 rounded px-3 py-1 hover:bg-gray-50">Detail</a>
+                                    {% if order.status == 'pending' %}
+                                    <a href="{% url 'orders:order_detail' order.order_number %}" class="inline-block text-[11px] font-bold uppercase text-white bg-primary border border-primary rounded px-3 py-1 hover:bg-green-800">Bayar</a>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
+                    </div>
+                    <!-- Empty state ketika difilter kosong -->
+                    <div id="no-filtered-orders" class="hidden text-center py-12">
+                        <p class="text-sm text-gray-500">Tidak ada pesanan dengan status tersebut.</p>
                     </div>
                     {% else %}
                     <div class="text-center py-12">
@@ -171,6 +191,39 @@ function showTab(tabId) {
     const activeBtn = document.getElementById(tabId.replace('tab-', 'btn-'));
     activeBtn.classList.remove('border-transparent', 'text-gray-600', 'font-medium');
     activeBtn.classList.add('bg-gray-50', 'border-primary', 'text-black', 'font-bold');
+}
+
+function filterOrders(status, btn) {
+    // Update button styles
+    document.querySelectorAll('.order-filter-btn').forEach(el => {
+        el.classList.remove('bg-black', 'text-white');
+        el.classList.add('bg-gray-100', 'text-gray-600');
+    });
+    btn.classList.remove('bg-gray-100', 'text-gray-600');
+    btn.classList.add('bg-black', 'text-white');
+
+    // Filter items
+    let visibleCount = 0;
+    document.querySelectorAll('.order-item').forEach(el => {
+        if (status === 'all' || el.getAttribute('data-status') === status) {
+            el.classList.remove('hidden');
+            el.classList.add('flex');
+            visibleCount++;
+        } else {
+            el.classList.remove('flex');
+            el.classList.add('hidden');
+        }
+    });
+
+    // Show empty state if needed
+    const noFilteredOrders = document.getElementById('no-filtered-orders');
+    if (noFilteredOrders) {
+        if (visibleCount === 0) {
+            noFilteredOrders.classList.remove('hidden');
+        } else {
+            noFilteredOrders.classList.add('hidden');
+        }
+    }
 }
 </script>
 {% endblock %}
