@@ -396,10 +396,6 @@ def midtrans_webhook(request):
             return HttpResponse("Error", status=400)
     return HttpResponseForbidden()
 
-@login_required
-def order_history_view(request):
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, "orders/history.html", {'orders': orders})
 
 @login_required
 def order_detail_view(request, order_number):

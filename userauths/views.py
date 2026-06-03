@@ -107,7 +107,7 @@ def auth_profile(request):
         return redirect("userauths:profile")
         
     from orders.models import Order
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')[:5]
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
     context = {
         'recent_orders': orders
     }

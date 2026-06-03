@@ -18,7 +18,6 @@ urlpatterns = [
     path('api/update-total/', views.update_total, name='update_total'),
     path('checkout/success/<str:order_number>/', views.checkout_success, name='checkout_success'),
     path('midtrans/webhook/', views.midtrans_webhook, name='midtrans_webhook'),
-    path('history/', views.order_history_view, name='history'),
     path('history/<str:order_number>/', views.order_detail_view, name='order_detail'),
     path('history/<str:order_number>/check-status/', views.manual_check_payment_status, name='check_payment_status'),
     path('history/<str:order_number>/invoice/', views.print_invoice, name='print_invoice'),
