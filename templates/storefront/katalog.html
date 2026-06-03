@@ -80,26 +80,32 @@
                     <div class="border-t border-gray-200 pt-6">
                         <h3 class="text-sm font-bold text-black uppercase tracking-wider mb-4">Warna</h3>
                         <div class="flex flex-wrap gap-3">
-                            <label class="cursor-pointer group">
-                                <input type="checkbox" name="color" value="black" class="sr-only peer">
+                            {% for color_val, color_name in colors %}
+                            <label class="cursor-pointer group relative" title="{{ color_name }}">
+                                <input type="checkbox" name="color" value="{{ color_val }}" class="sr-only peer" {% if color_val in selected_colors %}checked{% endif %}>
+                                {% if color_val == 'black' %}
                                 <div class="w-8 h-8 rounded-full bg-black ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="checkbox" name="color" value="white" class="sr-only peer">
+                                {% elif color_val == 'white' %}
                                 <div class="w-8 h-8 rounded-full bg-white border border-gray-300 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="checkbox" name="color" value="cream" class="sr-only peer">
-                                <div class="w-8 h-8 rounded-full bg-[#F5F5DC] border border-gray-200 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="checkbox" name="color" value="blue" class="sr-only peer">
-                                <div class="w-8 h-8 rounded-full bg-blue-600 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="checkbox" name="color" value="red" class="sr-only peer">
+                                {% elif color_val == 'grey' %}
+                                <div class="w-8 h-8 rounded-full bg-gray-400 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                                {% elif color_val == 'red' %}
                                 <div class="w-8 h-8 rounded-full bg-red-600 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                                {% elif color_val == 'blue' %}
+                                <div class="w-8 h-8 rounded-full bg-blue-600 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                                {% elif color_val == 'green' %}
+                                <div class="w-8 h-8 rounded-full bg-green-600 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                                {% elif color_val == 'yellow' %}
+                                <div class="w-8 h-8 rounded-full bg-yellow-400 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                                {% elif color_val == 'brown' %}
+                                <div class="w-8 h-8 rounded-full bg-amber-800 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                                {% elif color_val == 'multi' %}
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 via-green-500 to-blue-500 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                                {% else %}
+                                <div class="w-8 h-8 rounded-full bg-gray-200 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                                {% endif %}
                             </label>
+                            {% endfor %}
                         </div>
                     </div>
 

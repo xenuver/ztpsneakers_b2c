@@ -27,6 +27,8 @@ def catalog_view(request):
     category_id = request.GET.get('category')
     sort = request.GET.get('sort', '-created_at')
     page_number = request.GET.get('page', 1)
+    color_param = request.GET.get('color', '')
+    selected_colors = [c for c in color_param.split(',') if c]
 
     products = Product.objects.filter(is_active=True)
     
@@ -36,6 +38,8 @@ def catalog_view(request):
         products = products.filter(brand_id=brand_id)
     if category_id:
         products = products.filter(category_id=category_id)
+    if selected_colors:
+        products = products.filter(color__in=selected_colors)
         
     if sort in ['-created_at', 'price', '-price']:
         products = products.order_by(sort)
@@ -45,6 +49,7 @@ def catalog_view(request):
 
     brands = Brand.objects.all()
     categories = Category.objects.all()
+    all_colors = Product.COLOR_CHOICES
     
     wishlist_product_ids = []
     if request.user.is_authenticated:
@@ -55,6 +60,8 @@ def catalog_view(request):
         'products': page_obj,
         'brands': brands,
         'categories': categories,
+        'colors': all_colors,
+        'selected_colors': selected_colors,
         'current_sort': sort,
         'query': query,
         'brand_id': brand_id,

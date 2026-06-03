@@ -166,19 +166,19 @@
 - [ ] Badge "BARU" jika produk dibuat < 7 hari yang lalu
 - [ ] Badge "HOT" jika `average_rating >= 4.0` dan `review_count >= 3`
 - [ ] Wishlist toggle di card: heart icon pojok kanan atas (sudah ada, pastikan fungsional)
-- [ ] Hover: add-to-cart quick button muncul dari bawah (overlay) — pilih ukuran dulu di detail
-- [ ] Rating stars kecil di bawah nama produk jika ada review
+- [x] Hover: add-to-cart quick button muncul dari bawah (overlay) — pilih ukuran dulu di detail
+- [x] Rating stars kecil di bawah nama produk jika ada review
 
 ### Storefront — Detail Produk
 - [x] Galeri foto: foto utama besar + thumbnail kecil, klik ganti foto utama
 - [x] Pilih ukuran: pill button, disabled jika stok 0
 - [x] Tombol "Tambah ke Keranjang" (HTMX) + Tombol Wishlist (HTMX toggle)
 - [x] Section "Produk Terkait" (brand sama, 4 card)
-- [ ] Tampilkan stok real-time per ukuran: "Tersisa 2" jika stok ≤ 3 (via template tag)
-- [ ] Badge "LAST PAIR" jika 1 pasang, "SOLD OUT" jika stok 0 semua ukuran
-- [ ] Breadcrumb: Home > Katalog > [Brand] > [Nama Produk]
-- [ ] Ganti accordion jadi Tab UI: [Deskripsi] [Ulasan (N)] [Garansi & Return]
-- [ ] Tab Ulasan: ringkasan bintang 1-5 progress bar + list ulasan + foto pembeli
+- [x] Tampilkan stok real-time per ukuran: "Tersisa 2" jika stok ≤ 3 (via template tag)
+- [x] Badge "LAST PAIR" jika 1 pasang, "SOLD OUT" jika stok 0 semua ukuran
+- [x] Breadcrumb: Home > Katalog > [Brand] > [Nama Produk]
+- [x] Ganti accordion jadi Tab UI: [Deskripsi] [Ulasan (N)] [Garansi & Return]
+- [x] Tab Ulasan: ringkasan bintang 1-5 progress bar + list ulasan + foto pembeli
 
 ---
 
@@ -195,27 +195,27 @@
 
 #### A. Model Schema (Database Layer)
 Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering* akurat.
-- [ ] Tambahkan field `color` di model `Product` menggunakan `CharField` dengan `choices` warna *fixed* (Putih, Hitam, Abu, Merah, Biru, dll).
-- [ ] *(Opsional tapi direkomendasikan)* Tambahkan `color_secondary` untuk sepatu dengan kombinasi warna ikonik (misal: Hitam & Merah).
-- [ ] Mapping kode HEX di *frontend* harus merujuk pada nilai statis dari *choices* ini.
+- [x] Tambahkan field `color` di model `Product` menggunakan `CharField` dengan `choices` warna *fixed* (Putih, Hitam, Abu, Merah, Biru, dll).
+- [x] *(Opsional tapi direkomendasikan)* Tambahkan `color_secondary` untuk sepatu dengan kombinasi warna ikonik (misal: Hitam & Merah).
+- [x] Mapping kode HEX di *frontend* harus merujuk pada nilai statis dari *choices* ini.
 
 #### B. Filter Katalog (UX Layer)
-- [ ] **UI Filter Interaktif:** Jangan gunakan *dropdown* standar. Gunakan bulatan warna (*color swatches*) berjejer membentuk grid di sidebar.
-- [ ] **State Active:** Saat diklik, bulatan warna akan memiliki *ring border* hitam tebal (`ring-2 ring-black ring-offset-2`).
-- [ ] **Multiple Selection:** Pengguna harus bisa memilih >1 warna (misal: filter Hitam ATAU Putih). Integrasikan *state*-nya ke URL query parameter (contoh: `?color=black,white`) via HTMX agar URL *shareable*.
-- [ ] **Dynamic Tooltip:** Tambahkan atribut `title` atau tooltip CSS murni untuk menampilkan nama teks warna saat di-*hover* (membantu aksesibilitas).
+- [x] **UI Filter Interaktif:** Jangan gunakan *dropdown* standar. Gunakan bulatan warna (*color swatches*) berjejer membentuk grid di sidebar.
+- [x] **State Active:** Saat diklik, bulatan warna akan memiliki *ring border* hitam tebal (`ring-2 ring-black ring-offset-2`).
+- [x] **Multiple Selection:** Pengguna harus bisa memilih >1 warna (misal: filter Hitam ATAU Putih). Integrasikan *state*-nya ke URL query parameter (contoh: `?color=black,white`) via HTMX agar URL *shareable*.
+- [x] **Dynamic Tooltip:** Tambahkan atribut `title` atau tooltip CSS murni untuk menampilkan nama teks warna saat di-*hover* (membantu aksesibilitas).
 
 #### C. Card Produk (Homepage & Katalog)
-- [ ] **Indikator Visual Ringkas:** Tampilkan 1-2 titik warna kecil (ukuran `w-3 h-3`) sejajar secara horizontal tepat di bawah nama produk atau di sebelah harga.
-- [ ] Jika `color_secondary` tersedia, titik kedua agak saling tumpang tindih (*overlap*) dengan titik pertama.
+- [x] **Indikator Visual Ringkas:** Tampilkan 1-2 titik warna kecil (ukuran `w-3 h-3`) sejajar secara horizontal tepat di bawah nama produk atau di sebelah harga.
+- [x] Jika `color_secondary` tersedia, titik kedua agak saling tumpang tindih (*overlap*) dengan titik pertama.
 
 #### D. Detail Produk (Conversion Layer)
-- [ ] **Section Pilihan Warna:** Sebelum pemilihan ukuran (Size), tampilkan section "WARNA" dengan informasi teks yang jelas. Contoh: `WARNA: Putih / Varsity Red`.
-- [ ] **Cross-Linking Colorways (Advanced):** Di skenario masa depan, jika ada produk dengan model sama namun warna beda (misal produk A hitam, produk B putih), kita bisa me-render *thumbnail* produk B di halaman produk A sebagai *alternative colorways*. Saat ini, cukup fokuskan pada penampilan spesifikasi warna produk yang sedang dilihat.
+- [x] **Section Pilihan Warna:** Sebelum pemilihan ukuran (Size), tampilkan section "WARNA" dengan informasi teks yang jelas. Contoh: `WARNA: Putih / Varsity Red`.
+- [x] **Cross-Linking Colorways (Advanced):** Di skenario masa depan, jika ada produk dengan model sama namun warna beda (misal produk A hitam, produk B putih), kita bisa me-render *thumbnail* produk B di halaman produk A sebagai *alternative colorways*. Saat ini, cukup fokuskan pada penampilan spesifikasi warna produk yang sedang dilihat.
 
 #### E. Admin Panel (Backend Layer)
-- [ ] **Form Produk:** Admin wajib memilih *color* dari dropdown (required) saat membuat/mengedit produk.
-- [ ] Sediakan fitur migrasi data (satu kali) untuk memberikan *default value* (misal: 'multi') pada semua data sepatu lama di database agar web tidak error saat implementasi.
+- [x] **Form Produk:** Admin wajib memilih *color* dari dropdown (required) saat membuat/mengedit produk.
+- [x] Sediakan fitur migrasi data (satu kali) untuk memberikan *default value* (misal: 'multi') pada semua data sepatu lama di database agar web tidak error saat implementasi.
 
 ---
 

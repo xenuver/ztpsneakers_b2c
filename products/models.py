@@ -40,7 +40,21 @@ class Product(models.Model):
         ('new', 'New'),
         ('second', 'Second'),
     ]
+    COLOR_CHOICES = [
+        ('black', 'Hitam'),
+        ('white', 'Putih'),
+        ('red', 'Merah'),
+        ('blue', 'Biru'),
+        ('green', 'Hijau'),
+        ('yellow', 'Kuning'),
+        ('grey', 'Abu-abu'),
+        ('brown', 'Cokelat'),
+        ('multi', 'Multi-Warna'),
+    ]
+    
     name = models.CharField(max_length=200)
+    color = models.CharField(max_length=20, choices=COLOR_CHOICES, default='multi')
+    color_secondary = models.CharField(max_length=20, choices=COLOR_CHOICES, blank=True, null=True, help_text="Warna sekunder (Opsional)")
     slug = models.SlugField(unique=True, blank=True)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='products')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='products')
@@ -79,6 +93,10 @@ class Product(models.Model):
     @property
     def review_count(self):
         return self.reviews.count()
+
+    @property
+    def total_stock(self):
+        return sum(s.stock for s in self.sizes.all())
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')

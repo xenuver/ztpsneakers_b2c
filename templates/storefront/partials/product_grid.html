@@ -36,6 +36,13 @@
             </svg>
             {% endif %}
         </button>
+        <!-- Quick Add-to-Cart Overlay -->
+        <div class="absolute inset-x-0 bottom-0 bg-white/90 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center p-3 backdrop-blur-sm">
+            <span class="text-xs font-bold text-black uppercase tracking-wider flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                Pilih Ukuran
+            </span>
+        </div>
     </div>
     <div class="p-4">
         <div class="flex justify-between items-start">
@@ -47,6 +54,55 @@
             {% endif %}
         </div>
         <p class="mt-1 text-xs text-gray-500">{{ product.brand.name }} &bull; {{ product.get_condition_display }}</p>
+        
+        <!-- Color Dots -->
+        <div class="mt-1.5 flex items-center -space-x-1">
+            {% if product.color == 'black' %}
+            <div class="w-3 h-3 rounded-full bg-black ring-1 ring-white shadow-sm z-10"></div>
+            {% elif product.color == 'white' %}
+            <div class="w-3 h-3 rounded-full bg-white border border-gray-200 ring-1 ring-white shadow-sm z-10"></div>
+            {% elif product.color == 'grey' %}
+            <div class="w-3 h-3 rounded-full bg-gray-400 ring-1 ring-white shadow-sm z-10"></div>
+            {% elif product.color == 'red' %}
+            <div class="w-3 h-3 rounded-full bg-red-600 ring-1 ring-white shadow-sm z-10"></div>
+            {% elif product.color == 'blue' %}
+            <div class="w-3 h-3 rounded-full bg-blue-600 ring-1 ring-white shadow-sm z-10"></div>
+            {% elif product.color == 'green' %}
+            <div class="w-3 h-3 rounded-full bg-green-600 ring-1 ring-white shadow-sm z-10"></div>
+            {% elif product.color == 'yellow' %}
+            <div class="w-3 h-3 rounded-full bg-yellow-400 ring-1 ring-white shadow-sm z-10"></div>
+            {% elif product.color == 'brown' %}
+            <div class="w-3 h-3 rounded-full bg-amber-800 ring-1 ring-white shadow-sm z-10"></div>
+            {% elif product.color == 'multi' %}
+            <div class="w-3 h-3 rounded-full bg-gradient-to-br from-red-500 via-green-500 to-blue-500 ring-1 ring-white shadow-sm z-10"></div>
+            {% else %}
+            <div class="w-3 h-3 rounded-full bg-gray-200 ring-1 ring-white shadow-sm z-10"></div>
+            {% endif %}
+
+            {% if product.color_secondary %}
+                {% if product.color_secondary == 'black' %}
+                <div class="w-3 h-3 rounded-full bg-black ring-1 ring-white shadow-sm z-20"></div>
+                {% elif product.color_secondary == 'white' %}
+                <div class="w-3 h-3 rounded-full bg-white border border-gray-200 ring-1 ring-white shadow-sm z-20"></div>
+                {% elif product.color_secondary == 'grey' %}
+                <div class="w-3 h-3 rounded-full bg-gray-400 ring-1 ring-white shadow-sm z-20"></div>
+                {% elif product.color_secondary == 'red' %}
+                <div class="w-3 h-3 rounded-full bg-red-600 ring-1 ring-white shadow-sm z-20"></div>
+                {% elif product.color_secondary == 'blue' %}
+                <div class="w-3 h-3 rounded-full bg-blue-600 ring-1 ring-white shadow-sm z-20"></div>
+                {% elif product.color_secondary == 'green' %}
+                <div class="w-3 h-3 rounded-full bg-green-600 ring-1 ring-white shadow-sm z-20"></div>
+                {% elif product.color_secondary == 'yellow' %}
+                <div class="w-3 h-3 rounded-full bg-yellow-400 ring-1 ring-white shadow-sm z-20"></div>
+                {% elif product.color_secondary == 'brown' %}
+                <div class="w-3 h-3 rounded-full bg-amber-800 ring-1 ring-white shadow-sm z-20"></div>
+                {% elif product.color_secondary == 'multi' %}
+                <div class="w-3 h-3 rounded-full bg-gradient-to-br from-red-500 via-green-500 to-blue-500 ring-1 ring-white shadow-sm z-20"></div>
+                {% else %}
+                <div class="w-3 h-3 rounded-full bg-gray-200 ring-1 ring-white shadow-sm z-20"></div>
+                {% endif %}
+            {% endif %}
+        </div>
         <div class="mt-2 flex items-center gap-2">
             <p class="text-sm font-bold text-black">Rp {{ product.price|floatformat:"0" }}</p>
             {% if product.crossed_price %}
