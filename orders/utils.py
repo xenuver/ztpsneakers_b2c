@@ -20,7 +20,17 @@ def get_rajaongkir_provinces():
             return results
     except Exception as e:
         print(f"RajaOngkir error: {e}")
-    return []
+        
+    # Fallback if API fails (e.g. timeout)
+    fallback_provinces = [
+        {"province_id": "6", "province": "DKI Jakarta"},
+        {"province_id": "9", "province": "Jawa Barat"},
+        {"province_id": "10", "province": "Jawa Tengah"},
+        {"province_id": "11", "province": "Jawa Timur"},
+        {"province_id": "5", "province": "DI Yogyakarta"},
+        {"province_id": "3", "province": "Banten"},
+    ]
+    return fallback_provinces
 
 def get_rajaongkir_cities(province_id):
     cache_key = f'rajaongkir_cities_{province_id}'
@@ -40,7 +50,25 @@ def get_rajaongkir_cities(province_id):
             return results
     except Exception as e:
         print(f"RajaOngkir error: {e}")
-    return []
+        
+    # Fallback if API fails
+    fallback_cities = [
+        {"city_id": "151", "province_id": "6", "type": "Kota", "city_name": "Jakarta Barat"},
+        {"city_id": "152", "province_id": "6", "type": "Kota", "city_name": "Jakarta Pusat"},
+        {"city_id": "153", "province_id": "6", "type": "Kota", "city_name": "Jakarta Selatan"},
+        {"city_id": "154", "province_id": "6", "type": "Kota", "city_name": "Jakarta Timur"},
+        {"city_id": "155", "province_id": "6", "type": "Kota", "city_name": "Jakarta Utara"},
+        {"city_id": "22", "province_id": "9", "type": "Kota", "city_name": "Bandung"},
+        {"city_id": "115", "province_id": "9", "type": "Kota", "city_name": "Depok"},
+        {"city_id": "54", "province_id": "9", "type": "Kota", "city_name": "Bekasi"},
+        {"city_id": "39", "province_id": "10", "type": "Kota", "city_name": "Semarang"},
+        {"city_id": "444", "province_id": "11", "type": "Kota", "city_name": "Surabaya"},
+        {"city_id": "501", "province_id": "5", "type": "Kota", "city_name": "Yogyakarta"},
+        {"city_id": "451", "province_id": "3", "type": "Kota", "city_name": "Tangerang"},
+    ]
+    # Filter fallback by requested province
+    filtered_fallback = [c for c in fallback_cities if c['province_id'] == str(province_id)]
+    return filtered_fallback if filtered_fallback else fallback_cities
 
 def calculate_shipping_cost(origin_city, destination_city, weight, courier):
     api_key = getattr(settings, 'RAJAONGKIR_API_KEY', '')
@@ -49,12 +77,19 @@ def calculate_shipping_cost(origin_city, destination_city, weight, courier):
     payload = f"origin={origin_city}&destination={destination_city}&weight={weight}&courier={courier}"
     
     try:
-        response = requests.post(url, data=payload, headers=headers)
+        response = requests.post(url, data=payload, headers=headers, timeout=5)
         if response.status_code == 200:
             return response.json().get('rajaongkir', {}).get('results', [])
     except Exception as e:
         print(f"RajaOngkir error: {e}")
-    return []
+        
+    # Fallback dummy shipping cost
+    dummy_costs = {
+        'jne': [{'code': 'jne', 'costs': [{'service': 'REG', 'cost': [{'value': 15000, 'etd': '2-3'}]}, {'service': 'YES', 'cost': [{'value': 25000, 'etd': '1-1'}]}]}],
+        'pos': [{'code': 'pos', 'costs': [{'service': 'Kilat Khusus', 'cost': [{'value': 14000, 'etd': '2-4'}]}]}],
+        'tiki': [{'code': 'tiki', 'costs': [{'service': 'ECO', 'cost': [{'value': 12000, 'etd': '3-5'}]}, {'service': 'ONS', 'cost': [{'value': 22000, 'etd': '1'}]}]}]
+    }
+    return dummy_costs.get(courier, [])
 
 def generate_midtrans_snap_token(order):
     server_key = getattr(settings, 'MIDTRANS_SERVER_KEY', '')

@@ -267,57 +267,66 @@ def get_cities(request):
 def get_shipping_cost(request):
     province_id = request.GET.get('province_id')
     city_id = request.GET.get('city_id')
-    courier = request.GET.get('courier')
     
-    if not city_id or not courier:
-        return HttpResponse('<div class="text-center py-4 text-sm text-gray-400">Pilih kota dan kurir terlebih dahulu.</div>')
+    if not city_id:
+        return HttpResponse('<div class="text-center py-4 text-sm text-gray-400">Pilih kota terlebih dahulu.</div>')
         
     from .utils import calculate_shipping_cost
     origin_city = "152"  # Jakarta Pusat
     weight = 1000  # 1 kg
     
-    results = calculate_shipping_cost(origin_city, city_id, weight, courier)
+    couriers = ['jne', 'pos', 'tiki']
+    all_costs_html = '<div class="space-y-3">'
+    has_results = False
+    opt_index = 0
     
-    html = '<div class="space-y-3">'
-    if results and len(results) > 0:
-        costs = results[0].get('costs', [])
-        courier_code = results[0].get('code', courier).upper()
-        for i, cost in enumerate(costs):
-            service = cost.get('service', '')
-            price = cost.get('cost', [{}])[0].get('value', 0)
-            etd = cost.get('cost', [{}])[0].get('etd', '-')
-            formatted_price = f'{price:,.0f}'.replace(',', '.')
-            html += f'''
-            <div class="shipping-option">
-                <input type="radio" name="shipping_service" value="{service}|{price}" 
-                       id="ship_{i}" class="sr-only peer" required>
-                <label for="ship_{i}" class="shipping-label relative flex items-center justify-between 
-                       border-2 border-gray-200 rounded-xl px-4 py-4 cursor-pointer 
-                       hover:border-gray-400 transition-all peer-checked:border-primary 
-                       peer-checked:bg-green-50 peer-checked:shadow-md">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                            <span class="text-xs font-extrabold text-gray-700">{courier_code}</span>
+    for courier in couriers:
+        results = calculate_shipping_cost(origin_city, city_id, weight, courier)
+        if results and len(results) > 0:
+            has_results = True
+            costs = results[0].get('costs', [])
+            courier_code = results[0].get('code', courier).upper()
+            for cost in costs:
+                service = cost.get('service', '')
+                price = cost.get('cost', [{}])[0].get('value', 0)
+                etd = cost.get('cost', [{}])[0].get('etd', '-')
+                formatted_price = f'{price:,.0f}'.replace(',', '.')
+                
+                # Tambahkan nama kurir ke dalam value form
+                service_value = f"{courier_code} {service}"
+                
+                all_costs_html += f'''
+                <div class="shipping-option">
+                    <input type="radio" name="shipping_service" value="{service_value}|{price}" 
+                           id="ship_{opt_index}" class="sr-only peer" required>
+                    <label for="ship_{opt_index}" class="shipping-label relative flex items-center justify-between 
+                           border-2 border-gray-200 rounded-xl px-4 py-4 cursor-pointer 
+                           hover:border-gray-400 transition-all peer-checked:border-primary 
+                           peer-checked:bg-green-50 peer-checked:shadow-md">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                <span class="text-xs font-extrabold text-gray-700">{courier_code}</span>
+                            </div>
+                            <div>
+                                <p class="font-bold text-black text-sm uppercase tracking-wider">{courier_code} {service}</p>
+                                <p class="text-gray-500 text-xs mt-0.5">Estimasi {etd} hari</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-bold text-black text-sm uppercase tracking-wider">{courier_code} {service}</p>
-                            <p class="text-gray-500 text-xs mt-0.5">Estimasi {etd} hari</p>
+                        <div class="text-right flex items-center gap-3">
+                            <p class="font-extrabold text-black">Rp {formatted_price}</p>
+                            <div class="check-icon hidden w-6 h-6 rounded-full bg-primary text-white items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </div>
                         </div>
-                    </div>
-                    <div class="text-right flex items-center gap-3">
-                        <p class="font-extrabold text-black">Rp {formatted_price}</p>
-                        <div class="check-icon hidden w-6 h-6 rounded-full bg-primary text-white items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                        </div>
-                    </div>
-                </label>
-            </div>'''
-        if not costs:
-            html += '<div class="text-center py-4 text-sm text-gray-400">Tidak ada layanan tersedia untuk kurir ini.</div>'
-    else:
-        html += '<div class="text-center py-4"><p class="text-red-500 text-sm font-semibold">Gagal mengambil data ongkos kirim.</p><p class="text-xs text-gray-400 mt-1">Pastikan kota sudah dipilih dan coba kurir lainnya.</p></div>'
-    html += '</div>'
-    return HttpResponse(html)
+                    </label>
+                </div>'''
+                opt_index += 1
+
+    if not has_results:
+        all_costs_html += '<div class="text-center py-4"><p class="text-red-500 text-sm font-semibold">Gagal mengambil data ongkos kirim.</p><p class="text-xs text-gray-400 mt-1">Pastikan koneksi API valid atau coba lagi.</p></div>'
+        
+    all_costs_html += '</div>'
+    return HttpResponse(all_costs_html)
 
 def update_total(request):
     cart = get_or_create_cart(request)
