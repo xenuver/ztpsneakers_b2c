@@ -241,7 +241,8 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 - [x] Model `Order`, `OrderItem`, `ShippingAddress`
 - [x] RajaOngkir API: `ongkoskirim` endpoint, dipanggil dari backend Django
 - [x] Autocomplete Provinsi & Kota (Dimuat secara *Asynchronous HTMX* agar halaman tidak lag)
-- [x] Pilihan Kurir Pengiriman Dinamis (JNE, POS, TIKI) dengan radio card UI
+- [x] Pilihan Pengiriman Dinamis: Menampilkan seluruh layanan JNE, POS, TIKI sekaligus berdasarkan Kota
+- [x] Data Cadangan (Fallback): Mencegah dropdown kosong jika API RajaOngkir *timeout*
 - [x] Hitung ongkos kirim berdasarkan berat, tujuan, dan kurir (RajaOngkir)
 - [x] Real-time update total pembayaran saat memilih layanan pengiriman (client-side JS)
 - [x] Generate Snap Token untuk pesanan (auto-detect Production vs Sandbox)

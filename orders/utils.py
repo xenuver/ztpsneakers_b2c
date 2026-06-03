@@ -9,26 +9,26 @@ def get_rajaongkir_provinces():
         return cached_provinces
         
     api_key = getattr(settings, 'RAJAONGKIR_API_KEY', '')
-    url = "https://api.rajaongkir.com/starter/province"
+    url = "https://rajaongkir.komerce.id/api/v1/destination/province"
     headers = {"key": api_key}
     
     try:
-        response = requests.get(url, headers=headers, timeout=5)
+        response = requests.get(url, headers=headers, timeout=10)
         if response.status_code == 200:
-            results = response.json().get('rajaongkir', {}).get('results', [])
+            results = response.json().get('data', [])
             cache.set('rajaongkir_provinces', results, 60 * 60 * 24) # 24 hours
             return results
     except Exception as e:
-        print(f"RajaOngkir error: {e}")
+        print(f"RajaOngkir (Komerce) error: {e}")
         
     # Fallback if API fails (e.g. timeout)
     fallback_provinces = [
-        {"province_id": "6", "province": "DKI Jakarta"},
-        {"province_id": "9", "province": "Jawa Barat"},
-        {"province_id": "10", "province": "Jawa Tengah"},
-        {"province_id": "11", "province": "Jawa Timur"},
-        {"province_id": "5", "province": "DI Yogyakarta"},
-        {"province_id": "3", "province": "Banten"},
+        {"id": 10, "name": "DKI JAKARTA"},
+        {"id": 5, "name": "JAWA BARAT"},
+        {"id": 12, "name": "JAWA TENGAH"},
+        {"id": 18, "name": "JAWA TIMUR"},
+        {"id": 19, "name": "DI YOGYAKARTA"},
+        {"id": 11, "name": "BANTEN"},
     ]
     return fallback_provinces
 
@@ -39,55 +39,56 @@ def get_rajaongkir_cities(province_id):
         return cached_cities
         
     api_key = getattr(settings, 'RAJAONGKIR_API_KEY', '')
-    url = f"https://api.rajaongkir.com/starter/city?province={province_id}"
+    url = f"https://rajaongkir.komerce.id/api/v1/destination/city/{province_id}"
     headers = {"key": api_key}
     
     try:
-        response = requests.get(url, headers=headers, timeout=5)
+        response = requests.get(url, headers=headers, timeout=10)
         if response.status_code == 200:
-            results = response.json().get('rajaongkir', {}).get('results', [])
+            results = response.json().get('data', [])
             cache.set(cache_key, results, 60 * 60 * 24)
             return results
     except Exception as e:
-        print(f"RajaOngkir error: {e}")
+        print(f"RajaOngkir (Komerce) error: {e}")
         
     # Fallback if API fails
     fallback_cities = [
-        {"city_id": "151", "province_id": "6", "type": "Kota", "city_name": "Jakarta Barat"},
-        {"city_id": "152", "province_id": "6", "type": "Kota", "city_name": "Jakarta Pusat"},
-        {"city_id": "153", "province_id": "6", "type": "Kota", "city_name": "Jakarta Selatan"},
-        {"city_id": "154", "province_id": "6", "type": "Kota", "city_name": "Jakarta Timur"},
-        {"city_id": "155", "province_id": "6", "type": "Kota", "city_name": "Jakarta Utara"},
-        {"city_id": "22", "province_id": "9", "type": "Kota", "city_name": "Bandung"},
-        {"city_id": "115", "province_id": "9", "type": "Kota", "city_name": "Depok"},
-        {"city_id": "54", "province_id": "9", "type": "Kota", "city_name": "Bekasi"},
-        {"city_id": "39", "province_id": "10", "type": "Kota", "city_name": "Semarang"},
-        {"city_id": "444", "province_id": "11", "type": "Kota", "city_name": "Surabaya"},
-        {"city_id": "501", "province_id": "5", "type": "Kota", "city_name": "Yogyakarta"},
-        {"city_id": "451", "province_id": "3", "type": "Kota", "city_name": "Tangerang"},
+        {"id": 135, "province_id": 10, "name": "JAKARTA BARAT"},
+        {"id": 137, "province_id": 10, "name": "JAKARTA PUSAT"},
+        {"id": 136, "province_id": 10, "name": "JAKARTA SELATAN"},
+        {"id": 139, "province_id": 10, "name": "JAKARTA TIMUR"},
+        {"id": 138, "province_id": 10, "name": "JAKARTA UTARA"},
+        {"id": 22, "province_id": 5, "name": "BANDUNG"},
+        {"id": 115, "province_id": 5, "name": "DEPOK"},
+        {"id": 54, "province_id": 5, "name": "BEKASI"},
+        {"id": 39, "province_id": 12, "name": "SEMARANG"},
+        {"id": 444, "province_id": 18, "name": "SURABAYA"},
+        {"id": 501, "province_id": 19, "name": "YOGYAKARTA"},
+        {"id": 451, "province_id": 11, "name": "TANGERANG"},
     ]
     # Filter fallback by requested province
-    filtered_fallback = [c for c in fallback_cities if c['province_id'] == str(province_id)]
+    filtered_fallback = [c for c in fallback_cities if str(c.get('province_id', '')) == str(province_id)]
     return filtered_fallback if filtered_fallback else fallback_cities
 
 def calculate_shipping_cost(origin_city, destination_city, weight, courier):
     api_key = getattr(settings, 'RAJAONGKIR_API_KEY', '')
-    url = "https://api.rajaongkir.com/starter/cost"
+    url = "https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost"
     headers = {"key": api_key, "content-type": "application/x-www-form-urlencoded"}
     payload = f"origin={origin_city}&destination={destination_city}&weight={weight}&courier={courier}"
     
     try:
-        response = requests.post(url, data=payload, headers=headers, timeout=5)
+        response = requests.post(url, data=payload, headers=headers, timeout=10)
         if response.status_code == 200:
-            return response.json().get('rajaongkir', {}).get('results', [])
+            # Return directly as it's already a list of services in Komerce API
+            return response.json().get('data', [])
     except Exception as e:
-        print(f"RajaOngkir error: {e}")
+        print(f"RajaOngkir (Komerce) error: {e}")
         
-    # Fallback dummy shipping cost
+    # Fallback dummy shipping cost for Komerce structure
     dummy_costs = {
-        'jne': [{'code': 'jne', 'costs': [{'service': 'REG', 'cost': [{'value': 15000, 'etd': '2-3'}]}, {'service': 'YES', 'cost': [{'value': 25000, 'etd': '1-1'}]}]}],
-        'pos': [{'code': 'pos', 'costs': [{'service': 'Kilat Khusus', 'cost': [{'value': 14000, 'etd': '2-4'}]}]}],
-        'tiki': [{'code': 'tiki', 'costs': [{'service': 'ECO', 'cost': [{'value': 12000, 'etd': '3-5'}]}, {'service': 'ONS', 'cost': [{'value': 22000, 'etd': '1'}]}]}]
+        'jne': [{'code': 'jne', 'service': 'REG', 'cost': 15000, 'etd': '2-3'}, {'code': 'jne', 'service': 'YES', 'cost': 25000, 'etd': '1'}],
+        'pos': [{'code': 'pos', 'service': 'Kilat Khusus', 'cost': 14000, 'etd': '2-4'}],
+        'tiki': [{'code': 'tiki', 'service': 'ECO', 'cost': 12000, 'etd': '3-5'}, {'code': 'tiki', 'service': 'ONS', 'cost': 22000, 'etd': '1'}]
     }
     return dummy_costs.get(courier, [])
 

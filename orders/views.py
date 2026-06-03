@@ -247,7 +247,7 @@ def get_provinces_options(request):
                     class="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition">
                 <option value="">Pilih Provinsi</option>'''
     for prov in provinces:
-        html += f'<option value="{prov.get("province_id")}">{prov.get("province")}</option>'
+        html += f'<option value="{prov.get("id")}">{prov.get("name")}</option>'
     html += '</select>'
     return HttpResponse(html)
 
@@ -261,7 +261,7 @@ def get_cities(request):
     
     html = '<option value="">Pilih Kota</option>'
     for city in cities:
-        html += f'<option value="{city.get("city_id")}">{city.get("type")} {city.get("city_name")}</option>'
+        html += f'<option value="{city.get("id")}">{city.get("name")}</option>'
     return HttpResponse(html)
 
 def get_shipping_cost(request):
@@ -284,12 +284,11 @@ def get_shipping_cost(request):
         results = calculate_shipping_cost(origin_city, city_id, weight, courier)
         if results and len(results) > 0:
             has_results = True
-            costs = results[0].get('costs', [])
-            courier_code = results[0].get('code', courier).upper()
-            for cost in costs:
+            for cost in results:
                 service = cost.get('service', '')
-                price = cost.get('cost', [{}])[0].get('value', 0)
-                etd = cost.get('cost', [{}])[0].get('etd', '-')
+                price = cost.get('cost', 0)
+                etd = cost.get('etd', '-')
+                courier_code = cost.get('code', courier).upper()
                 formatted_price = f'{price:,.0f}'.replace(',', '.')
                 
                 # Tambahkan nama kurir ke dalam value form
