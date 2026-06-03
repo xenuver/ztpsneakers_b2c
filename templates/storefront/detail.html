@@ -46,7 +46,8 @@
                 </div>
 
                 <!-- Sizes & Actions Form -->
-                <form id="add-to-cart-form" hx-post="{% url 'orders:add_to_cart' product.id %}" hx-swap="innerHTML" hx-target="#cart-drawer-container">
+                <form id="add-to-cart-form" action="{% url 'orders:add_to_cart' product.id %}" method="POST">
+                    {% csrf_token %}
                     
                     <!-- Color Selection (Mockup) -->
                     <div class="mb-6 border-b border-gray-200 pb-6">

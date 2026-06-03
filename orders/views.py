@@ -69,12 +69,11 @@ def add_to_cart(request, product_id):
                 cart_item.quantity += 1
                 cart_item.save()
             else:
-                return HttpResponse("Melebihi stok", status=400)
+                from django.contrib import messages
+                messages.error(request, "Melebihi stok")
+                return redirect('orders:cart_page')
                 
-        # Trigger event HTMX untuk open cart drawer & update cart count
-        response = render(request, "orders/partials/cart_drawer_content.html", {'cart': cart})
-        response['HX-Trigger'] = 'openCart, cartUpdated'
-        return response
+        return redirect('orders:cart_page')
         
     return HttpResponseForbidden()
 
@@ -133,10 +132,9 @@ from .models import Order, OrderItem, ShippingAddress
 def checkout_view(request):
     cart = get_or_create_cart(request)
     if not cart.items.exists():
-        return HttpResponse("""<script>window.location.href='/';</script>""")
+        return redirect('orders:cart_page')
         
-    from .utils import get_rajaongkir_provinces, generate_midtrans_snap_token
-    provinces = get_rajaongkir_provinces()
+    from .utils import generate_midtrans_snap_token
     
     if request.method == 'POST':
         if not request.user.is_authenticated:
@@ -168,11 +166,13 @@ def checkout_view(request):
         
         # Buat Order
         order_number = f"ZTP-{get_random_string(10).upper()}"
+        selected_courier = request.POST.get('courier', 'jne')
+        
         order = Order.objects.create(
             user=request.user,
             order_number=order_number,
             status='pending',
-            courier='jne', # Defaulting to JNE for now
+            courier=selected_courier,
             shipping_service=shipping_service,
             shipping_cost=shipping_cost,
             subtotal=subtotal,
@@ -223,7 +223,6 @@ def checkout_view(request):
     
     context = {
         'cart': cart,
-        'provinces': provinces,
     }
     return render(request, "orders/checkout.html", context)
 
@@ -236,6 +235,21 @@ def wishlist_view(request):
         'wishlists': wishlists,
     }
     return render(request, "orders/wishlist.html", context)
+
+def get_provinces_options(request):
+    from .utils import get_rajaongkir_provinces
+    from django.urls import reverse
+    provinces = get_rajaongkir_provinces()
+    cities_url = reverse('orders:get_cities')
+    html = f'''<select name="province_id" form="checkout-form" required 
+                    hx-get="{cities_url}" 
+                    hx-target="#city_select" 
+                    class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black">
+                <option value="">Pilih Provinsi</option>'''
+    for prov in provinces:
+        html += f'<option value="{prov.get("province_id")}">{prov.get("province")}</option>'
+    html += '</select>'
+    return HttpResponse(html)
 
 def get_cities(request):
     province_id = request.GET.get('province_id')
@@ -253,15 +267,15 @@ def get_cities(request):
 def get_shipping_cost(request):
     province_id = request.GET.get('province_id')
     city_id = request.GET.get('city_id')
+    courier = request.GET.get('courier')
     
-    if not city_id:
+    if not city_id or not courier:
         return HttpResponse('')
         
     from .utils import calculate_shipping_cost
     # Asumsi origin Jakarta Pusat (ID: 152), berat 1000 gram (1kg)
     origin_city = "152"
     weight = 1000
-    courier = "jne" # default courier
     
     results = calculate_shipping_cost(origin_city, city_id, weight, courier)
     
