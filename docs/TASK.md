@@ -75,72 +75,72 @@
 ## Sprint 2 — Product Models & Storefront Katalog
 
 ### Models
-- [ ] Model `Category`: nama, slug, icon, urutan
-- [ ] Model `Brand`: nama, slug, logo
-- [ ] Model `Product`:
+- [x] Model `Category`: nama, slug, icon, urutan
+- [x] Model `Brand`: nama, slug, logo
+- [x] Model `Product`:
   - nama, slug, brand (FK), kategori (FK)
   - deskripsi, kondisi (new/second)
   - harga, harga_coret (untuk diskon)
   - is_active, is_featured, created_at
-- [ ] Model `ProductImage`: product (FK), image, is_primary, urutan
-- [ ] Model `ProductSize`: product (FK), ukuran (35-46), stok (int)
-- [ ] Model `Banner`: judul, subtitle, gambar, link, urutan, is_active
+- [x] Model `ProductImage`: product (FK), image, is_primary, urutan
+- [x] Model `ProductSize`: product (FK), ukuran (35-46), stok (int)
+- [x] Model `Banner`: judul, subtitle, gambar, link, urutan, is_active
 
 ### Storefront — Homepage
-- [ ] Layout base template dark theme:
+- [x] Layout base template dark theme:
   - Navbar sticky: logo kiri, menu tengah (Katalog, Brand, Tentang), search + cart icon + avatar kanan
   - Footer: info toko, link, sosial media
-- [ ] Hero carousel: full-width, dark overlay, teks bold, numbered bullets, auto-slide 5s
-- [ ] Trust badge strip: 5 badge horizontal (ikon + teks singkat)
-- [ ] Section "Produk Featured" — grid 4 kolom dari `is_featured=True`
-- [ ] Section "Pilihan Untukmu" — rekomendasi berdasarkan rating tertinggi
+- [x] Hero carousel: full-width, dark overlay, teks bold, numbered bullets, auto-slide 5s
+- [x] Trust badge strip: 5 badge horizontal (ikon + teks singkat)
+- [x] Section "Produk Featured" — grid 4 kolom dari `is_featured=True`
+- [x] Section "Pilihan Untukmu" — rekomendasi berdasarkan rating tertinggi
 
 ### Storefront — Katalog
-- [ ] Halaman `/katalog/` — grid produk 4 kolom desktop, 2 mobile
-- [ ] Filter sidebar/drawer: brand (checkbox), ukuran (pill toggle), harga (range slider), kondisi
-- [ ] Sort dropdown: Terbaru, Terlaris, Harga ↑, Harga ↓
-- [ ] Filter + sort via HTMX (update grid tanpa reload halaman)
-- [ ] HTMX live search (debounce 300ms)
-- [ ] Produk card: foto hover scale, nama, harga, badge SOLD OUT / NEW
+- [x] Halaman `/katalog/` — grid produk 4 kolom desktop, 2 mobile
+- [x] Filter sidebar/drawer: brand (checkbox), ukuran (pill toggle), harga (range slider), kondisi
+- [x] Sort dropdown: Terbaru, Terlaris, Harga ↑, Harga ↓
+- [x] Filter + sort via HTMX (update grid tanpa reload halaman)
+- [x] HTMX live search (debounce 300ms)
+- [x] Produk card: foto hover scale, nama, harga, badge SOLD OUT / NEW
 - [ ] Pagination infinite scroll via HTMX `hx-trigger="revealed"`
 
 ### Storefront — Detail Produk
-- [ ] Galeri foto: foto utama besar + thumbnail kecil, klik ganti foto utama
-- [ ] Pilih ukuran: pill button, disabled jika stok 0
-- [ ] Tampilan stok: "Tersisa X" jika stok ≤ 3
-- [ ] Tombol "Tambah ke Keranjang" (HTMX, update cart badge navbar)
-- [ ] Tombol "Tambah ke Wishlist" (HTMX, toggle heart icon)
-- [ ] Tab: Deskripsi | Ulasan (count) | Garansi & Return
+- [x] Galeri foto: foto utama besar + thumbnail kecil, klik ganti foto utama
+- [x] Pilih ukuran: pill button, disabled jika stok 0
+- [x] Tampilan stok: "Tersisa X" jika stok ≤ 3
+- [x] Tombol "Tambah ke Keranjang" (HTMX, update cart badge navbar)
+- [x] Tombol "Tambah ke Wishlist" (HTMX, toggle heart icon)
+- [x] Tab: Deskripsi | Ulasan (count) | Garansi & Return
 - [ ] Tab Ulasan: tampilkan review + rata-rata bintang + distribusi bintang
-- [ ] Tab Garansi: teks kebijakan garansi toko
-- [ ] Section "Produk Terkait" (brand sama, 4 card)
+- [x] Tab Garansi: teks kebijakan garansi toko
+- [x] Section "Produk Terkait" (brand sama, 4 card)
 
 ---
 
 ## Sprint 3 — Wishlist, Keranjang & Checkout
 
 ### Wishlist
-- [ ] Model `Wishlist`: customer (FK), product (FK), created_at
-- [ ] HTMX toggle wishlist dari card produk dan halaman detail
+- [x] Model `Wishlist`: customer (FK), product (FK), created_at
+- [x] HTMX toggle wishlist dari card produk dan halaman detail
 - [ ] Halaman `/wishlist/` — grid produk + tombol hapus
 - [ ] Kirim email notifikasi jika produk di wishlist stok hampir habis (≤ 2)
 
 ### Keranjang
-- [ ] Model `Cart` + `CartItem`
-- [ ] Persistent cart: simpan ke DB jika login, session jika guest → merge saat login
-- [ ] Sidebar cart (drawer kanan) via HTMX `hx-swap="innerHTML"`
+- [x] Model `Cart` + `CartItem`
+- [x] Persistent cart: simpan ke DB jika login, session jika guest → merge saat login
+- [x] Sidebar cart (drawer kanan) via HTMX `hx-swap="innerHTML"`
 - [ ] Update qty + hapus item via HTMX
 - [ ] Halaman `/cart/` — full cart view
 - [ ] Validasi stok saat add to cart dan saat checkout
 
 ### Checkout
-- [ ] Multi-step checkout (3 langkah, progress bar):
+- [x] Multi-step checkout (3 langkah, progress bar):
   1. **Alamat**: nama penerima, telepon, provinsi, kota, kecamatan, detail alamat, kode pos
   2. **Pengiriman**: pilih ekspedisi + layanan (dari RajaOngkir), tampilkan estimasi + biaya
   3. **Pembayaran**: ringkasan order + tombol bayar via Midtrans
 - [ ] Autocomplete alamat (dropdown province → city → subdistrict via RajaOngkir atau data statis)
-- [ ] RajaOngkir API: `ongkoskirim` endpoint, dipanggil dari backend Django (key tidak exposed ke frontend)
-- [ ] Model `Order`, `OrderItem`, `ShippingAddress`
+- [x] RajaOngkir API: `ongkoskirim` endpoint, dipanggil dari backend Django (key tidak exposed ke frontend)
+- [x] Model `Order`, `OrderItem`, `ShippingAddress`
 - [ ] Integrasi Midtrans Snap: buat transaksi dari backend, tampilkan Snap popup
 - [ ] Webhook Midtrans: update `Order.status` berdasarkan notifikasi payment
 - [ ] Halaman sukses pembayaran + redirect ke detail order
