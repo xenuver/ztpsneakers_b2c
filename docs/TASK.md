@@ -232,16 +232,17 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 ### Keranjang
 - [x] Model `Cart` + `CartItem`
 - [x] Persistent cart: simpan ke DB jika login, session jika guest → merge saat login
-- [x] Tambah ke keranjang (dengan pilihan ukuran) via HTMX
+- [x] Tambah ke keranjang (dengan pilihan ukuran) -> langsung redirect ke `/cart/`
 - [x] HTMX Keranjang: update qty (+/-), hapus item (tanpa reload)
-- [x] Cart drawer (slide dari samping kanan) + halaman `/cart/` penuh
+- [x] Halaman `/cart/` penuh (Laci/Drawer ditiadakan)
 - [x] Validasi stok saat add to cart dan saat checkout
 
 ### Checkout
 - [x] Model `Order`, `OrderItem`, `ShippingAddress`
-- [x] RajaOngkir API: `ongkoskirim` endpoint, dipanggil dari backend Django (key tidak exposed ke frontend)
-- [x] Autocomplete Provinsi & Kota via RajaOngkir API (AJAX/HTMX)
-- [x] Hitung ongkos kirim berdasarkan berat dan tujuan (RajaOngkir)
+- [x] RajaOngkir API: `ongkoskirim` endpoint, dipanggil dari backend Django
+- [x] Autocomplete Provinsi & Kota (Dimuat secara *Asynchronous HTMX* agar halaman tidak lag)
+- [x] Pilihan Kurir Pengiriman Dinamis (JNE, POS, TIKI)
+- [x] Hitung ongkos kirim berdasarkan berat, tujuan, dan kurir (RajaOngkir)
 - [x] Generate Snap Token untuk pesanan
 - [x] Popup Midtrans Snap di halaman checkout sukses
 - [x] Webhook endpoint untuk update status otomatis (Pending → Paid)
