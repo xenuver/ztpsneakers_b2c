@@ -357,6 +357,7 @@ def update_total(request):
 @login_required
 def checkout_success(request, order_number):
     order = get_object_or_404(Order, order_number=order_number, user=request.user)
+    from django.conf import settings
     
     # Midtrans client key for frontend Snap popup
     server_key = getattr(settings, 'MIDTRANS_SERVER_KEY', '')
