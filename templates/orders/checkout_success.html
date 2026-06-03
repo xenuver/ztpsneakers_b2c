@@ -23,8 +23,16 @@
                         <span class="font-bold text-yellow-600 uppercase">{{ order.get_status_display }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-500">Total Pembayaran</span>
-                        <span class="font-bold text-black">Rp {{ order.total|floatformat:"0" }}</span>
+                        <span class="text-gray-500">Kurir</span>
+                        <span class="font-bold text-black uppercase">{{ order.courier }} - {{ order.shipping_service }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Ongkos Kirim</span>
+                        <span class="font-bold text-black">Rp {{ order.shipping_cost|floatformat:"0" }}</span>
+                    </div>
+                    <div class="flex justify-between border-t border-gray-200 pt-3">
+                        <span class="text-gray-500 font-bold">Total Pembayaran</span>
+                        <span class="font-extrabold text-primary text-lg">Rp {{ order.total|floatformat:"0" }}</span>
                     </div>
                 </div>
             </div>
@@ -32,13 +40,17 @@
             {% if order.status == 'pending' and order.midtrans_transaction_id %}
             <div class="mb-8">
                 <p class="text-sm text-gray-500 mb-4">Silakan selesaikan pembayaran Anda untuk memproses pesanan.</p>
-                <button id="pay-button" class="inline-flex justify-center w-full sm:w-auto px-8 py-4 border border-transparent text-sm font-bold rounded-md text-white bg-primary hover:bg-green-800 transition uppercase tracking-widest">
+                <button id="pay-button" class="inline-flex justify-center w-full sm:w-auto px-8 py-4 border border-transparent text-sm font-bold rounded-lg text-white bg-black hover:bg-gray-800 transition uppercase tracking-widest">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                     Bayar Sekarang
                 </button>
             </div>
             {% endif %}
             
             <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="{% url 'orders:order_detail' order.order_number %}" class="inline-flex justify-center px-6 py-3 border border-gray-300 shadow-sm text-sm font-bold rounded-md text-gray-700 bg-white hover:bg-gray-50 transition uppercase tracking-wider">
+                    Lihat Detail Pesanan
+                </a>
                 <a href="{% url 'storefront:home' %}" class="inline-flex justify-center px-6 py-3 border border-gray-300 shadow-sm text-sm font-bold rounded-md text-gray-700 bg-white hover:bg-gray-50 transition uppercase tracking-wider">
                     Kembali ke Beranda
                 </a>
@@ -48,26 +60,36 @@
 </div>
 
 {% if order.status == 'pending' and order.midtrans_transaction_id %}
-<!-- Midtrans Snap JS -->
-<!-- Note: for production change to https://app.midtrans.com/snap/snap.js -->
+<!-- Midtrans Snap JS - Auto-detect production vs sandbox -->
+{% if midtrans_is_production %}
+<script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ client_key }}"></script>
+{% else %}
 <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ client_key }}"></script>
+{% endif %}
 <script type="text/javascript">
     document.getElementById('pay-button').onclick = function(){
         snap.pay('{{ order.midtrans_transaction_id }}', {
-            // Optional
             onSuccess: function(result){
-                window.location.reload();
+                window.location.href = "{% url 'orders:order_detail' order.order_number %}";
             },
-            // Optional
             onPending: function(result){
                 window.location.reload();
             },
-            // Optional
             onError: function(result){
-                alert("Pembayaran gagal!");
+                alert("Pembayaran gagal! Silakan coba lagi.");
+            },
+            onClose: function(){
+                // User closed the popup without finishing payment
             }
         });
     };
+
+    // Auto-open Midtrans popup on page load
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            document.getElementById('pay-button').click();
+        }, 800);
+    });
 </script>
 {% endif %}
 
