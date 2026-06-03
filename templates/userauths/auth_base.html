@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Masuk atau Daftar - ZTPSneakers{% endblock %}
+
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-sm border border-gray-100">
+        <div class="text-center">
+            <h2 class="mt-6 text-3xl font-extrabold text-gray-900">Masuk atau Daftar</h2>
+            <p class="mt-2 text-sm text-gray-600">
+                Lanjutkan ke ZTPSneakers
+            </p>
+        </div>
+        
+        <div id="auth-container">
+            <!-- Form Awal: Input Identifier (Email/HP) -->
+            <form hx-post="{% url 'userauths:auth_check' %}" hx-target="#auth-container" hx-swap="innerHTML" class="mt-8 space-y-6">
+                {% csrf_token %}
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div>
+                        <label for="identifier" class="sr-only">Email atau Nomor HP</label>
+                        <input id="identifier" name="identifier" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm transition-all" placeholder="Email atau Nomor Handphone">
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-all">
+                        Lanjutkan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

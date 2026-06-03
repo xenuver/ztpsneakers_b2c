@@ -1,26 +1,78 @@
-{% extends 'partials/base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Profil Saya - ZTP Sneakers{% endblock %}
+{% block title %}Profil Saya - ZTPSneakers{% endblock %}
 
 {% block content %}
-<div style="padding: 40px; max-width: 600px;">
-    <h1>Profil Saya</h1>
-    <p>Berikut adalah detail akun Anda yang terdaftar di ZTP Sneakers:</p>
-    
-    <hr>
+<div class="bg-gray-50 min-h-screen py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row gap-8">
+            
+            <!-- Sidebar Navigation -->
+            <div class="w-full md:w-64 flex-shrink-0">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-24">
+                    <div class="flex flex-col items-center mb-8">
+                        <div class="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-white text-3xl font-extrabold mb-4">
+                            {{ user.email|make_list|first|upper }}
+                        </div>
+                        <h2 class="text-lg font-bold text-black uppercase tracking-wider">{{ user.username|default:user.email|truncatechars:15 }}</h2>
+                        <p class="text-xs text-gray-500 mt-1">{{ user.email }}</p>
+                    </div>
 
-    <ul>
-        <li><strong>Nama Lengkap:</strong> {{ user.username }}</li>
-        <li><strong>Email:</strong> {{ user.email }}</li>
-        <li><strong>Nomor WhatsApp:</strong> {{ user.phone_number }}</li>
-        <li><strong>Status Akun:</strong> {% if user.is_superuser %}Admin{% else %}Pelanggan{% endif %}</li>
-    </ul>
+                    <nav class="space-y-2">
+                        <a href="{% url 'userauths:profile' %}" class="block px-4 py-3 rounded-lg bg-gray-50 text-black font-bold text-sm hover:bg-gray-100 transition border-l-4 border-primary">
+                            Profil Pribadi
+                        </a>
+                        <a href="#" class="block px-4 py-3 rounded-lg text-gray-600 font-medium text-sm hover:bg-gray-50 transition border-l-4 border-transparent hover:border-gray-200">
+                            Pesanan Saya
+                        </a>
+                        <a href="#" class="block px-4 py-3 rounded-lg text-gray-600 font-medium text-sm hover:bg-gray-50 transition border-l-4 border-transparent hover:border-gray-200">
+                            Wishlist
+                        </a>
+                        <a href="{% url 'userauths:auth_logout' %}" class="block px-4 py-3 rounded-lg text-red-600 font-bold text-sm hover:bg-red-50 transition border-l-4 border-transparent hover:border-red-200 mt-8">
+                            Keluar
+                        </a>
+                    </nav>
+                </div>
+            </div>
 
-    <hr>
+            <!-- Profile Content -->
+            <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                <h1 class="text-2xl font-extrabold text-black uppercase tracking-tight mb-8 border-b border-gray-100 pb-4">Pengaturan Akun</h1>
+                
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Email</label>
+                            <input type="email" value="{{ user.email }}" disabled class="w-full bg-gray-50 border border-gray-200 rounded-md py-3 px-4 text-sm text-gray-500 cursor-not-allowed">
+                            <p class="text-xs text-gray-400 mt-1">Email tidak dapat diubah.</p>
+                        </div>
 
-    <p>Ingat untuk keluar demi keamanan akun Anda:</p>
-    <a href="{% url 'userauths:logout' %}" style="color: red; font-weight: bold;">
-        🔴 Keluar dari Akun (Logout)
-    </a>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Username</label>
+                            <input type="text" name="username" value="{{ user.username }}" class="w-full bg-white border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-black focus:border-black transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Nomor HP</label>
+                            <input type="text" name="phone_number" value="{{ user.phone_number|default:'' }}" class="w-full bg-white border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-black focus:border-black transition">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Alamat Pengiriman Default</label>
+                            <textarea name="address" rows="3" class="w-full bg-white border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-black focus:border-black transition">{{ user.address|default:'' }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end">
+                        <button type="submit" class="bg-black text-white px-8 py-3 rounded-md font-bold text-sm uppercase tracking-wider hover:bg-gray-800 transition shadow-sm border border-black">
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
 </div>
 {% endblock %}

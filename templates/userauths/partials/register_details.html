@@ -1,0 +1,26 @@
+<form hx-post="{% url 'userauths:auth_register' %}" hx-target="#auth-error" hx-swap="innerHTML" class="mt-8 space-y-4">
+    {% csrf_token %}
+    <input type="hidden" name="identifier" value="{{ identifier }}">
+    
+    <div class="text-sm text-gray-600 mb-4">
+        Sepertinya <strong>{{ identifier }}</strong> belum terdaftar. Lengkapi data di bawah untuk bergabung.
+    </div>
+
+    <div>
+        <label for="name" class="sr-only">Nama Lengkap</label>
+        <input id="name" name="name" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black sm:text-sm transition-all" placeholder="Nama Lengkap">
+    </div>
+
+    <div>
+        <label for="password" class="sr-only">Buat Password</label>
+        <input id="password" name="password" type="password" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black sm:text-sm transition-all" placeholder="Buat Password">
+    </div>
+    
+    <div id="auth-error"></div>
+
+    <div>
+        <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-all">
+            Daftar & Lanjutkan
+        </button>
+    </div>
+</form>

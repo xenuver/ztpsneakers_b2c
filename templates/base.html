@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ZTP Sneakers{% endblock %}</title>
     
+    <!-- Google Fonts: Jost and Bodoni Moda -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,16 +17,22 @@
             theme: {
                 extend: {
                     colors: {
-                        light: '#FFFFFF',
-                        surface: '#F9F9F9',
+                        primary: '#0B6A42', // Dark Forest Green from ZTPSneakers
+                        surface: '#FFFFFF',
                         accent: '#000000',
-                        textPrimary: '#000000',
-                        textSecondary: '#666666'
+                    },
+                    fontFamily: {
+                        sans: ['Jost', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        serif: ['"Bodoni Moda"', 'ui-serif', 'Georgia', 'serif'],
                     }
                 }
             }
         }
     </script>
+    <style>
+        body { font-family: 'Jost', sans-serif; }
+        .font-luxury { font-family: '"Bodoni Moda"', serif; }
+    </style>
     
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@2.0.0" integrity="sha384-wS5/001a14R4aP4bE9n8wBq9bTq7Jj1d6aHn7gSjK8Fk5g5hM4I0yO2b7gSjK8Fk" crossorigin="anonymous"></script>

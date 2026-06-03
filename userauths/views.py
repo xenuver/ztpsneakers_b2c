@@ -1,84 +1,83 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm, UserLoginForm
+from django.contrib.auth import login, logout, authenticate
+from django.http import HttpResponse
+from django.db.models import Q
 from .models import User
 
-def get_redirect_url_for_role(user):
-    if user.role == 'admin_toko':
-        return '/admin-toko/'
-    elif user.role == 'owner' or user.is_superuser:
-        return '/jasmine/'
-    return '/'
-
-def auth_view(request):
+def auth_main(request):
     if request.user.is_authenticated:
-        return redirect(get_redirect_url_for_role(request.user))
-    
-    login_form = UserLoginForm()
-    register_form = UserRegisterForm()
-    
-    context = {
-        'login_form': login_form,
-        'register_form': register_form,
-        'active_tab': 'login'
-    }
-    return render(request, "userauths/auth.html", context)
+        return redirect("storefront:home")
+    return render(request, "userauths/auth_base.html")
 
-def login_tab(request):
-    """HTMX view to render just the login form."""
+def auth_check(request):
     if request.method == "POST":
-        form = UserLoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get("email")
-            password = form.cleaned_data.get("password")
-            remember_me = form.cleaned_data.get("remember_me")
+        identifier = request.POST.get("identifier", "").strip()
+        if not identifier:
+            return HttpResponse("Silakan masukkan email atau nomor HP", status=400)
             
-            user = authenticate(request, email=email, password=password)
-            if user is not None:
-                login(request, user)
-                if not remember_me:
-                    request.session.set_expiry(0) # Expire on browser close
-                
-                response = render(request, "userauths/partials/login_form.html", {"login_form": form})
-                response['HX-Redirect'] = get_redirect_url_for_role(user)
-                return response
-            else:
-                form.add_error(None, "Email atau kata sandi salah!")
-    else:
-        form = UserLoginForm()
+        user = User.objects.filter(Q(email=identifier) | Q(phone_number=identifier)).first()
         
-    return render(request, "userauths/partials/login_form.html", {"login_form": form})
+        if user:
+            # Pindah ke input password
+            return render(request, "userauths/partials/login_password.html", {"identifier": identifier})
+        else:
+            # Pindah ke input detail pendaftaran
+            return render(request, "userauths/partials/register_details.html", {"identifier": identifier})
+            
+    return HttpResponse("Method not allowed", status=405)
 
-def register_tab(request):
-    """HTMX view to render just the register form."""
+def auth_login(request):
     if request.method == "POST":
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            password = form.cleaned_data.get("password")
-            password_confirm = form.cleaned_data.get("password_confirm")
-            if password != password_confirm:
-                form.add_error("password_confirm", "Password tidak cocok.")
-            else:
-                user = form.save(commit=False)
-                user.set_password(password)
-                user.role = 'customer'
-                user.save()
-                
-                login(request, user)
-                response = render(request, "userauths/partials/register_form.html", {"register_form": form})
-                response['HX-Redirect'] = get_redirect_url_for_role(user)
-                return response
-    else:
-        form = UserRegisterForm()
+        identifier = request.POST.get("identifier")
+        password = request.POST.get("password")
         
-    return render(request, "userauths/partials/register_form.html", {"register_form": form})
+        user = User.objects.filter(Q(email=identifier) | Q(phone_number=identifier)).first()
+        if user and user.check_password(password):
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return HttpResponse("""<script>window.location.href='/';</script>""")
+        else:
+            return HttpResponse("""<div class="text-red-500 text-sm mt-2">Password salah</div>""", status=400)
+            
+    return HttpResponse("Method not allowed", status=405)
 
-def logout_view(request):
+def auth_register(request):
+    if request.method == "POST":
+        identifier = request.POST.get("identifier")
+        password = request.POST.get("password")
+        name = request.POST.get("name")
+        
+        # Cek apakah identifier adalah email atau hp (sederhana)
+        is_email = '@' in identifier
+        
+        if User.objects.filter(Q(email=identifier) | Q(phone_number=identifier)).exists():
+            return HttpResponse("""<div class="text-red-500 text-sm mt-2">Email/No HP sudah terdaftar</div>""", status=400)
+            
+        user = User.objects.create_user(
+            username=identifier.split('@')[0] if is_email else identifier,
+            email=identifier if is_email else f"{identifier}@placeholder.com",
+            password=password,
+            phone_number=identifier if not is_email else ""
+        )
+        # Boleh tambahkan logic first_name/last_name = name
+        
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        return HttpResponse("""<script>window.location.href='/';</script>""")
+        
+    return HttpResponse("Method not allowed", status=405)
+
+def auth_logout(request):
     logout(request)
-    return redirect("core:home")
+    return redirect("userauths:auth_main")
 
-@login_required(login_url='/auth/')
-def profile_view(request):
+def auth_profile(request):
+    if not request.user.is_authenticated:
+        return redirect("userauths:auth_main")
+        
+    if request.method == "POST":
+        request.user.username = request.POST.get("username", request.user.username)
+        request.user.phone_number = request.POST.get("phone_number", request.user.phone_number)
+        request.user.address = request.POST.get("address", request.user.address)
+        request.user.save()
+        return redirect("userauths:profile")
+        
     return render(request, "userauths/profile.html")

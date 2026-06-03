@@ -1,83 +1,138 @@
 {% extends "base.html" %}
 
-{% block title %}Katalog Produk - 807GARAGE{% endblock %}
+{% block title %}Katalog Produk - ZTPSneakers{% endblock %}
 
 {% block content %}
 <div class="bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex items-baseline justify-between border-b border-gray-200 pb-6 mb-6">
-            <h1 class="text-3xl font-extrabold tracking-tight text-black">SEMUA PRODUK</h1>
-            
-            <div class="flex items-center">
-                <!-- Search Bar -->
-                <div class="relative mr-6">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+    <!-- Breadcrumb & Header -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+        <nav class="flex text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="/" class="hover:text-black transition">Beranda</a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 mx-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                        <span class="text-black font-medium">Sneakers</span>
                     </div>
-                    <input type="text" name="q" placeholder="Cari produk..." 
-                           class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-black focus:border-black sm:text-sm transition"
-                           hx-get="{% url 'storefront:catalog' %}" 
-                           hx-trigger="keyup changed delay:300ms" 
-                           hx-target="#produk-grid"
-                           hx-include="#filter-form">
-                </div>
+                </li>
+            </ol>
+        </nav>
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-200 pb-6">
+            <div>
+                <h1 class="text-3xl font-extrabold text-black uppercase tracking-tight">Katalog</h1>
+                <p class="mt-2 text-sm text-gray-500">Temukan koleksi sneakers terbaik kami</p>
+            </div>
+            
+            <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                <label for="sort" class="text-sm font-medium text-gray-700">Tampilkan:</label>
+                <select id="sort" name="sort" class="block w-48 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-black focus:border-black sm:text-sm rounded-md"
+                        hx-get="{% url 'storefront:catalog' %}"
+                        hx-target="#product-grid"
+                        hx-include="#filter-form"
+                        hx-swap="innerHTML">
+                    <option value="-created_at">Pilihan Utama</option>
+                    <option value="price_asc">Harga Terendah</option>
+                    <option value="price_desc">Harga Tertinggi</option>
+                    <option value="name_asc">A - Z</option>
+                </select>
             </div>
         </div>
+    </div>
 
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex flex-col md:flex-row gap-8">
             <!-- Sidebar Filter -->
-            <aside class="w-full md:w-64 flex-shrink-0">
-                <form id="filter-form" hx-get="{% url 'storefront:catalog' %}" hx-target="#produk-grid" hx-trigger="change">
-                    <!-- Sort -->
-                    <div class="mb-6">
-                        <h3 class="text-sm font-medium text-black mb-3">Urutkan</h3>
-                        <select name="sort" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-black focus:border-black sm:text-sm rounded-md">
-                            <option value="-created_at">Terbaru</option>
-                            <option value="price">Harga: Rendah ke Tinggi</option>
-                            <option value="-price">Harga: Tinggi ke Rendah</option>
-                        </select>
-                    </div>
-
-                    <!-- Category Filter -->
-                    <div class="mb-6 pt-6 border-t border-gray-200">
-                        <h3 class="text-sm font-medium text-black mb-3">Kategori</h3>
-                        <div class="space-y-2">
-                            <div class="flex items-center">
-                                <input id="cat-all" name="category" value="" type="radio" checked class="h-4 w-4 border-gray-300 text-black focus:ring-black">
-                                <label for="cat-all" class="ml-3 text-sm text-gray-600">Semua</label>
-                            </div>
-                            {% for cat in categories %}
-                            <div class="flex items-center">
-                                <input id="cat-{{ cat.id }}" name="category" value="{{ cat.id }}" type="radio" class="h-4 w-4 border-gray-300 text-black focus:ring-black">
-                                <label for="cat-{{ cat.id }}" class="ml-3 text-sm text-gray-600">{{ cat.name }}</label>
-                            </div>
-                            {% endfor %}
+            <div class="w-full md:w-64 flex-shrink-0">
+                <form id="filter-form" class="space-y-8" 
+                      hx-get="{% url 'storefront:catalog' %}" 
+                      hx-target="#product-grid" 
+                      hx-trigger="change">
+                    
+                    <!-- Search -->
+                    <div>
+                        <div class="relative">
+                            <input type="text" name="q" placeholder="Cari produk..." value="{{ request.GET.q }}" class="w-full bg-gray-50 border border-gray-200 rounded-md py-2 pl-3 pr-10 text-sm focus:ring-1 focus:ring-black focus:border-black">
+                            <button type="submit" class="absolute right-3 top-2.5 text-gray-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Brand Filter -->
-                    <div class="mb-6 pt-6 border-t border-gray-200">
-                        <h3 class="text-sm font-medium text-black mb-3">Brand</h3>
-                        <div class="space-y-2">
-                            <div class="flex items-center">
-                                <input id="brand-all" name="brand" value="" type="radio" checked class="h-4 w-4 border-gray-300 text-black focus:ring-black">
-                                <label for="brand-all" class="ml-3 text-sm text-gray-600">Semua</label>
-                            </div>
-                            {% for brand in brands %}
-                            <div class="flex items-center">
-                                <input id="brand-{{ brand.id }}" name="brand" value="{{ brand.id }}" type="radio" class="h-4 w-4 border-gray-300 text-black focus:ring-black">
-                                <label for="brand-{{ brand.id }}" class="ml-3 text-sm text-gray-600">{{ brand.name }}</label>
-                            </div>
+                    <!-- Filter Warna -->
+                    <div class="border-t border-gray-200 pt-6">
+                        <h3 class="text-sm font-bold text-black uppercase tracking-wider mb-4">Warna</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <label class="cursor-pointer group">
+                                <input type="checkbox" name="color" value="black" class="sr-only peer">
+                                <div class="w-8 h-8 rounded-full bg-black ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="checkbox" name="color" value="white" class="sr-only peer">
+                                <div class="w-8 h-8 rounded-full bg-white border border-gray-300 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="checkbox" name="color" value="cream" class="sr-only peer">
+                                <div class="w-8 h-8 rounded-full bg-[#F5F5DC] border border-gray-200 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="checkbox" name="color" value="blue" class="sr-only peer">
+                                <div class="w-8 h-8 rounded-full bg-blue-600 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="checkbox" name="color" value="red" class="sr-only peer">
+                                <div class="w-8 h-8 rounded-full bg-red-600 ring-2 ring-offset-2 ring-transparent peer-checked:ring-black transition"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Filter Size -->
+                    <div class="border-t border-gray-200 pt-6">
+                        <h3 class="text-sm font-bold text-black uppercase tracking-wider mb-4">Size (US)</h3>
+                        <div class="grid grid-cols-4 gap-2">
+                            {% for size in "7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12"|slice:" " %}
+                            <label class="cursor-pointer text-center">
+                                <input type="checkbox" name="size" value="{{ size }}" class="sr-only peer">
+                                <div class="py-2 border border-gray-200 rounded-md text-sm text-gray-600 peer-checked:bg-black peer-checked:text-white peer-checked:border-black hover:border-black transition">
+                                    {{ size }}
+                                </div>
+                            </label>
                             {% endfor %}
                         </div>
                     </div>
                 </form>
-            </aside>
+            </div>
 
             <!-- Product Grid -->
             <div class="flex-1">
-                <div id="produk-grid" class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:gap-x-8">
-                    {% include "storefront/partials/product_grid.html" %}
+                <div id="product-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-6">
+                    {% for product in products %}
+                        {% include "storefront/partials/product_grid.html" with product=product %}
+                    {% empty %}
+                        <div class="col-span-full py-20 text-center">
+                            <p class="text-gray-500 mb-4">Tidak ada produk yang sesuai dengan filter.</p>
+                            <button class="text-sm font-bold border-b border-black pb-1 hover:text-primary hover:border-primary transition" onclick="document.getElementById('filter-form').reset(); htmx.trigger('#filter-form', 'change')">Reset Filter</button>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination Placeholder -->
+                <div class="mt-12 border-t border-gray-200 pt-8 flex justify-center">
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Previous</span>
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        </a>
+                        <a href="#" aria-current="page" class="z-10 bg-black text-white relative inline-flex items-center px-4 py-2 border border-black text-sm font-medium">1</a>
+                        <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</a>
+                        <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">3</a>
+                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Next</span>
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                        </a>
+                    </nav>
                 </div>
             </div>
         </div>

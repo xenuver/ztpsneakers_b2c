@@ -213,7 +213,7 @@ NAVBAR
 └── SECTION: PRODUK TERKAIT (brand sama, 4 card)
 ```
 
-### 3.4 Auth Page (`/auth/`)
+### 4.4 Auth Page (`/auth/`)
 
 ```
 LAYOUT: Split screen
