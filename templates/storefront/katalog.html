@@ -111,17 +111,43 @@
 
                     <!-- Filter Size -->
                     <div class="border-t border-gray-200 pt-6">
-                        <h3 class="text-sm font-bold text-black uppercase tracking-wider mb-4">Size (US)</h3>
+                        <h3 class="text-sm font-bold text-black uppercase tracking-wider mb-4">Size</h3>
                         <div class="grid grid-cols-4 gap-2">
-                            {% for size in "7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12"|slice:" " %}
+                            {% for size in sizes %}
                             <label class="cursor-pointer text-center">
-                                <input type="checkbox" name="size" value="{{ size }}" class="sr-only peer">
-                                <div class="py-2 border border-gray-200 rounded-md text-sm text-gray-600 peer-checked:bg-black peer-checked:text-white peer-checked:border-black hover:border-black transition">
+                                <input type="checkbox" name="size" value="{{ size }}" class="sr-only peer" {% if size in selected_sizes %}checked{% endif %}>
+                                <div class="py-2 border border-gray-200 rounded-md text-sm font-medium text-gray-600 peer-checked:bg-black peer-checked:text-white peer-checked:border-black hover:border-black transition">
                                     {{ size }}
                                 </div>
                             </label>
                             {% endfor %}
                         </div>
+                    </div>
+
+                    <!-- Filter Kondisi -->
+                    <div class="border-t border-gray-200 pt-6">
+                        <h3 class="text-sm font-bold text-black uppercase tracking-wider mb-4">Kondisi</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center cursor-pointer group">
+                                <input type="radio" name="condition" value="" class="w-4 h-4 text-black focus:ring-black border-gray-300" {% if not condition %}checked{% endif %}>
+                                <span class="ml-3 text-sm text-gray-700 group-hover:text-black">Semua Kondisi</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer group">
+                                <input type="radio" name="condition" value="new" class="w-4 h-4 text-black focus:ring-black border-gray-300" {% if condition == 'new' %}checked{% endif %}>
+                                <span class="ml-3 text-sm text-gray-700 group-hover:text-black">Baru (BNIB)</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer group">
+                                <input type="radio" name="condition" value="second" class="w-4 h-4 text-black focus:ring-black border-gray-300" {% if condition == 'second' %}checked{% endif %}>
+                                <span class="ml-3 text-sm text-gray-700 group-hover:text-black">Second</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Reset Filter -->
+                    <div class="border-t border-gray-200 pt-6">
+                        <a href="{% url 'storefront:catalog' %}" class="w-full block text-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-bold uppercase tracking-wider text-black bg-white hover:bg-gray-50 transition">
+                            Reset Filter
+                        </a>
                     </div>
                 </form>
                 </div>

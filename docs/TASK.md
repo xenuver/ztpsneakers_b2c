@@ -148,24 +148,24 @@
 > Filter yang ada di sidebar sudah partial. Berikut desain lengkapnya:
 
 **Filter yang perlu diimplementasikan:**
-- [ ] Filter ukuran (Size): pill toggle interaktif, ukuran dari data DB (`ProductSize`), bukan hardcode
+- [x] Filter ukuran (Size): pill toggle interaktif, ukuran dari data DB (`ProductSize`), bukan hardcode
   - Query: `ProductSize.objects.values_list('size', flat=True).distinct().order_by('size')`
   - Tampil sebagai grid pill: `[38] [39] [40] [41] [42]` — hitam jika aktif
 - [ ] Filter harga: range slider dual-handle (min-max), format Rp
   - Range: Rp 0 – Rp 5.000.000
   - Gunakan `<input type="range">` native HTML + JS update label harga real-time
-- [ ] Filter kondisi: radio (Semua / Baru / Second)
-- [ ] Tombol "Reset Filter" — clear semua filter sekaligus
-- [ ] Filter count: tampilkan jumlah produk per filter aktif `(12)`
-- [ ] Mobile: sidebar → bottom sheet drawer (toggle tombol "Filter")
-- [ ] Badge aktif: "3 Filter Aktif" di header katalog saat ada filter
+- [x] Filter kondisi: radio (Semua / Baru / Second)
+- [x] Tombol "Reset Filter" — clear semua filter sekaligus
+- [x] Filter count: tampilkan jumlah produk per filter aktif `(12)`
+- [x] Mobile: sidebar → bottom sheet drawer (toggle tombol "Filter")
+- [x] Badge aktif: "3 Filter Aktif" di header katalog saat ada filter
 
 #### 🎨 [UI POLISH] Katalog — Card Produk
-- [ ] Badge "LAST PAIR" (merah) otomatis jika total stok = 1
-- [ ] Badge "SOLD OUT" (abu-abu) overlay jika semua stok = 0 dan `is_active=False`
-- [ ] Badge "BARU" jika produk dibuat < 7 hari yang lalu
-- [ ] Badge "HOT" jika `average_rating >= 4.0` dan `review_count >= 3`
-- [ ] Wishlist toggle di card: heart icon pojok kanan atas (sudah ada, pastikan fungsional)
+- [x] Badge "LAST PAIR" (merah) otomatis jika total stok = 1
+- [x] Badge "SOLD OUT" (abu-abu) overlay jika semua stok = 0 dan `is_active=False`
+- [x] Badge "BARU" jika produk dibuat < 7 hari yang lalu
+- [x] Badge "HOT" jika `average_rating >= 4.0` dan `review_count >= 3`
+- [x] Wishlist toggle di card: heart icon pojok kanan atas (sudah ada, pastikan fungsional)
 - [x] Hover: add-to-cart quick button muncul dari bawah (overlay) — pilih ukuran dulu di detail
 - [x] Rating stars kecil di bawah nama produk jika ada review
 

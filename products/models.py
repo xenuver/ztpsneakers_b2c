@@ -98,6 +98,16 @@ class Product(models.Model):
     def total_stock(self):
         return sum(s.stock for s in self.sizes.all())
 
+    @property
+    def is_new(self):
+        from django.utils import timezone
+        import datetime
+        return self.created_at >= timezone.now() - datetime.timedelta(days=7)
+
+    @property
+    def is_hot(self):
+        return self.average_rating >= 4.0 and self.review_count >= 3
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='products/images/')
