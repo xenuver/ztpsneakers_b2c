@@ -1,24 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-dark py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 bg-[#111111] p-8 rounded-xl border border-gray-800 shadow-2xl relative">
+<div class="min-h-screen flex items-center justify-center bg-surface py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl border border-gray-200 shadow-lg relative">
         <div class="text-center">
-            <h2 class="text-3xl font-extrabold text-white">ZTP Sneakers</h2>
-            <p class="mt-2 text-sm text-gray-400">Silakan masuk atau buat akun baru.</p>
+            <h2 class="text-3xl font-extrabold text-black">ZTP Sneakers</h2>
+            <p class="mt-2 text-sm text-gray-500">Silakan masuk atau buat akun baru.</p>
         </div>
         
-        <div class="flex border-b border-gray-700">
+        <div class="flex border-b border-gray-200">
             <button class="flex-1 py-3 text-center font-medium transition-colors duration-200 focus:outline-none 
-                {% if active_tab == 'login' %}text-accent border-b-2 border-accent{% else %}text-gray-400 hover:text-white{% endif %}"
+                {% if active_tab == 'login' %}text-black border-b-2 border-black{% else %}text-gray-500 hover:text-black{% endif %}"
                 hx-get="{% url 'userauths:login_tab' %}" hx-target="#auth-form-container"
-                onclick="document.querySelectorAll('button').forEach(b => b.classList.remove('text-accent', 'border-b-2', 'border-accent')); this.classList.add('text-accent', 'border-b-2', 'border-accent');">
+                onclick="document.querySelectorAll('button').forEach(b => b.classList.remove('text-black', 'border-b-2', 'border-black')); this.classList.add('text-black', 'border-b-2', 'border-black');">
                 Masuk
             </button>
             <button class="flex-1 py-3 text-center font-medium transition-colors duration-200 focus:outline-none 
-                {% if active_tab == 'register' %}text-accent border-b-2 border-accent{% else %}text-gray-400 hover:text-white{% endif %}"
+                {% if active_tab == 'register' %}text-black border-b-2 border-black{% else %}text-gray-500 hover:text-black{% endif %}"
                 hx-get="{% url 'userauths:register_tab' %}" hx-target="#auth-form-container"
-                onclick="document.querySelectorAll('button').forEach(b => b.classList.remove('text-accent', 'border-b-2', 'border-accent')); this.classList.add('text-accent', 'border-b-2', 'border-accent');">
+                onclick="document.querySelectorAll('button').forEach(b => b.classList.remove('text-black', 'border-b-2', 'border-black')); this.classList.add('text-black', 'border-b-2', 'border-black');">
                 Daftar
             </button>
         </div>
@@ -34,16 +34,16 @@
         <div class="mt-6">
             <div class="relative">
                 <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-700"></div>
+                    <div class="w-full border-t border-gray-200"></div>
                 </div>
                 <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-[#111111] text-gray-400">Atau masuk dengan</span>
+                    <span class="px-2 bg-white text-gray-500">Atau masuk dengan</span>
                 </div>
             </div>
             
             <div class="mt-6">
                 <!-- Google OAuth from django-allauth -->
-                <a href="{% url 'account_login' %}" class="w-full flex items-center justify-center px-4 py-2 border border-gray-700 rounded-md shadow-sm text-sm font-medium text-white bg-[#1A1A1A] hover:bg-gray-800 transition-colors">
+                <a href="{% url 'account_login' %}" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-black bg-white hover:bg-gray-50 transition-colors">
                     <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
                     </svg>

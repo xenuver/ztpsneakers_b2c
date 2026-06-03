@@ -11,26 +11,26 @@
 
 ```
 /* === BASE (Storefront & Admin Toko) === */
---bg-base:        #0D0D0D;    /* background utama */
---bg-surface:     #1A1A1A;    /* card, modal, sidebar */
---bg-elevated:    #222222;    /* hover, dropdown */
---border-subtle:  #2A2A2A;    /* border default */
---border-active:  #3A3A3A;    /* border hover */
+--bg-base:        #FFFFFF;    /* background utama */
+--bg-surface:     #F9F9F9;    /* card, modal, sidebar */
+--bg-elevated:    #F0F0F0;    /* hover, dropdown */
+--border-subtle:  #E5E5E5;    /* border default */
+--border-active:  #CCCCCC;    /* border hover */
 
---text-primary:   #F5F5F5;    /* teks utama */
---text-secondary: #A0A0A0;    /* teks muted */
---text-hint:      #606060;    /* placeholder, hint */
+--text-primary:   #000000;    /* teks utama */
+--text-secondary: #666666;    /* teks muted */
+--text-hint:      #999999;    /* placeholder, hint */
 
---accent-yellow:  #E8FF00;    /* CTA utama — sneaker culture */
---accent-red:     #FF3B30;    /* flash sale, error, sold out */
---success:        #22C55E;
---warning:        #F59E0B;
---info:           #3B82F6;
+--accent-black:   #000000;    /* CTA utama — minimalis/premium */
+--accent-red:     #E53935;    /* flash sale, error, sold out */
+--success:        #2E7D32;
+--warning:        #F57C00;
+--info:           #1565C0;
 
 /* === JASMINE (Owner Dashboard) === */
---jasmine-bg:     #0A0A0A;    /* lebih gelap */
+--jasmine-bg:     #F5F5F5;    
 --jasmine-gold:   #D4AF37;    /* aksen emas/premium */
---jasmine-surface:#111111;
+--jasmine-surface:#FFFFFF;
 ```
 
 ### Tipografi
@@ -55,10 +55,10 @@ Hierarki:
 ```
 /* Button Utama (CTA) */
 .btn-primary {
-  background: #E8FF00;
-  color: #0D0D0D;
-  font-weight: 700;
-  border-radius: 6px;
+  background: #000000;
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 4px;
   padding: 12px 24px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -67,27 +67,27 @@ Hierarki:
 /* Button Sekunder */
 .btn-secondary {
   background: transparent;
-  border: 1px solid #3A3A3A;
-  color: #F5F5F5;
-  border-radius: 6px;
+  border: 1px solid #E5E5E5;
+  color: #000000;
+  border-radius: 4px;
 }
 
 /* Card Produk */
 .card-product {
-  background: #1A1A1A;
-  border: 1px solid #2A2A2A;
-  border-radius: 8px;
+  background: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  border-radius: 4px;
   overflow: hidden;
-  transition: transform 0.2s, border-color 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 .card-product:hover {
-  transform: scale(1.02);
-  border-color: #E8FF00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 /* Badge */
-.badge-new    { background: #E8FF00; color: #0D0D0D; }
-.badge-sold   { background: #FF3B30; color: #fff; }
+.badge-new    { background: #000000; color: #FFFFFF; }
+.badge-sold   { background: #E53935; color: #fff; }
 .badge-status { /* per status warna berbeda */ }
 ```
 
@@ -101,7 +101,7 @@ Hierarki:
 [LOGO ZTP]    [Katalog]  [Brand]  [Tentang]    [🔍] [🛒 2] [Avatar ▾]
 ```
 - Posisi: sticky top, `z-50`
-- Background: `rgba(13,13,13,0.95)` + backdrop-blur
+- Background: `rgba(255,255,255,0.95)` + backdrop-blur
 - Mobile: hamburger menu → drawer kiri
 - Cart icon: badge counter update via HTMX
 

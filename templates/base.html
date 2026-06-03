@@ -12,10 +12,11 @@
             theme: {
                 extend: {
                     colors: {
-                        dark: '#0D0D0D',
-                        accent: '#E8FF00',
-                        textPrimary: '#F5F5F5',
-                        textSecondary: '#A0A0A0'
+                        light: '#FFFFFF',
+                        surface: '#F9F9F9',
+                        accent: '#000000',
+                        textPrimary: '#000000',
+                        textSecondary: '#666666'
                     }
                 }
             }
@@ -27,7 +28,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-dark text-textPrimary font-sans antialiased h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<body class="bg-light text-textPrimary font-sans antialiased h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     
     {% if messages %}
         <div class="fixed top-4 right-4 z-50 flex flex-col gap-2">

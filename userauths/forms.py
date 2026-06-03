@@ -7,7 +7,7 @@ class UserLoginForm(forms.Form):
         widget=forms.EmailInput(attrs={
             "placeholder": "Email",
             "required": "required",
-            "class": "w-full bg-[#1A1A1A] border border-gray-700 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none focus:border-accent"
+            "class": "w-full bg-white border border-gray-300 rounded-md p-3 text-black placeholder-gray-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
         }),
         label=""
     )
@@ -15,28 +15,28 @@ class UserLoginForm(forms.Form):
         widget=forms.PasswordInput(attrs={
             "placeholder": "Password",
             "required": "required",
-            "class": "w-full bg-[#1A1A1A] border border-gray-700 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none focus:border-accent"
+            "class": "w-full bg-white border border-gray-300 rounded-md p-3 text-black placeholder-gray-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
         }),
         label=""
     )
-    remember_me = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={"class": "w-4 h-4 text-accent bg-gray-700 border-gray-600 rounded focus:ring-accent"}))
+    remember_me = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={"class": "w-4 h-4 text-black bg-white border-gray-300 rounded focus:ring-black"}))
 
 class UserRegisterForm(UserCreationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
         "placeholder": "Nama Lengkap",
-        "class": "w-full bg-[#1A1A1A] border border-gray-700 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none focus:border-accent"
+        "class": "w-full bg-white border border-gray-300 rounded-md p-3 text-black placeholder-gray-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
     }), label="")
     email = forms.EmailField(widget=forms.EmailInput(attrs={
         "placeholder": "Email",
-        "class": "w-full bg-[#1A1A1A] border border-gray-700 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none focus:border-accent"
+        "class": "w-full bg-white border border-gray-300 rounded-md p-3 text-black placeholder-gray-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
     }), label="")
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         "placeholder": "Password",
-        "class": "w-full bg-[#1A1A1A] border border-gray-700 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none focus:border-accent"
+        "class": "w-full bg-white border border-gray-300 rounded-md p-3 text-black placeholder-gray-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
     }), label="")
     password_confirm = forms.CharField(widget=forms.PasswordInput(attrs={
         "placeholder": "Confirm Password",
-        "class": "w-full bg-[#1A1A1A] border border-gray-700 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none focus:border-accent"
+        "class": "w-full bg-white border border-gray-300 rounded-md p-3 text-black placeholder-gray-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
     }), label="")
 
     class Meta:
