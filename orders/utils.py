@@ -121,3 +121,21 @@ def generate_midtrans_snap_token(order):
     except Exception as e:
         print(f"Midtrans error: {e}")
         return None
+
+def check_midtrans_payment_status(order):
+    server_key = getattr(settings, 'MIDTRANS_SERVER_KEY', '')
+    is_production = getattr(settings, 'MIDTRANS_IS_PRODUCTION', False)
+    
+    core = midtransclient.CoreApi(
+        is_production=is_production,
+        server_key=server_key,
+        client_key=getattr(settings, 'MIDTRANS_CLIENT_KEY', '')
+    )
+    
+    try:
+        response = core.transactions.status(order.order_number)
+        return response
+    except Exception as e:
+        print(f'Midtrans status error: {e}')
+        return None
+

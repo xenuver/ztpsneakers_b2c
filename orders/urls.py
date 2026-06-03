@@ -20,6 +20,7 @@ urlpatterns = [
     path('midtrans/webhook/', views.midtrans_webhook, name='midtrans_webhook'),
     path('history/', views.order_history_view, name='history'),
     path('history/<str:order_number>/', views.order_detail_view, name='order_detail'),
+    path('history/<str:order_number>/check-status/', views.manual_check_payment_status, name='check_payment_status'),
     path('history/<str:order_number>/invoice/', views.print_invoice, name='print_invoice'),
     path('history/<str:order_number>/complete/', views.complete_order, name='complete_order'),
     path('item/<int:item_id>/review/', views.create_review, name='create_review'),

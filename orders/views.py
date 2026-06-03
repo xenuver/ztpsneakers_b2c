@@ -530,3 +530,29 @@ def warranty_tracking(request, claim_id):
     claim = get_object_or_404(WarrantyClaim, id=claim_id, user=request.user)
     return render(request, "orders/warranty_tracking.html", {'claim': claim})
 
+
+@login_required
+def manual_check_payment_status(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number, user=request.user)
+    from .utils import check_midtrans_payment_status
+    status_response = check_midtrans_payment_status(order)
+    from django.contrib import messages
+    
+    if status_response:
+        transaction_status = status_response.get('transaction_status')
+        if transaction_status in ['capture', 'settlement']:
+            order.status = 'paid'
+            order.save()
+            messages.success(request, f'Status pembayaran pesanan {order_number} berhasil diperbarui (Lunas).')
+        elif transaction_status in ['pending']:
+            messages.warning(request, f'Pembayaran pesanan {order_number} masih pending.')
+        elif transaction_status in ['deny', 'cancel', 'expire']:
+            order.status = 'cancelled'
+            order.save()
+            messages.error(request, f'Pembayaran pesanan {order_number} gagal/dibatalkan.')
+        else:
+            messages.info(request, f'Status transaksi: {transaction_status}')
+    else:
+        messages.error(request, 'Gagal mengecek status ke Midtrans. Pastikan pesanan sudah dibuat di Midtrans (token valid).')
+        
+    return redirect('orders:order_detail', order_number=order_number)

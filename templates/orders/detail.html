@@ -111,11 +111,18 @@
                         </dl>
                         
                         {% if order.status == 'pending' %}
-                        <div class="mt-6">
+                        <div class="mt-6 flex flex-col gap-3">
                             {% if order.midtrans_transaction_id %}
                                 <button id="pay-button" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-primary hover:bg-green-800 transition uppercase tracking-wider">
                                     Lanjutkan Pembayaran
                                 </button>
+                                
+                                <form method="POST" action="{% url 'orders:check_payment_status' order.order_number %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 border border-primary rounded-md shadow-sm text-sm font-bold text-primary bg-white hover:bg-green-50 transition uppercase tracking-wider">
+                                        Cek Status Pembayaran
+                                    </button>
+                                </form>
                             {% else %}
                                 <button disabled class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-gray-400 cursor-not-allowed uppercase tracking-wider">
                                     Lanjutkan Pembayaran (Error API)
