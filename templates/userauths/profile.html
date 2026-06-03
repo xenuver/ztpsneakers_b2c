@@ -86,7 +86,40 @@
 
                 <!-- Tab: Pesanan Saya -->
                 <div id="tab-orders" class="tab-content hidden bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                    <h1 class="text-2xl font-extrabold text-black uppercase tracking-tight mb-8 border-b border-gray-100 pb-4">Pesanan Saya</h1>
+                    <div class="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
+                        <h1 class="text-2xl font-extrabold text-black uppercase tracking-tight">Pesanan Saya</h1>
+                        <a href="{% url 'orders:history' %}" class="text-sm font-bold text-primary hover:underline uppercase">Lihat Semua</a>
+                    </div>
+                    
+                    {% if recent_orders %}
+                    <div class="space-y-4">
+                        {% for order in recent_orders %}
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-4 last:border-0">
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">{{ order.created_at|date:"d M Y, H:i" }}</p>
+                                <h3 class="text-sm font-bold text-black uppercase">#{{ order.order_number }}</h3>
+                                <div class="mt-1 flex items-center gap-2">
+                                    {% if order.status == 'pending' %}
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800 uppercase">Menunggu Pembayaran</span>
+                                    {% elif order.status == 'paid' %}
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-800 uppercase">Dibayar</span>
+                                    {% elif order.status == 'shipped' %}
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 uppercase">Dikirim</span>
+                                    {% elif order.status == 'completed' %}
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-800 uppercase">Selesai</span>
+                                    {% else %}
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-800 uppercase">Dibatalkan</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-bold text-primary">Rp {{ order.total|floatformat:"0" }}</p>
+                                <a href="{% url 'orders:order_detail' order.order_number %}" class="inline-block mt-2 text-[11px] font-bold uppercase text-gray-600 border border-gray-300 rounded px-3 py-1 hover:bg-gray-50">Detail</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
                     <div class="text-center py-12">
                         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -94,11 +127,12 @@
                         <h3 class="mt-2 text-sm font-medium text-gray-900">Belum ada pesanan</h3>
                         <p class="mt-1 text-sm text-gray-500">Anda belum melakukan transaksi apapun.</p>
                         <div class="mt-6">
-                            <a href="/" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-green-800">
+                            <a href="{% url 'storefront:catalog' %}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-green-800">
                                 Mulai Belanja
                             </a>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
 
                 <!-- Tab: Wishlist -->

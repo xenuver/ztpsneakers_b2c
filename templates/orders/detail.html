@@ -112,9 +112,16 @@
                         
                         {% if order.status == 'pending' %}
                         <div class="mt-6">
-                            <a href="{% url 'orders:checkout_success' order.order_number %}" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-primary hover:bg-green-800 transition uppercase tracking-wider">
-                                Lanjutkan Pembayaran
-                            </a>
+                            {% if order.midtrans_transaction_id %}
+                                <button id="pay-button" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-primary hover:bg-green-800 transition uppercase tracking-wider">
+                                    Lanjutkan Pembayaran
+                                </button>
+                            {% else %}
+                                <button disabled class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-gray-400 cursor-not-allowed uppercase tracking-wider">
+                                    Lanjutkan Pembayaran (Error API)
+                                </button>
+                                <p class="text-xs text-red-500 mt-2 text-center font-bold">API Key Midtrans tidak valid. Silakan periksa file .env</p>
+                            {% endif %}
                         </div>
                         {% elif order.status == 'shipped' %}
                         <div class="mt-6">
@@ -180,4 +187,32 @@
         </div>
     </div>
 </div>
+
+{% if order.status == 'pending' and order.midtrans_transaction_id %}
+<!-- Midtrans Snap JS - Auto-detect production vs sandbox -->
+{% if midtrans_is_production %}
+<script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ client_key }}"></script>
+{% else %}
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ client_key }}"></script>
+{% endif %}
+<script type="text/javascript">
+    document.getElementById('pay-button').onclick = function(){
+        snap.pay('{{ order.midtrans_transaction_id }}', {
+            onSuccess: function(result){
+                window.location.reload();
+            },
+            onPending: function(result){
+                window.location.reload();
+            },
+            onError: function(result){
+                alert("Pembayaran gagal! Silakan coba lagi.");
+            },
+            onClose: function(){
+                // User closed the popup without finishing payment
+            }
+        });
+    };
+</script>
+{% endif %}
+
 {% endblock %}

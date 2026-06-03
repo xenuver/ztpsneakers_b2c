@@ -404,7 +404,30 @@ def order_history_view(request):
 @login_required
 def order_detail_view(request, order_number):
     order = get_object_or_404(Order, order_number=order_number, user=request.user)
-    return render(request, "orders/detail.html", {'order': order})
+    
+    # Generate midtrans token if it's missing (e.g. API failed during checkout)
+    if order.status == 'pending' and not order.midtrans_transaction_id:
+        from .utils import generate_midtrans_snap_token
+        snap_token = generate_midtrans_snap_token(order)
+        if snap_token:
+            order.midtrans_transaction_id = snap_token
+            order.save()
+        else:
+            from django.contrib import messages
+            messages.error(request, "Gagal menghubungkan ke Midtrans API. Kunci server (Server Key) di .env mungkin tidak valid atau unauthorized.")
+            
+    from django.conf import settings
+    
+    server_key = getattr(settings, 'MIDTRANS_SERVER_KEY', '')
+    client_key = getattr(settings, 'MIDTRANS_CLIENT_KEY', '')
+    is_production = not server_key.startswith('SB-')
+    
+    context = {
+        'order': order,
+        'client_key': client_key,
+        'midtrans_is_production': is_production,
+    }
+    return render(request, "orders/detail.html", context)
 
 @login_required
 def print_invoice(request, order_number):

@@ -458,3 +458,9 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 - [ ] **Validasi Ongkir Dinamis:** Integrasikan RajaOngkir API pada halaman *Checkout* untuk kalkulasi otomatis tarif pengiriman tanpa *reload*.
 - [ ] **Integrasi Payment Gateway:** Pasang Midtrans Snap pada tombol "Buat Pesanan" agar *popup* pembayaran instan muncul.
 
+ 
+ # #   B u g   y a n g   S u d a h   D i p e r b a i k i   ( S p r i n t   B e r j a l a n )  
+ -   [ x ]   F i x   N a m e E r r o r   m o d u l e   s e t t i n g s   d i   c h e c k o u t _ s u c c e s s   v i e w s  
+ -   [ x ]   F i x   H a l a m a n   k e r a n j a n g   k o s o n g   s e t e l a h   b e r h a s i l   c h e c k o u t   p e r t a m a   k a l i   k a r e n a   k e r a n j a n g   t i d a k   d i k o s o n g k a n   d e n g a n   b e n a r   d a r i   s e s s i o n   v s   u s e r   c a r t ,   d a n   p r o f i l e   h i s t o r y   y a n g   h a r d c o d e d  
+ -   [ x ]   F i x   T o m b o l   B a y a r   d i   d e t a i l   p e s a n a n   t i d a k   m e l a k u k a n   a k s i   j i k a   t o k e n   M i d t r a n s   A P I   g a g a l   t e r g e n e r a t e   a k i b a t   k u n c i   A P I   t i d a k   v a l i d / u n a u t h o r i z e d  
+ 
