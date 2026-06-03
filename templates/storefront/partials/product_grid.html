@@ -1,0 +1,38 @@
+{% for product in products %}
+<a href="{% url 'storefront:product_detail' product.slug %}" class="group relative card-product">
+    <div class="w-full h-64 bg-gray-100 rounded-t-md overflow-hidden flex items-center justify-center relative">
+        {% if product.get_primary_image %}
+            <img src="{{ product.get_primary_image }}" alt="{{ product.name }}" class="w-full h-full object-center object-cover group-hover:opacity-75 transition-opacity">
+        {% else %}
+            <span class="text-gray-400">No Image</span>
+        {% endif %}
+        
+        <!-- Badges -->
+        <div class="absolute top-2 left-2 flex flex-col gap-1">
+            {% if product.is_featured %}
+                <span class="badge-new px-2 py-1 text-xs font-bold rounded">TERPILIH</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="p-4">
+        <div class="flex justify-between">
+            <h3 class="text-sm font-medium text-black truncate pr-2">{{ product.name }}</h3>
+        </div>
+        <p class="mt-1 text-xs text-gray-500">{{ product.brand.name }} &bull; {{ product.get_condition_display }}</p>
+        <div class="mt-2 flex items-center gap-2">
+            <p class="text-sm font-bold text-black">Rp {{ product.price|floatformat:"0" }}</p>
+            {% if product.crossed_price %}
+                <p class="text-xs text-gray-400 line-through">Rp {{ product.crossed_price|floatformat:"0" }}</p>
+            {% endif %}
+        </div>
+    </div>
+</a>
+{% empty %}
+<div class="col-span-full py-12 text-center">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada produk</h3>
+    <p class="mt-1 text-sm text-gray-500">Coba sesuaikan filter atau pencarian Anda.</p>
+</div>
+{% endfor %}

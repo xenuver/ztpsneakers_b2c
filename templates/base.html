@@ -41,8 +41,12 @@
     {% endif %}
 
     <main class="h-full w-full">
+        {% include "partials/navbar.html" %}
+        
         {% block content %}
         {% endblock %}
+        
+        {% include "partials/footer.html" %}
     </main>
 
     {% block extra_scripts %}{% endblock %}
