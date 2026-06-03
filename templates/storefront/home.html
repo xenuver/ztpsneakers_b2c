@@ -37,13 +37,7 @@
         
         <!-- Product Grid -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {% for product in featured_products %}
-                {% include "storefront/partials/product_grid.html" with product=product %}
-            {% empty %}
-                <div class="col-span-full text-center py-12 text-gray-500">
-                    Belum ada produk.
-                </div>
-            {% endfor %}
+            {% include "storefront/partials/product_grid.html" with products=featured_products %}
         </div>
     </div>
 </div>
@@ -51,23 +45,25 @@
 <!-- Category Banners -->
 <div class="bg-gray-50 py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Banner 1 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for category in categories %}
             <div class="relative bg-gray-200 h-80 rounded-xl overflow-hidden group cursor-pointer">
-                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition duration-300 z-10"></div>
+                {% if category.icon %}
+                <img src="{{ category.icon.url }}" alt="{{ category.name }}" class="absolute inset-0 w-full h-full object-cover">
+                {% else %}
+                <div class="absolute inset-0 bg-gray-300"></div>
+                {% endif %}
+                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition duration-300 z-10"></div>
                 <div class="absolute inset-0 flex flex-col justify-end p-8 z-20">
-                    <h3 class="text-3xl font-extrabold text-white uppercase tracking-tight mb-2">Mens Collection</h3>
-                    <a href="{% url 'storefront:catalog' %}?category=mens" class="inline-block text-white font-bold border-b-2 border-white pb-1 w-max opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Shop Now</a>
+                    <h3 class="text-2xl md:text-3xl font-extrabold text-white uppercase tracking-tight mb-2">{{ category.name }}</h3>
+                    <a href="{% url 'storefront:catalog' %}?category={{ category.id }}" class="inline-block text-white font-bold border-b-2 border-white pb-1 w-max opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Shop Now</a>
                 </div>
             </div>
-            <!-- Banner 2 -->
-            <div class="relative bg-gray-200 h-80 rounded-xl overflow-hidden group cursor-pointer">
-                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition duration-300 z-10"></div>
-                <div class="absolute inset-0 flex flex-col justify-end p-8 z-20">
-                    <h3 class="text-3xl font-extrabold text-white uppercase tracking-tight mb-2">Womens Collection</h3>
-                    <a href="{% url 'storefront:catalog' %}?category=womens" class="inline-block text-white font-bold border-b-2 border-white pb-1 w-max opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Shop Now</a>
-                </div>
+            {% empty %}
+            <div class="col-span-full text-center py-8 text-gray-500">
+                Kategori belum ditambahkan.
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>

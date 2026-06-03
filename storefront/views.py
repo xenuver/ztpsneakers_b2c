@@ -3,7 +3,7 @@ from products.models import Banner, Product, Category, Brand
 
 def home_view(request):
     banners = Banner.objects.filter(is_active=True).order_by('order', '-id')
-    featured_products = Product.objects.filter(is_active=True, is_featured=True).order_by('-created_at')[:8]
+    featured_products = Product.objects.filter(is_active=True).order_by('-created_at')[:8]
     categories = Category.objects.all().order_by('order')
 
     context = {
