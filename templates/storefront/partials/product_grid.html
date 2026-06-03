@@ -1,5 +1,5 @@
 {% for product in products %}
-<a href="{% url 'storefront:product_detail' product.slug %}" class="group relative card-product"
+<a href="{% url 'storefront:product_detail' product.slug %}" class="group relative card-product hover:scale-105 transition-transform duration-300 block"
 {% if forloop.last and products.has_next %}
     hx-get="?page={{ products.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if brand_id %}&brand={{ brand_id }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
     hx-trigger="revealed"

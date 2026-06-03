@@ -439,31 +439,224 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 | 🟡 Penting | Jasmine Dashboard, RajaOngkir, Notifikasi Email |
 | 🟢 Bonus | Rekomendasi Produk, Wishlist Notif, Analytics heatmap |
 
+- [x] Real-time update total pembayaran saat memilih layanan pengiriman (client-side JS)
+- [x] Generate Snap Token untuk pesanan (auto-detect Production vs Sandbox)
+- [x] Popup Midtrans Snap di halaman checkout sukses (auto-open, URL Production/Sandbox otomatis)
+- [x] Webhook endpoint untuk update status otomatis (Pending → Paid)
+- [x] In-app notif setelah bayar sukses + redirect ke detail order
+- [x] Form checkout unified (`id="checkout-form"`) — semua input (alamat, kurir, pengiriman) dalam satu form
+- [ ] Merge cart guest → user saat login (session cart dipindah ke user cart)
+
+---
+
+## 🛒 [ANALISIS ARCHITECTURE] Sistem Checkout, Cart Persistance & Voucher (Senior System Designer)
+
+> **Evaluasi Sistem Saat Ini:** Berdasarkan audit sistem, ditemukan beberapa *bottleneck* kritis pada alur checkout yang menyebabkan performa lambat, *state* keranjang hilang, dan disfungsi pada API pihak ketiga. Berikut adalah rancangan arsitektur perbaikannya:
+
+### A. Persistensi Keranjang (Cart Session Fix)
+- [x] **Masalah:** Saat ini *guest user* (belum login) kehilangan keranjang belanja saat kembali ke halaman utama (*homepage*). Ini terjadi karena `request.session.create()` di Django tidak otomatis mengirimkan *cookie* jika tidak ada data sesi yang secara spesifik dimodifikasi (aturan *session.modified*).
+- [x] **Desain Solusi:** 
+  - [x] Modifikasi fungsi `get_or_create_cart` di `orders/views.py`.
+  - [x] Berikan trigger mutasi sesi: `request.session['cart_initialized'] = True` tepat setelah membuat sesi baru. Hal ini memaksa *middleware* Django untuk menyimpan *cookie* `sessionid` di peramban (browser) pengguna.
+
+### B. Optimasi Kecepatan Checkout & Integrasi RajaOngkir
+- [x] **Masalah:** Halaman `/checkout/` memuat sangat lambat karena melakukan panggilan API *Synchronous* ke RajaOngkir (`get_rajaongkir_provinces`) setiap kali halaman di-*load*.
+- [x] **Desain Solusi:**
+  - [x] **Caching Layer:** Terapkan `django.core.cache` (Memcached/Redis atau FileBasedCache) untuk menyimpan data Provinsi dan Kota selama minimal 24 jam. Hal ini akan memangkas waktu muat dari 2000ms menjadi 10ms.
+  - [ ] **Validasi Kredensial:** Pastikan `RAJAONGKIR_API_KEY` di *Environment* (`.env`) adalah kunci yang valid (bukan *dummy*), karena API tidak akan membalas dengan JSON yang benar jika kuncinya ditolak.
+  - [ ] **Error Handling UI:** Tambahkan *fallback* teks merah di UI menggunakan HTMX jika API RajaOngkir *timeout* atau gagal (saat ini error *backend* hanya ditangkap oleh `print()`).
+
+### C. Pembayaran Midtrans Snap
+- [ ] **Masalah:** *Popup* Midtrans belum muncul dengan benar.
+- [ ] **Desain Solusi:**
+  - [ ] Kunci `MIDTRANS_SERVER_KEY` dan `MIDTRANS_CLIENT_KEY` di `.env` harus valid (gunakan *sandbox* untuk pengujian).
+  - [ ] Pastikan di `checkout_success.html` sudah me-render `<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ client_key }}"></script>` dan otomatis men-trigger `window.snap.pay('{{ order.midtrans_transaction_id }}')`.
+
+### D. Sistem Voucher (Ekspansi Masa Depan)
+> Fitur ini ditambahkan ke antrean *backlog* (*task list*) untuk dieksekusi agar pembeli bisa menggunakan kode promo (karena fitur "ZTP Point" telah resmi dihapus untuk menyederhanakan UX).
+
+- [ ] **Skema Database (`Voucher` Model):**
+  - [ ] `code` (CharField, unique)
+  - [ ] `discount_type` (Choices: 'percentage' atau 'nominal')
+  - [ ] `discount_value` (DecimalField)
+  - [ ] `min_purchase` (DecimalField)
+  - [ ] `valid_from` & `valid_to` (DateTimeField)
+  - [ ] `quota` (IntegerField)
+  - [ ] `is_active` (BooleanField)
+- [ ] **Modifikasi Cart:** Tambahkan relasi `voucher = models.ForeignKey(Voucher, null=True, blank=True)` pada model `Cart`.
+- [ ] **API HTMX (`/api/apply-voucher/`):** Endpoint yang menerima input teks, memvalidasi aturan voucher, mengunci *state* ke keranjang pengguna, dan mengembalikan *swap* nilai pada blok `#total-payment` beserta diskonnya.
+
+---
+
+## Sprint 4 — Manajemen Pesanan & Notifikasi
+
+### Order Management (Customer)
+- [x] Daftar Pesanan (`/orders/`): riwayat transaksi, filter status (Semua, Belum Bayar, Dikirim, Selesai)
+- [ ] Filter tab status di halaman riwayat pesanan (Semua, Menunggu Bayar, Diproses, Dikirim, Selesai)
+- [x] Detail Pesanan (`/orders/<id>/`): resi kurir, item dibeli, rincian pembayaran
+- [x] Tombol "Tandai Selesai" (muncul saat status Shipped)
+- [x] Cetak Invoice sederhana (PDF / Print view)
+- [ ] Tombol "Bayar Sekarang" di riwayat pesanan untuk order status `pending` (re-trigger Midtrans Snap)
+
+### Sistem Notifikasi In-App (Pengganti Email — Built-in)
+> Karena tidak menggunakan SMTP, seluruh notifikasi berbasis in-app via model `core.Notification`
+- [x] Model `Notification`: user, title, message, link, is_read, created_at
+- [x] Signal `pre_save` Order → auto-create notifikasi saat status berubah
+- [x] Notif: Pembayaran Berhasil (paid)
+- [x] Notif: Pesanan Diproses (processing)
+- [x] Notif: Pesanan Dikirim + nomor resi (shipped)
+- [x] Notif: Pesanan Selesai + ajakan ulasan (completed)
+- [ ] Notif: Klaim Garansi Diterima (saat user submit klaim)
+- [ ] Notif: Update status klaim garansi (pending→approved/rejected/resolved)
+- [ ] Notif: Produk di wishlist stok hampir habis (≤ 2)
+- [ ] Halaman notifikasi penuh `/notifications/` — list semua notif + tandai sudah dibaca
+- [ ] Navbar bell: badge count in-app (auto refresh via HTMX polling setiap 60 detik)
+- [x] Tombol "Tandai Semua Dibaca" di dropdown notifikasi
+- [ ] Notif: Pesanan dibatalkan (cancelled) — ketika admin batalkan
+
+---
+
+## Sprint 5 — Layanan Purna Jual & Penyempurnaan
+
+### Ulasan & Rating
+- [x] Model `Review` + form ulasan (rating 1-5, komentar, 1 foto)
+- [x] Tampil ulasan di halaman detail produk (accordion)
+- [x] Rata-rata bintang di card produk dan halaman detail
+- [x] Hanya order status `completed` yang bisa review
+- [ ] Distribusi bintang per rating (progress bar 1★–5★) di halaman detail produk
+- [ ] Upload hingga 3 foto per ulasan (sesuai PRD), bukan hanya 1
+- [ ] Field `is_visible` di model Review untuk moderasi admin
+
+### Laporan Garansi
+- [x] Model `WarrantyClaim` + form klaim + upload foto bukti
+- [x] Status klaim: pending → approved → rejected → resolved
+- [ ] Field `kategori` di model WarrantyClaim (choices: cacat_produk/salah_ukuran/tidak_sesuai_foto/lainnya)
+- [ ] Validasi batas 7 hari sejak order `completed` untuk klaim garansi
+- [ ] Halaman tracking klaim garansi (`/orders/garansi/<id>/`) — timeline status + catatan resolusi admin
+
+### Crisp Live Chat
+- [x] Embed Crisp widget script di `base.html` (`window.$crisp`)
+- [x] Set Crisp user identity jika login (nama, email via JS)
+- [x] Widget muncul di semua halaman storefront
+- [ ] Tombol "Chat dengan Kami" di halaman detail produk dan pesanan
+
+---
+
+## Sprint 6 — Admin Toko Panel
+
+### Layout & Auth
+- [ ] Layout Admin Toko: sidebar kiri, topbar, content area — tema neutral (bukan dark total)
+- [ ] Redirect ke `/admin-toko/login/` jika belum login atau bukan group `AdminToko`
+- [ ] Dashboard ringkasan: pesanan hari ini, stok menipis, laporan garansi baru
+
+### Fitur Admin Toko
+- [ ] **Produk**: form tambah/edit produk + upload gambar + kelola stok per ukuran
+- [ ] **Produk**: toggle aktif/nonaktif (tidak ada tombol hapus permanen)
+- [ ] **Pesanan**: tabel dengan filter status, search nomor order, detail modal
+- [ ] **Pesanan**: update status pesanan + input nomor resi ekspedisi
+- [ ] **Pelanggan**: tabel customer + detail profil + riwayat beli (read-only)
+- [ ] **Ulasan**: moderasi — toggle tampil/sembunyikan ulasan
+- [ ] **Garansi**: daftar laporan masalah + update status + tulis catatan resolusi
+- [ ] **Laporan**: tampilkan tabel laporan penjualan (no export button)
+- [ ] Akses Crisp: link ke inbox Crisp (tab baru)
+
+---
+
+## Sprint 7 — Jasmine Owner Dashboard
+
+### Layout Premium
+- [ ] Layout Jasmine: ultra-dark (`#0A0A0A`), sidebar elegan dengan aksen emas `#D4AF37`
+- [ ] Topbar: greeting "Selamat pagi/siang/sore, [nama owner]" + notifikasi bell
+- [ ] Logo ZTP + label "Jasmine" di sidebar
+- [ ] Semua chart menggunakan Chart.js (via CDN, compatible dengan shared hosting)
+
+### Dashboard & Analytics
+- [ ] KPI cards: Total Revenue (bulan ini), Total Order, Customer Baru, Produk Terlaris
+- [ ] Setiap KPI card punya sparkline mini (7 hari terakhir)
+- [ ] Grafik penjualan: toggle Harian / Bulanan / Tahunan (HTMX swap chart)
+- [ ] Tabel 10 produk terlaris bulan ini
+- [ ] Heatmap jam sibuk (opsional, Chart.js matrix)
+
+### Full Management
+- [ ] **Produk**: CRUD lengkap termasuk kategori dan brand
+- [ ] **Banner**: kelola banner homepage (tambah/edit/urutkan/hapus)
+- [ ] **Admin Toko**: buat akun, set permission group, suspend/aktifkan
+- [ ] **Semua Pesanan**: tabel lengkap + filter + override status
+- [ ] **Garansi**: semua laporan + eskalasi ke resolved/rejected
+- [ ] **Laporan**: filter bulan-tahun → tabel transaksi → tombol Export Excel
+- [ ] Export Excel: `openpyxl`, kolom: No, Tanggal, Pelanggan, Produk, Total, Status, Ekspedisi
+- [ ] **Pengaturan**: SMTP email, Crisp token, logo toko, teks header/footer
+
+---
+
+## Sprint 8 — Testing, Polish & Deploy
+
+### Testing
+- [ ] Blackbox testing semua user story:
+  - Customer: register, browse, checkout, ulasan, laporan garansi
+  - Admin Toko: kelola produk, proses pesanan, update status garansi
+  - Jasmine: dashboard, export laporan, kelola admin toko
+- [ ] Test payment flow Midtrans (mode sandbox)
+- [ ] Test RajaOngkir API dengan berbagai kota tujuan
+- [ ] Test Crisp widget di berbagai halaman
+- [ ] Test email notifikasi (semua trigger)
+- [ ] Test webhook Midtrans (gunakan ngrok untuk local testing)
+
+### Responsive & Polish
+- [ ] Cek tampilan mobile (≤ 768px) semua halaman storefront
+- [ ] Cek tampilan tablet (768px–1024px)
+- [ ] Konsistensi dark theme 807-style di seluruh halaman
+- [ ] Loading state untuk semua HTMX request (spinner/skeleton)
+- [ ] Error state dan empty state (keranjang kosong, hasil search kosong, dll)
+- [ ] Optimize gambar produk (thumbnail via Pillow, lazy load)
+- [ ] Meta tags SEO dasar (title, description per halaman)
+
+### Deploy ke Shared Hosting
+- [ ] Setup Python App di cPanel
+- [ ] Upload project via FTP/File Manager atau Git (jika hosting support)
+- [ ] Konfigurasi `passenger_wsgi.py`
+- [ ] Jalankan `collectstatic` → upload ke `public_html/static/`
+- [ ] Konfigurasi MySQL database via cPanel
+- [ ] Jalankan `migrate`
+- [ ] Buat superuser/owner
+- [ ] Set `.env` production (DEBUG=False, ALLOWED_HOSTS, keys)
+- [ ] Test semua fitur di production
+- [ ] Setup HTTPS (SSL via cPanel Let's Encrypt)
+
+---
+
+## Catatan Prioritas
+
+| Prioritas | Modul |
+|---|---|
+| 🔴 Wajib | Auth, Katalog, Keranjang, Checkout, Midtrans, Pesanan |
+| 🟠 Penting | Purna Jual (Ulasan + Garansi), Admin Toko, Crisp |
+| 🟡 Penting | Jasmine Dashboard, RajaOngkir, Notifikasi Email |
+| 🟢 Bonus | Rekomendasi Produk, Wishlist Notif, Analytics heatmap |
+
 ---
 
 ## B2C UI/UX System Design Improvements (Analysis Results)
 
 ### 1. Animasi & Interaktivitas UI
-- [ ] **Carousel Banner Otomatis:** Integrasikan Swiper.js/Alpine.js pada Hero Banner untuk transisi *slide* otomatis.
-- [ ] **Micro-interactions:** Tambahkan animasi *zoom-in* lambat (scale 1.05) pada _card_ produk saat di-_hover_, dan efek interaktif pada ikon profil/keranjang.
+- [x] **Carousel Banner Otomatis:** Integrasikan Swiper.js/Alpine.js pada Hero Banner untuk transisi *slide* otomatis.
+- [x] **Micro-interactions:** Tambahkan animasi *zoom-in* lambat (scale 1.05) pada _card_ produk saat di-_hover_, dan efek interaktif pada ikon profil/keranjang.
 
 ### 2. Pengelolaan Keranjang (Cart Drawer)
-- [ ] **Toast Notifications:** Tampilkan notifikasi kecil di pojok kanan atas layar saat produk berhasil ditambahkan ke keranjang (hilang otomatis).
+- [x] **Toast Notifications:** Tampilkan notifikasi kecil di pojok kanan atas layar saat produk berhasil ditambahkan ke keranjang (hilang otomatis).
 
 ### 3. Sistem Filter & Pencarian
-- [ ] **Mobile Filter Modal:** Pindahkan saringan kategori/urutan ke *modal* atau *bottom-sheet* saat dilihat melalui layar *mobile*.
-- [ ] **Live Search Results:** Buat hasil pencarian langsung muncul sebagai _dropdown_ seketika saat pengguna mengetik (menggunakan `hx-trigger`).
+- [x] **Mobile Filter Modal:** Pindahkan saringan kategori/urutan ke *modal* atau *bottom-sheet* saat dilihat melalui layar *mobile*.
+- [x] **Live Search Results:** Buat hasil pencarian langsung muncul sebagai _dropdown_ seketika saat pengguna mengetik (menggunakan `hx-trigger`).
 
 ### 4. Alur Checkout & Pembayaran
-- [ ] **Validasi Ongkir Dinamis:** Integrasikan RajaOngkir API pada halaman *Checkout* untuk kalkulasi otomatis tarif pengiriman tanpa *reload*.
-- [ ] **Integrasi Payment Gateway:** Pasang Midtrans Snap pada tombol "Buat Pesanan" agar *popup* pembayaran instan muncul.
+- [x] **Validasi Ongkir Dinamis:** Integrasikan RajaOngkir API pada halaman *Checkout* untuk kalkulasi otomatis tarif pengiriman tanpa *reload*.
+- [x] **Integrasi Payment Gateway:** Pasang Midtrans Snap pada tombol "Buat Pesanan" agar *popup* pembayaran instan muncul.
 
- 
- # #   B u g   y a n g   S u d a h   D i p e r b a i k i   ( S p r i n t   B e r j a l a n )  
- -   [ x ]   F i x   N a m e E r r o r   m o d u l e   s e t t i n g s   d i   c h e c k o u t _ s u c c e s s   v i e w s  
- -   [ x ]   F i x   H a l a m a n   k e r a n j a n g   k o s o n g   s e t e l a h   b e r h a s i l   c h e c k o u t   p e r t a m a   k a l i   k a r e n a   k e r a n j a n g   t i d a k   d i k o s o n g k a n   d e n g a n   b e n a r   d a r i   s e s s i o n   v s   u s e r   c a r t ,   d a n   p r o f i l e   h i s t o r y   y a n g   h a r d c o d e d  
- -   [ x ]   F i x   T o m b o l   B a y a r   d i   d e t a i l   p e s a n a n   t i d a k   m e l a k u k a n   a k s i   j i k a   t o k e n   M i d t r a n s   A P I   g a g a l   t e r g e n e r a t e   a k i b a t   k u n c i   A P I   t i d a k   v a l i d / u n a u t h o r i z e d  
- -   [ x ]   F i x   S a l a h   d e t e k s i   e n v i r o n m e n t   M i d t r a n s   ( P r o d u c t i o n   v s   S a n d b o x )   a k i b a t   f o r m a t   k u n c i   A P I   t a n p a   a w a l a n   S B -  
- -   [ x ]   T a m b a h k a n   f i t u r   t o m b o l   C e k   S t a t u s   P e m b a y a r a n   s e c a r a   m a n u a l   u n t u k   t r a n s a k s i   M i d t r a n s  
- -   [ x ]   H a p u s   h a l a m a n   R i w a y a t   P e s a n a n   g a n d a   ( o r d e r s : h i s t o r y )   d a n   g a b u n g k a n   s e p e n u h n y a   k e   t a b   P e s a n a n   S a y a   d i   h a l a m a n   P r o f i l  
- 
+## Bug yang Sudah Diperbaiki (Sprint Berjalan)
+- [x] Fix NameError module settings di checkout_success views
+- [x] Fix Halaman keranjang kosong setelah berhasil checkout pertama kali karena keranjang tidak dikosongkan dengan benar dari session vs user cart, dan profile history yang hardcoded
+- [x] Fix Tombol Bayar di detail pesanan tidak melakukan aksi jika token Midtrans API gagal tergenerate akibat kunci API tidak valid/unauthorized
+- [x] Fix Salah deteksi environment Midtrans (Production vs Sandbox) akibat format kunci API tanpa awalan SB-
+- [x] Tambahkan fitur tombol Cek Status Pembayaran secara manual untuk transaksi Midtrans
+- [x] Hapus halaman Riwayat Pesanan ganda (orders:history) dan gabungkan sepenuhnya ke tab Pesanan Saya di halaman Profil

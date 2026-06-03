@@ -69,10 +69,24 @@ def add_to_cart(request, product_id):
                 cart_item.quantity += 1
                 cart_item.save()
             else:
+                if request.META.get('HTTP_HX_REQUEST'):
+                    response = HttpResponse()
+                    import json
+                    response['HX-Trigger'] = json.dumps({"showToast": {"message": "Melebihi batas stok tersedia", "type": "error"}})
+                    return response
                 from django.contrib import messages
                 messages.error(request, "Melebihi stok")
                 return redirect('orders:cart_page')
                 
+        if request.META.get('HTTP_HX_REQUEST'):
+            response = HttpResponse()
+            import json
+            response['HX-Trigger'] = json.dumps({
+                "cartUpdated": True,
+                "showToast": {"message": "Produk berhasil ditambahkan ke keranjang", "type": "success"}
+            })
+            return response
+            
         return redirect('orders:cart_page')
         
     return HttpResponseForbidden()

@@ -49,27 +49,30 @@
             <!-- Search and Icons -->
             <div class="flex items-center space-x-6">
                 <!-- Search -->
-                <div class="hidden md:block relative w-64 lg:w-96">
-                    <input type="text" placeholder="Search for products and brand"
+                <form id="search-form-navbar" action="{% url 'storefront:catalog' %}" method="GET" class="hidden md:block relative w-64 lg:w-96 group">
+                    <input type="text" name="q" placeholder="Search for products and brand" autocomplete="off"
+                        hx-get="{% url 'storefront:live_search' %}"
+                        hx-trigger="keyup changed delay:500ms, search"
+                        hx-target="#search-results"
                         class="w-full bg-gray-50 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-black placeholder-gray-400">
-                    <svg class="w-4 h-4 text-gray-400 absolute left-4 top-2.5" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    <svg class="w-4 h-4 text-gray-400 absolute left-4 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                </div>
+                    <!-- Dropdown -->
+                    <div id="search-results" class="absolute left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-lg shadow-lg z-50 empty:hidden"></div>
+                </form>
 
                 <div class="flex items-center space-x-5">
                     <!-- Cart -->
-                    <a href="{% url 'orders:cart_page' %}" class="text-black hover:text-primary transition relative">
+                    <button type="button" class="text-black hover:text-primary transition hover:scale-110 relative" hx-get="{% url 'orders:cart_drawer' %}" hx-target="#cart-drawer-container" hx-swap="innerHTML">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
                             </path>
                         </svg>
-                    </a>
+                    </button>
                     <!-- Heart -->
-                    <a href="{% url 'orders:wishlist' %}" class="text-black hover:text-primary transition flex items-center">
+                    <a href="{% url 'orders:wishlist' %}" class="text-black hover:text-primary transition hover:scale-110 flex items-center">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
@@ -79,7 +82,7 @@
                     <!-- Bell -->
                     {% if user.is_authenticated %}
                     <div class="relative" id="notif-wrapper">
-                        <button type="button" class="text-black hover:text-primary transition relative" onclick="document.getElementById('notif-dropdown').classList.toggle('hidden')">
+                        <button type="button" class="text-black hover:text-primary transition hover:scale-110 relative" onclick="document.getElementById('notif-dropdown').classList.toggle('hidden')">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
@@ -125,7 +128,7 @@
                         </div>
                     </div>
                     {% else %}
-                    <button type="button" class="text-black hover:text-primary transition" onclick="window.location.href='{% url 'userauths:auth_main' %}'">
+                    <button type="button" class="text-black hover:text-primary transition hover:scale-110" onclick="window.location.href='{% url 'userauths:auth_main' %}'">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                         </svg>
@@ -135,7 +138,7 @@
                     {% if user.is_authenticated %}
                     <div class="relative">
                         <a href="{% url 'userauths:profile' %}"
-                            class="flex items-center space-x-2 bg-gray-50 rounded-full pl-1 pr-3 py-1 border border-gray-200 hover:border-primary hover:bg-gray-100 transition cursor-pointer">
+                            class="flex items-center space-x-2 bg-gray-50 rounded-full pl-1 pr-3 py-1 border border-gray-200 hover:border-primary hover:bg-gray-100 hover:scale-105 transition cursor-pointer">
                             <div
                                 class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
                                 {{ user.email|make_list|first|upper }}

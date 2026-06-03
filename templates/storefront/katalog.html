@@ -44,8 +44,23 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex flex-col md:flex-row gap-8">
-            <!-- Sidebar Filter -->
-            <div class="w-full md:w-64 flex-shrink-0">
+            <!-- Mobile filter button -->
+            <button type="button" class="md:hidden w-full mb-4 flex items-center justify-center gap-2 py-3 border border-gray-300 rounded-md text-sm font-bold uppercase tracking-wider text-black hover:bg-gray-50 transition" onclick="document.getElementById('mobile-filter-modal').classList.remove('hidden')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                Filter & Sort
+            </button>
+
+            <!-- Sidebar / Mobile Modal Filter -->
+            <div id="mobile-filter-modal" class="hidden md:block fixed inset-0 z-50 md:relative md:z-auto bg-black/50 md:bg-transparent flex flex-col justify-end md:block">
+                <div class="bg-white w-full md:w-64 flex-shrink-0 p-6 md:p-0 rounded-t-2xl md:rounded-none max-h-[85vh] md:max-h-none overflow-y-auto relative animate-[slideUp_0.3s_ease-out] md:animate-none">
+                    
+                    <div class="flex items-center justify-between mb-6 md:hidden">
+                        <h2 class="text-lg font-bold text-black uppercase tracking-wider">Filter & Sort</h2>
+                        <button type="button" class="text-gray-400 hover:text-black p-1" onclick="document.getElementById('mobile-filter-modal').classList.add('hidden')">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+
                 <form id="filter-form" class="space-y-8" 
                       hx-get="{% url 'storefront:catalog' %}" 
                       hx-target="#product-grid" 
@@ -103,6 +118,7 @@
                         </div>
                     </div>
                 </form>
+                </div>
             </div>
 
             <!-- Product Grid -->

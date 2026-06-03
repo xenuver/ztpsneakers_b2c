@@ -1,24 +1,32 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<style>
+    .swiper-pagination-bullet { background: #9ca3af; opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--color-primary, #0B6A42); width: 24px; border-radius: 4px; }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Hero Section -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-8">
-    <div class="relative bg-gradient-to-r from-gray-300 to-gray-200 rounded-lg overflow-hidden min-h-[400px] flex items-center justify-center">
-        
-        <!-- Only photo/background image is displayed here per user request -->
-        {% if banners %}
-        <div class="w-full h-full bg-cover bg-center absolute inset-0 opacity-90 transition-all duration-500" style="background-image: url('{{ banners.0.image.url }}');"></div>
-        {% else %}
-        <div class="w-full h-full bg-cover bg-center absolute inset-0 opacity-90 transition-all duration-500" style="background-image: url('https://via.placeholder.com/1200x400?text=NO+BANNER');"></div>
-        {% endif %}
-        
-        <!-- Pagination dots -->
-        <div class="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-30">
-            <div class="w-8 h-2 rounded-full bg-primary"></div>
-            <div class="w-2 h-2 rounded-full bg-gray-400 cursor-pointer"></div>
-            <div class="w-2 h-2 rounded-full bg-gray-400 cursor-pointer"></div>
-            <div class="w-2 h-2 rounded-full bg-gray-400 cursor-pointer"></div>
+    <div class="swiper hero-swiper relative bg-gradient-to-r from-gray-300 to-gray-200 rounded-lg overflow-hidden min-h-[400px]">
+        <div class="swiper-wrapper h-full">
+            {% if banners %}
+                {% for banner in banners %}
+                <div class="swiper-slide h-[400px] w-full">
+                    <div class="w-full h-full bg-cover bg-center absolute inset-0 opacity-90" style="background-image: url('{{ banner.image.url }}');"></div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="swiper-slide h-[400px] w-full">
+                    <div class="w-full h-full bg-cover bg-center absolute inset-0 opacity-90" style="background-image: url('https://via.placeholder.com/1200x400?text=NO+BANNER');"></div>
+                </div>
+            {% endif %}
         </div>
+        <!-- Pagination dots -->
+        <div class="swiper-pagination absolute bottom-6 z-30"></div>
     </div>
     
     <div class="text-center mt-8">
@@ -26,6 +34,29 @@
         <p class="text-xs md:text-sm text-gray-500 mt-1">Berdiri sejak 2016 • 6 Lokasi Cabang • Ribuan Customer • Bisa kirim seluruh Indonesia gratis ongkir</p>
     </div>
 </div>
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const swiper = new Swiper('.hero-swiper', {
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            }
+        });
+    });
+</script>
+{% endblock %}
 
 <!-- Product Grids Section -->
 <div class="bg-white py-16">

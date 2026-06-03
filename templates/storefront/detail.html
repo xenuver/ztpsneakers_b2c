@@ -46,7 +46,7 @@
                 </div>
 
                 <!-- Sizes & Actions Form -->
-                <form id="add-to-cart-form" action="{% url 'orders:add_to_cart' product.id %}" method="POST">
+                <form id="add-to-cart-form" hx-post="{% url 'orders:add_to_cart' product.id %}" hx-swap="none">
                     {% csrf_token %}
                     
                     <!-- Color Selection (Mockup) -->

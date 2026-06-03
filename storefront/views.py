@@ -82,3 +82,11 @@ def product_detail_view(request, slug):
         'wishlist_product_ids': wishlist_product_ids,
     }
     return render(request, "storefront/detail.html", context)
+
+def live_search_view(request):
+    query = request.GET.get('q', '').strip()
+    if not query:
+        return render(request, "storefront/partials/search_results.html", {'products': []})
+        
+    products = Product.objects.filter(is_active=True, name__icontains=query).order_by('-created_at')[:5]
+    return render(request, "storefront/partials/search_results.html", {'products': products})
