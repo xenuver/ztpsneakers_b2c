@@ -1,0 +1,141 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static jazzmin %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block content_title %} {% trans 'Dashboard' %} {% endblock %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+        <li class="breadcrumb-item active">{% trans 'Dashboard' %}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {% get_side_menu using="app_list" as dashboard_list %}
+    {% if dashboard_list %}
+        {% assign app_list dashboard_list %}
+    {% endif %}
+
+    <div class="row">
+        <!-- Analytics and Export for Superusers -->
+        {% if request.user.is_superuser %}
+        <div class="col-12 mb-4">
+            <div class="card card-primary card-outline">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="card-title">ZTP Jasmine Analytics <small>(Exclusive for Owners)</small></h3>
+                        <a href="/admin/export-excel/" class="btn btn-sm btn-success">
+                            <i class="fas fa-file-excel mr-1"></i> Export Laporan Excel
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="position-relative mb-4">
+                        <canvas id="sales-chart" height="200"></canvas>
+                    </div>
+                    <div class="d-flex flex-row justify-content-end">
+                        <span class="mr-2">
+                            <i class="fas fa-square text-primary"></i> Tren Penjualan Bulan Ini
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const ctx = document.getElementById('sales-chart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
+                            datasets: [{
+                                label: 'Pendapatan (Juta Rp)',
+                                data: [12, 19, 15, 25],
+                                backgroundColor: '#007bff',
+                                borderColor: '#007bff',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                        }
+                    });
+                });
+            </script>
+        </div>
+        {% endif %}
+
+        <div class="col-lg-9 col-12">
+            <div class="row">
+                {% for app in app_list %}
+                    {% for model in app.models %}
+                        <div class="col-md-4 col-sm-6 col-12">
+                            <div class="info-box bg-white shadow-sm">
+                                <span class="info-box-icon {% if model.icon %}bg-primary{% else %}bg-secondary{% endif %} elevation-1">
+                                    <i class="{% if model.icon %}{{ model.icon }}{% else %}fas fa-circle{% endif %}"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">{{ model.name }}</span>
+                                    {% if model.admin_url %}
+                                    <a href="{{ model.admin_url }}" class="small-box-footer text-muted">
+                                        View <i class="fas fa-arrow-circle-right"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-12">
+            <div id="content-related">
+                <div class="module" id="recent-actions-module">
+                    <h4 class="mb-3">{% trans 'Recent actions' %}</h4>
+                    {% load log %}
+                    {% get_admin_log 10 as admin_log for_user user %}
+                    {% if not admin_log %}
+                        <p>{% trans 'None available' %}</p>
+                    {% else %}
+                        <div class="timeline">
+                            {% for entry in admin_log %}
+                                <div>
+                                    {% if entry.is_addition %}
+                                        <i class="fas fa-plus bg-success"></i>
+                                    {% elif entry.is_change %}
+                                        <i class="fas fa-edit bg-warning"></i>
+                                    {% elif entry.is_deletion %}
+                                        <i class="fas fa-trash bg-danger"></i>
+                                    {% endif %}
+                                    <div class="timeline-item">
+                                        <span class="time"><i class="fas fa-clock"></i> {{ entry.action_time|date:"H:i" }}</span>
+                                        <h3 class="timeline-header no-border">
+                                            {% if entry.is_deletion or not entry.url %}
+                                                {{ entry.object_repr }}
+                                            {% else %}
+                                                <a href="{{ entry.url }}">{{ entry.object_repr }}</a>
+                                            {% endif %}
+                                            <br>
+                                            <small class="text-muted">
+                                                {% if entry.content_type %}
+                                                    {% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}
+                                                {% else %}
+                                                    {% trans 'Unknown content' %}
+                                                {% endif %}
+                                            </small>
+                                        </h3>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

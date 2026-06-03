@@ -1,0 +1,149 @@
+{% extends "admintoko/base_admin.html" %}
+
+{% block title %}Klaim Garansi - ZTP Admin Pro{% endblock %}
+{% block header_title %}Klaim Garansi{% endblock %}
+{% block header_subtitle %}Validasi dan tanggapi laporan masalah pelanggan.{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+        <h3 class="text-sm font-bold text-slate-800 tracking-tight">Daftar Tiket Garansi</h3>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[800px]">
+            <thead>
+                <tr class="bg-white border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <th class="px-6 py-4">ID Klaim</th>
+                    <th class="px-6 py-4">Produk</th>
+                    <th class="px-6 py-4">Kategori Masalah</th>
+                    <th class="px-6 py-4">Status</th>
+                    <th class="px-6 py-4 text-right">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                {% for claim in claims %}
+                <tr class="hover:bg-slate-50/50 transition-colors group" x-data="{ modalOpen: false }">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-rose-50 flex items-center justify-center text-rose-500 font-bold text-xs border border-rose-100">
+                                #{{ claim.id }}
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-800">Order #{{ claim.order_item.order.order_number }}</div>
+                                <div class="text-xs text-slate-400 font-medium">{{ claim.created_at|date:"d M Y, H:i" }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-semibold text-slate-700">{{ claim.order_item.product_name }}</div>
+                        <div class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md inline-block mt-1">Size: {{ claim.order_item.size_str }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-bold text-slate-800">{{ claim.get_kategori_display|default:"-" }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider
+                            {% if claim.status == 'pending' %}bg-amber-50 text-amber-600 border border-amber-100
+                            {% elif claim.status == 'approved' %}bg-blue-50 text-blue-600 border border-blue-100
+                            {% elif claim.status == 'rejected' %}bg-rose-50 text-rose-600 border border-rose-100
+                            {% elif claim.status == 'resolved' %}bg-emerald-50 text-emerald-600 border border-emerald-100{% endif %}">
+                            {{ claim.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                        <button @click="modalOpen = true" class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-primary hover:border-primary/50 hover:bg-indigo-50 transition-all shadow-sm text-xs font-bold gap-1.5">
+                            Tinjau
+                        </button>
+                    </td>
+                    
+                    <!-- Modal Alpine.js -->
+                    <template x-teleport="body">
+                        <div x-show="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="display: none;">
+                            <div x-show="modalOpen" x-transition.opacity class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" @click="modalOpen = false"></div>
+                            
+                            <div x-show="modalOpen" 
+                                x-transition:enter="ease-out duration-300" 
+                                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                                x-transition:leave="ease-in duration-200" 
+                                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                class="relative bg-white rounded-2xl shadow-2xl w-full max-w-xl mx-4 overflow-hidden transform transition-all border border-slate-100">
+                                
+                                <form method="POST" action="{% url 'admintoko:warranty_update' claim.id %}">
+                                    {% csrf_token %}
+                                    <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                        <h3 class="text-lg font-bold text-slate-800 tracking-tight" id="modal-title">
+                                            Tiket Klaim <span class="text-rose-500">#{{ claim.id }}</span>
+                                        </h3>
+                                        <button type="button" @click="modalOpen = false" class="text-slate-400 hover:text-slate-600">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="p-6 space-y-5">
+                                        <div class="bg-rose-50/50 border border-rose-100 p-4 rounded-xl text-sm">
+                                            <p class="font-bold text-rose-800 mb-2 flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                                                Pesan Pelanggan:
+                                            </p>
+                                            <p class="text-slate-700 italic border-l-2 border-rose-200 pl-3">"{{ claim.reason }}"</p>
+                                            
+                                            {% if claim.evidence_image %}
+                                            <div class="mt-4">
+                                                <a href="{{ claim.evidence_image.url }}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-lg text-xs font-bold transition-colors shadow-sm">
+                                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                    Lihat Bukti Foto &nearr;
+                                                </a>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ubah Status</label>
+                                            <select name="status" class="w-full bg-slate-50 border border-slate-200 rounded-xl text-sm p-3 font-medium text-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                                                {% for val, name in claim.STATUS_CHOICES %}
+                                                <option value="{{ val }}" {% if claim.status == val %}selected{% endif %}>{{ name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                                Catatan Admin
+                                                <span class="text-slate-400 font-normal normal-case">(Dapat dilihat pelanggan)</span>
+                                            </label>
+                                            <textarea name="admin_notes" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl text-sm p-3 font-medium text-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder-slate-400" placeholder="Tuliskan alasan penolakan atau instruksi selanjutnya...">{{ claim.admin_notes|default:"" }}</textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="px-6 py-4 bg-slate-50/80 border-t border-slate-100 flex justify-end gap-3 rounded-b-2xl">
+                                        <button type="button" @click="modalOpen = false" class="px-4 py-2 rounded-xl text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                                            Batal
+                                        </button>
+                                        <button type="submit" class="px-5 py-2 rounded-xl text-sm font-bold text-white bg-primary hover:bg-indigo-700 shadow-md shadow-primary/20 transition-all">
+                                            Simpan Resolusi
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </template>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-16 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 text-slate-400 mb-4 border border-slate-200">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </div>
+                        <h4 class="text-slate-700 font-bold mb-1">Tidak ada klaim garansi</h4>
+                        <p class="text-sm text-slate-500">Semua laporan telah terselesaikan.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -32,7 +32,7 @@ def dashboard_view(request):
         'new_warranty_claims': new_warranty_claims,
         'low_stock_sizes': low_stock_sizes,
     }
-    return render(request, 'admin_toko/dashboard.html', context)
+    return render(request, 'admintoko/dashboard.html', context)
 
 @user_passes_test(is_admin_toko, login_url='/auth/')
 def products_view(request):
@@ -40,7 +40,7 @@ def products_view(request):
     context = {
         'products': products
     }
-    return render(request, 'admin_toko/products.html', context)
+    return render(request, 'admintoko/products.html', context)
 
 @user_passes_test(is_admin_toko, login_url='/auth/')
 def orders_view(request):
@@ -54,7 +54,7 @@ def orders_view(request):
         'orders': orders,
         'current_status': status_filter
     }
-    return render(request, 'admin_toko/orders.html', context)
+    return render(request, 'admintoko/orders.html', context)
 
 @user_passes_test(is_admin_toko, login_url='/auth/')
 def warranty_view(request):
@@ -62,7 +62,7 @@ def warranty_view(request):
     context = {
         'claims': claims
     }
-    return render(request, 'admin_toko/warranty.html', context)
+    return render(request, 'admintoko/warranty.html', context)
 
 @user_passes_test(is_admin_toko, login_url='/auth/')
 def reviews_view(request):
@@ -70,7 +70,7 @@ def reviews_view(request):
     context = {
         'reviews': reviews
     }
-    return render(request, 'admin_toko/reviews.html', context)
+    return render(request, 'admintoko/reviews.html', context)
 
 @user_passes_test(is_admin_toko, login_url='/auth/')
 def product_toggle_view(request, product_id):
@@ -79,7 +79,7 @@ def product_toggle_view(request, product_id):
         product.is_active = not product.is_active
         product.save()
         messages.success(request, f"Status produk {product.name} berhasil diperbarui.")
-    return redirect('admin_toko:products')
+    return redirect('admintoko:products')
 
 @user_passes_test(is_admin_toko, login_url='/auth/')
 def order_update_status(request, order_id):
@@ -94,7 +94,7 @@ def order_update_status(request, order_id):
             order.tracking_number = tracking_number
         order.save()
         messages.success(request, f"Pesanan #{order.order_number} berhasil diperbarui.")
-    return redirect('admin_toko:orders')
+    return redirect('admintoko:orders')
 
 @user_passes_test(is_admin_toko, login_url='/auth/')
 def warranty_update_status(request, claim_id):
@@ -109,7 +109,7 @@ def warranty_update_status(request, claim_id):
             claim.admin_notes = admin_notes
         claim.save()
         messages.success(request, f"Klaim garansi #{claim.id} berhasil diperbarui.")
-    return redirect('admin_toko:warranty')
+    return redirect('admintoko:warranty')
 
 @user_passes_test(is_admin_toko, login_url='/auth/')
 def review_toggle_view(request, review_id):
@@ -118,7 +118,7 @@ def review_toggle_view(request, review_id):
         review.is_visible = not getattr(review, 'is_visible', True)
         review.save()
         messages.success(request, f"Visibilitas ulasan berhasil diperbarui.")
-    return redirect('admin_toko:reviews')
+    return redirect('admintoko:reviews')
 
 @user_passes_test(is_admin_toko, login_url='/auth/')
 def customers_view(request):
@@ -127,5 +127,5 @@ def customers_view(request):
     context = {
         'customers': customers
     }
-    return render(request, 'admin_toko/customers.html', context)
+    return render(request, 'admintoko/customers.html', context)
 

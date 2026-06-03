@@ -1,0 +1,107 @@
+{% extends "admintoko/base_admin.html" %}
+
+{% block title %}Dashboard - ZTP Admin Pro{% endblock %}
+{% block header_title %}Overview{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <!-- Card 1 -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 card-hover relative overflow-hidden group">
+        <div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+        <div class="flex items-center justify-between relative z-10">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pesanan Hari Ini</p>
+                <h3 class="text-4xl font-extrabold text-slate-800">{{ orders_today_count }}</h3>
+            </div>
+            <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-primary rotate-3 group-hover:rotate-0 transition-transform">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+            </div>
+        </div>
+        <div class="mt-5 flex gap-3 relative z-10">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-600 border border-amber-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span> {{ pending_orders }} Menunggu
+            </span>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span> {{ paid_orders }} Siap Kirim
+            </span>
+        </div>
+    </div>
+    
+    <!-- Card 2 -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 card-hover relative overflow-hidden group">
+        <div class="absolute -right-4 -top-4 w-24 h-24 bg-rose-50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+        <div class="flex items-center justify-between relative z-10">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Klaim Garansi</p>
+                <h3 class="text-4xl font-extrabold text-slate-800">{{ new_warranty_claims }}</h3>
+            </div>
+            <div class="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 -rotate-3 group-hover:rotate-0 transition-transform">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+        </div>
+        <div class="mt-6 relative z-10">
+            <a href="{% url 'admintoko:warranty' %}" class="inline-flex items-center text-sm text-rose-600 hover:text-rose-700 font-bold group-hover:translate-x-1 transition-transform">
+                Tinjau Laporan <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Empty Slot or Quick Links -->
+    <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 shadow-md text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full"></div>
+        <h3 class="text-lg font-bold mb-4">Aksi Cepat</h3>
+        <div class="space-y-3">
+            <a href="{% url 'admintoko:orders' %}?status=paid" class="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/20 transition backdrop-blur-sm">
+                <span class="text-sm font-medium text-slate-200">Proses Pengiriman</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+            <a href="https://app.crisp.chat/" target="_blank" class="flex items-center justify-between p-3 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-500/30 hover:bg-blue-500/30 transition backdrop-blur-sm">
+                <span class="text-sm font-bold">Buka Layanan Chat</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <h3 class="text-sm font-bold text-slate-800 flex items-center">
+            <span class="w-2 h-2 rounded-full bg-amber-500 mr-2"></span>
+            Stok Hampir Habis (&le; 2)
+        </h3>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-white border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <th class="px-6 py-4">Produk</th>
+                    <th class="px-6 py-4">Ukuran</th>
+                    <th class="px-6 py-4 text-right">Sisa Stok</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                {% for item in low_stock_sizes %}
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-700">{{ item.product.name }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{{ item.size }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold {% if item.stock == 0 %}bg-rose-50 text-rose-600 border border-rose-100{% else %}bg-amber-50 text-amber-600 border border-amber-100{% endif %}">
+                            {{ item.stock }} Unit
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="px-6 py-12 text-center">
+                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-50 text-green-500 mb-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <p class="text-sm font-medium text-slate-500">Stok semua produk dalam kondisi aman.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

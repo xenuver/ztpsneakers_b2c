@@ -1,0 +1,69 @@
+{% extends "admintoko/base_admin.html" %}
+
+{% block title %}Daftar Pelanggan - ZTP Admin Pro{% endblock %}
+{% block header_title %}Database Pelanggan{% endblock %}
+{% block header_subtitle %}Daftar pengguna terdaftar pada sistem.{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+        <h3 class="text-sm font-bold text-slate-800 tracking-tight">Data Registrasi</h3>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[600px]">
+            <thead>
+                <tr class="bg-white border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <th class="px-6 py-4">Profil Pelanggan</th>
+                    <th class="px-6 py-4">Informasi Kontak</th>
+                    <th class="px-6 py-4">Status & Waktu Bergabung</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                {% for customer in customers %}
+                <tr class="hover:bg-slate-50/50 transition-colors group">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-200 flex items-center justify-center font-bold text-slate-600 shadow-sm">
+                                {{ customer.email|make_list|first|upper }}
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-800">{{ customer.get_full_name|default:"Pengguna Tanpa Nama" }}</div>
+                                <div class="text-xs text-slate-400 font-medium">UID: #{{ customer.id }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            {{ customer.email }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col gap-1">
+                            <span class="inline-flex items-center w-fit px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100 uppercase tracking-wider">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span> Aktif
+                            </span>
+                            <div class="text-sm text-slate-500 mt-1 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                {{ customer.date_joined|date:"d M Y, H:i" }}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="px-6 py-16 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 text-slate-400 mb-4 border border-slate-200">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        </div>
+                        <h4 class="text-slate-700 font-bold mb-1">Tidak ada pelanggan</h4>
+                        <p class="text-sm text-slate-500">Belum ada pelanggan yang terdaftar di sistem.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

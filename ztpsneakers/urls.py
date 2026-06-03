@@ -21,14 +21,16 @@ from django.urls import path, include
 
 
 urlpatterns = [
+    path('admin/export-excel/', include([
+        path('', getattr(__import__('orders.admin_export', fromlist=['export_excel_admin_view']), 'export_excel_admin_view'), name='admin_export_excel'),
+    ])),
     path('admin/', admin.site.urls),
     path("",include("storefront.urls")),
     path("pesanan/", include("orders.urls")),
     path("user/", include("userauths.urls")),
     path("accounts/", include("allauth.urls")),
     path("core/", include("core.urls")),
-    path("admin-toko/", include("admin_toko.urls")),
-    path("jasmine/", include("jasmine.urls")),
+    path("admintoko/", include("admintoko.urls")),
 ]
 
 if settings.DEBUG:
