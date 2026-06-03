@@ -88,7 +88,7 @@ def auth_register(request):
 
 def auth_logout(request):
     logout(request)
-    return redirect("userauths:auth_main")
+    return redirect("/")
 
 def auth_profile(request):
     if not request.user.is_authenticated:

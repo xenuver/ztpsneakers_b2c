@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ZTP Sneakers{% endblock %}</title>
-    
-    <!-- Google Fonts: Jost and Bodoni Moda -->
+
+    <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -22,8 +23,8 @@
                         accent: '#000000',
                     },
                     fontFamily: {
-                        sans: ['Jost', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-                        serif: ['"Bodoni Moda"', 'ui-serif', 'Georgia', 'serif'],
+                        sans: ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        serif: ['Outfit', 'ui-serif', 'Georgia', 'serif'],
                     },
                     keyframes: {
                         marquee: {
@@ -39,33 +40,42 @@
         }
     </script>
     <style>
-        body { font-family: 'Jost', sans-serif; }
-        .font-luxury { font-family: '"Bodoni Moda"', serif; }
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .font-luxury {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
     </style>
-    
+
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@2.0.0"></script>
 
     {% block extra_head %}{% endblock %}
 </head>
+
 <body class="bg-light text-textPrimary font-sans antialiased h-screen">
-    
+
     {% if messages %}
-        <div class="fixed top-4 right-4 z-50 flex flex-col gap-2">
-            {% for message in messages %}
-                <div class="px-4 py-2 rounded shadow-lg {% if message.tags == 'error' %}bg-red-500 text-white{% else %}bg-accent text-black font-bold{% endif %}">
-                    {{ message }}
-                </div>
-            {% endfor %}
+    <div class="fixed top-4 right-4 z-50 flex flex-col gap-2">
+        {% for message in messages %}
+        <div
+            class="px-4 py-2 rounded shadow-lg {% if message.tags == 'error' %}bg-red-500 text-white{% else %}bg-accent text-black font-bold{% endif %}">
+            {{ message }}
         </div>
+        {% endfor %}
+    </div>
     {% endif %}
 
     <main class="h-full w-full">
         {% include "partials/navbar.html" %}
-        
+
         {% block content %}
         {% endblock %}
-        
+
         {% include "partials/footer.html" %}
     </main>
 
@@ -74,4 +84,5 @@
 
     {% block extra_scripts %}{% endblock %}
 </body>
+
 </html>

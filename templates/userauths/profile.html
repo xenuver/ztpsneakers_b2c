@@ -19,15 +19,15 @@
                     </div>
 
                     <nav class="space-y-2">
-                        <a href="{% url 'userauths:profile' %}" class="block px-4 py-3 rounded-lg bg-gray-50 text-black font-bold text-sm hover:bg-gray-100 transition border-l-4 border-primary">
+                        <button id="btn-profile" onclick="showTab('tab-profile')" class="tab-btn w-full text-left block px-4 py-3 rounded-lg bg-gray-50 text-black font-bold text-sm hover:bg-gray-100 transition border-l-4 border-primary">
                             Profil Pribadi
-                        </a>
-                        <a href="#" class="block px-4 py-3 rounded-lg text-gray-600 font-medium text-sm hover:bg-gray-50 transition border-l-4 border-transparent hover:border-gray-200">
+                        </button>
+                        <button id="btn-orders" onclick="showTab('tab-orders')" class="tab-btn w-full text-left block px-4 py-3 rounded-lg text-gray-600 font-medium text-sm hover:bg-gray-50 transition border-l-4 border-transparent hover:border-gray-200">
                             Pesanan Saya
-                        </a>
-                        <a href="#" class="block px-4 py-3 rounded-lg text-gray-600 font-medium text-sm hover:bg-gray-50 transition border-l-4 border-transparent hover:border-gray-200">
+                        </button>
+                        <button id="btn-wishlist" onclick="showTab('tab-wishlist')" class="tab-btn w-full text-left block px-4 py-3 rounded-lg text-gray-600 font-medium text-sm hover:bg-gray-50 transition border-l-4 border-transparent hover:border-gray-200">
                             Wishlist
-                        </a>
+                        </button>
                         <a href="{% url 'userauths:auth_logout' %}" class="block px-4 py-3 rounded-lg text-red-600 font-bold text-sm hover:bg-red-50 transition border-l-4 border-transparent hover:border-red-200 mt-8">
                             Keluar
                         </a>
@@ -35,44 +35,99 @@
                 </div>
             </div>
 
-            <!-- Profile Content -->
-            <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                <h1 class="text-2xl font-extrabold text-black uppercase tracking-tight mb-8 border-b border-gray-100 pb-4">Pengaturan Akun</h1>
-                
-                <form method="POST" action="">
-                    {% csrf_token %}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Email</label>
-                            <input type="email" value="{{ user.email }}" disabled class="w-full bg-gray-50 border border-gray-200 rounded-md py-3 px-4 text-sm text-gray-500 cursor-not-allowed">
-                            <p class="text-xs text-gray-400 mt-1">Email tidak dapat diubah.</p>
+            <!-- Content Area -->
+            <div class="flex-1">
+                <!-- Tab: Profile Content -->
+                <div id="tab-profile" class="tab-content bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                    <h1 class="text-2xl font-extrabold text-black uppercase tracking-tight mb-8 border-b border-gray-100 pb-4">Pengaturan Akun</h1>
+                    
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Email</label>
+                                <input type="email" value="{{ user.email }}" disabled class="w-full bg-gray-50 border border-gray-200 rounded-md py-3 px-4 text-sm text-gray-500 cursor-not-allowed">
+                                <p class="text-xs text-gray-400 mt-1">Email tidak dapat diubah.</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Username</label>
+                                <input type="text" name="username" value="{{ user.username }}" class="w-full bg-white border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-black focus:border-black transition">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Nomor HP</label>
+                                <input type="text" name="phone_number" value="{{ user.phone_number|default:'' }}" class="w-full bg-white border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-black focus:border-black transition">
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Alamat Pengiriman Default</label>
+                                <textarea name="address" rows="3" class="w-full bg-white border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-black focus:border-black transition">{{ user.address|default:'' }}</textarea>
+                            </div>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Username</label>
-                            <input type="text" name="username" value="{{ user.username }}" class="w-full bg-white border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-black focus:border-black transition">
+                        <div class="mt-8 flex justify-end">
+                            <button type="submit" class="bg-black text-white px-8 py-3 rounded-md font-bold text-sm uppercase tracking-wider hover:bg-gray-800 transition shadow-sm border border-black">
+                                Simpan Perubahan
+                            </button>
                         </div>
+                    </form>
+                </div>
 
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Nomor HP</label>
-                            <input type="text" name="phone_number" value="{{ user.phone_number|default:'' }}" class="w-full bg-white border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-black focus:border-black transition">
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Alamat Pengiriman Default</label>
-                            <textarea name="address" rows="3" class="w-full bg-white border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-black focus:border-black transition">{{ user.address|default:'' }}</textarea>
+                <!-- Tab: Pesanan Saya -->
+                <div id="tab-orders" class="tab-content hidden bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                    <h1 class="text-2xl font-extrabold text-black uppercase tracking-tight mb-8 border-b border-gray-100 pb-4">Pesanan Saya</h1>
+                    <div class="text-center py-12">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">Belum ada pesanan</h3>
+                        <p class="mt-1 text-sm text-gray-500">Anda belum melakukan transaksi apapun.</p>
+                        <div class="mt-6">
+                            <a href="/" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-green-800">
+                                Mulai Belanja
+                            </a>
                         </div>
                     </div>
+                </div>
 
-                    <div class="mt-8 flex justify-end">
-                        <button type="submit" class="bg-black text-white px-8 py-3 rounded-md font-bold text-sm uppercase tracking-wider hover:bg-gray-800 transition shadow-sm border border-black">
-                            Simpan Perubahan
-                        </button>
+                <!-- Tab: Wishlist -->
+                <div id="tab-wishlist" class="tab-content hidden bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                    <h1 class="text-2xl font-extrabold text-black uppercase tracking-tight mb-8 border-b border-gray-100 pb-4">Wishlist</h1>
+                    <div class="text-center py-12">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">Wishlist Kosong</h3>
+                        <p class="mt-1 text-sm text-gray-500">Temukan sneakers favorit Anda dan simpan di sini.</p>
                     </div>
-                </form>
+                </div>
             </div>
             
         </div>
     </div>
 </div>
+
+<script>
+function showTab(tabId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.add('hidden');
+    });
+    
+    // Show selected tab content
+    document.getElementById(tabId).classList.remove('hidden');
+    
+    // Reset all buttons
+    document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('bg-gray-50', 'border-primary', 'text-black', 'font-bold');
+        el.classList.add('border-transparent', 'text-gray-600', 'font-medium');
+    });
+    
+    // Highlight active button
+    const activeBtn = document.getElementById(tabId.replace('tab-', 'btn-'));
+    activeBtn.classList.remove('border-transparent', 'text-gray-600', 'font-medium');
+    activeBtn.classList.add('bg-gray-50', 'border-primary', 'text-black', 'font-bold');
+}
+</script>
 {% endblock %}

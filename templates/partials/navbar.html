@@ -1,9 +1,9 @@
 <!-- Top Strip -->
-<div class="bg-[#111827] text-white text-xs font-bold py-2 uppercase tracking-wider relative overflow-hidden h-8 flex items-center">
+<div id="promo-banner" class="bg-[#111827] text-white text-xs font-bold py-2 uppercase tracking-wider relative overflow-hidden h-8 flex items-center">
     <div class="whitespace-nowrap animate-marquee absolute text-center text-white font-extrabold tracking-widest">
         PROMO TERBATAS HARI INI - BELANJA SEKARANG UNTUK DISKON SPESIAL!
     </div>
-    <button class="text-white hover:text-gray-300 absolute right-4 z-10 bg-[#111827] pl-2">
+    <button onclick="document.getElementById('promo-banner').style.display='none'" class="text-white hover:text-gray-300 absolute right-4 z-10 bg-[#111827] pl-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
         </svg>
@@ -87,30 +87,15 @@
                     </button>
                     <!-- User -->
                     {% if user.is_authenticated %}
-                    <div class="relative group">
-                        <button type="button"
-                            class="flex items-center space-x-2 bg-gray-50 rounded-full pl-1 pr-3 py-1 border border-gray-200 hover:border-primary transition cursor-pointer">
+                    <div class="relative">
+                        <a href="{% url 'userauths:profile' %}"
+                            class="flex items-center space-x-2 bg-gray-50 rounded-full pl-1 pr-3 py-1 border border-gray-200 hover:border-primary hover:bg-gray-100 transition cursor-pointer">
                             <div
                                 class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
                                 {{ user.email|make_list|first|upper }}
                             </div>
-                            <span class="text-xs font-semibold text-black">{{
-                                user.username|default:user.email|truncatechars:10 }}</span>
-                        </button>
-                        <div
-                            class="absolute right-0 w-48 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg hidden group-hover:block">
-                            <div class="py-1">
-                                <a href="{% url 'userauths:profile' %}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold uppercase tracking-wider">Profil
-                                    Saya</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pesanan
-                                    Saya</a>
-                            </div>
-                            <div class="py-1">
-                                <a href="{% url 'userauths:auth_logout' %}"
-                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-bold">Keluar</a>
-                            </div>
-                        </div>
+                            <span class="text-xs font-semibold text-black">{{ user.username|default:user.email|truncatechars:10 }}</span>
+                        </a>
                     </div>
                     {% else %}
                     <a href="{% url 'userauths:auth_main' %}"
