@@ -1,0 +1,26 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}Profil Saya - ZTP Sneakers{% endblock %}
+
+{% block content %}
+<div style="padding: 40px; max-width: 600px;">
+    <h1>Profil Saya</h1>
+    <p>Berikut adalah detail akun Anda yang terdaftar di ZTP Sneakers:</p>
+    
+    <hr>
+
+    <ul>
+        <li><strong>Nama Lengkap:</strong> {{ user.username }}</li>
+        <li><strong>Email:</strong> {{ user.email }}</li>
+        <li><strong>Nomor WhatsApp:</strong> {{ user.phone_number }}</li>
+        <li><strong>Status Akun:</strong> {% if user.is_superuser %}Admin{% else %}Pelanggan{% endif %}</li>
+    </ul>
+
+    <hr>
+
+    <p>Ingat untuk keluar demi keamanan akun Anda:</p>
+    <a href="{% url 'userauths:logout' %}" style="color: red; font-weight: bold;">
+        🔴 Keluar dari Akun (Logout)
+    </a>
+</div>
+{% endblock %}

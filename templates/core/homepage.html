@@ -1,0 +1,103 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}ZTP Sneakers - Home{% endblock %}
+
+{% block content %}
+
+<!-- ====== HERO SLIDER (banners) ====== -->
+<section class="hero-slider">
+    <div class="slider-wrapper">
+        <div class="slider-track">
+            {% for banner in banners %}
+            <div class="slide">
+                <img src="{{ banner.image.url }}" alt="{{ banner.title }}">
+            </div>
+            {% endfor %}
+        </div>
+
+        <button class="slider-btn prev">&#10094;</button>
+        <button class="slider-btn next">&#10095;</button>
+
+        <div class="slider-dots">
+            {% for banner in banners %}
+            <span class="dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}"></span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ===== SECTION TOKO + RECOMMENDED ===== -->
+<section class="home-section">
+    <div class="home-container">
+
+        <!-- Judul besar tengah -->
+        <h2 class="home-heading">
+            Toko Sepatu Sneakers Pontianak
+        </h2>
+
+            <!-- RECOMMENDED FOR YOU -->
+            <header class="section-header">
+            <div class="section-title">
+                <span class="section-title-text">Recommended For You</span>
+                <span class="section-title-dot"></span>
+            </div>
+            <a href="#" class="section-viewall">View All</a>
+            </header>
+
+                <div class="product-row-scroll">
+                    {% for p in recommended_products %}
+                        <article class="product-card">
+                        <div class="product-thumb">
+                            <img src="{{ p.image.url }}" alt="{{ p.name }}">
+                        </div>
+                        <h3 class="product-name">{{ p.name }}</h3>
+                        <p class="product-price">
+                            Rp {{ p.price|intcomma }}
+                        </p>
+                        </article>
+                    {% empty %}
+                        <p>Belum ada produk.</p>
+                    {% endfor %}
+                    </div>
+
+    </div>
+</section>
+
+<!-- ========== BRAND POPULAR ========== -->
+<section class="home-section">
+    <div class="home-container">
+
+        <!-- Brand Popular -->
+            <header class="section-header">
+                <div class="section-title">
+                <span class="section-title-text">Brand Popular</span>
+                <span class="section-title-dot"></span>
+                </div>
+                <a href="#" class="section-viewall">View All</a>
+            </header>
+
+                <!-- ROW BRAND (SCROLL HORIZONTAL) -->
+            <div class="brand-row">
+                {% for b in popular_brands %}
+                    <article class="product-card brand-card">
+                        <div class="product-thumb">
+                            {% if b.image %}
+                                <img src="{{ b.image.url }}" alt="{{ b.name }}">
+                            {% else %}
+                                <div class="no-image-placeholder">
+                                    {{ b.name|upper }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <h3 class="product-name">{{ b.name }}</h3>
+                        <p class="product-price">&nbsp;</p>  <!-- biar tinggi card sama -->
+                    </article>
+                {% endfor %}
+            </div>
+    </div>
+</section>
+
+
+{% endblock %}

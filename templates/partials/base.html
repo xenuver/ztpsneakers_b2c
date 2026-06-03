@@ -1,0 +1,242 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}ZTP Sneakers{% endblock %}</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-left">
+            <a href="#" class="mobile-search-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </a>
+
+            <img src="{% static 'assets/images/ztppng.png' %}" alt="ZTP Sneakers Logo" class="logo" />
+            <input type="text" class="search" placeholder="Search for products and brand" />
+        </div>
+
+        <nav class="nav-menu">
+            <div class="mobile-menu-logo">
+                <img src="{% static 'assets/images/ztppng.png' %}" alt="ZTP Sneakers Logo" />
+            </div>
+            
+            <a href="#" class="nav-link">BROWSE ALL</a>
+            <a href="#" class="nav-link">HOT ITEM</a>
+
+            <div class="nav-dropdown">
+                <button class="nav-link nav-drop-toggle" type="button">
+                    CATEGORIES
+                    <span class="nav-drop-chevron">▾</span>
+                </button>
+                <div class="nav-drop-menu">
+                    <a href="#" class="nav-drop-item">Nike</a>
+                    <a href="#" class="nav-drop-item">Adidas</a>
+                    <a href="#" class="nav-drop-item">Puma</a>
+                    <a href="#" class="nav-drop-item">New Balance</a>
+                    <a href="#" class="nav-drop-item">Converse</a>
+                </div>
+            </div>
+
+            <div class="nav-dropdown">
+                <button class="nav-link nav-drop-toggle" type="button">
+                    MORE
+                    <span class="nav-drop-chevron">▾</span>
+                </button>
+                <div class="nav-drop-menu">
+                    <a href="#" class="nav-drop-item">Grail Collection</a>
+                    <a href="#" class="nav-drop-item">Running Collection</a>
+                    <a href="#" class="nav-drop-item">Sneakers &lt; 1 Juta</a>
+                    <a href="#" class="nav-drop-item">Sneakers 1–2 Juta</a>
+                    <a href="#" class="nav-drop-item">Sneakers 2–3 Juta</a>
+                </div>
+            </div>
+
+            <div class="mobile-only-menu">
+                <a href="#" class="cart">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.2 14l-.18.72C6.89 16.1 7.84 17 9 17h8v-2H9.42c-.14 0-.25-.11-.25-.25l.03-.12L10.1 13h6.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 21 4H5.21l-.94-2H1v2h2l3.6 7.59-.4 1.41z"/>
+                    </svg>
+                    Keranjang
+                </a>
+    
+                {% if user.is_authenticated %}
+                <a href="{% url 'userauths:logout' %}" class="profile">Logout ({{ user.username }})</a>
+                {% else %}
+                <a href="{% url 'userauths:entry' %}" class="profile">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+
+        <div class="nav-right">
+            <a href="#" class="cart">
+                <span class="cart-box">
+                    <svg viewBox="0 0 24 24" class="cart-svg" fill="currentColor">
+                    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.2 14l-.18.72C6.89 16.1 7.84 17 9 17h8v-2H9.42c-.14 0-.25-.11-.25-.25l.03-.12L10.1 13h6.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 21 4H5.21l-.94-2H1v2h2l3.6 7.59-.4 1.41z"/>
+                    </svg>
+                </span>
+            </a>
+                        {% if user.is_authenticated %}
+                <a href="{% url 'userauths:profile' %}" class="profile-badge">
+                    <div class="profile-circle">
+                        {{ user.username|slice:":2"|upper }}
+                    </div>
+                    <span class="profile-name">{{ user.username|truncatechars:8 }}</span>
+                </a>
+            {% else %}
+                <a href="{% url 'userauths:entry' %}" class="profile">Login</a>
+            {% endif %}
+        </div>
+
+        <div class="nav-hamburger" id="hamburger">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <div class="nav-overlay" id="nav-overlay"></div>
+    </header>
+
+    
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer>
+
+        <!-- TOP BENEFITS -->
+        <section class="footer-top">
+            <div class="footer-top-item">
+                <div class="ft-icon">😊</div>
+                <h4>Garansi Puas</h4>
+                <p>Kami pastikan Anda puas dengan setiap produk ZTP Sneakers.</p>
+            </div>
+            <div class="footer-top-item">
+                <div class="ft-icon">↩</div>
+                <h4>7 Hari Pengembalian</h4>
+                <p>Pengembalian mudah dalam 7 hari setelah pesanan diterima.</p>
+            </div>
+            <div class="footer-top-item">
+                <div class="ft-icon">🚚</div>
+                <h4>Gratis Ongkir</h4>
+                <p>Pengiriman aman & cepat ke seluruh Indonesia.</p>
+            </div>
+            <div class="footer-top-item">
+                <div class="ft-icon">👟</div>
+                <h4>Koleksi Terlengkap</h4>
+                <p>Koleksi sneakers autentik terbaru dari berbagai brand.</p>
+            </div>
+        </section>
+
+        <!-- MAIN FOOTER -->
+        <section class="footer-main">
+            <div class="footer-main-inner">
+
+                <div class="footer-col footer-brand">
+                    <h2>ZTP SNEAKERS</h2>
+                    <p class="footer-subtitle">Official Store Locations</p>
+                    <ul>
+                        <li><strong>PONTIANAK</strong><br>Jl. Mulyo </li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Information</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contacts Admin</h4>
+                    <ul>
+                        <li>
+                            <a href="https://wa.me/6281200000000" target="_blank">
+                                WhatsApp: +62 812 0000 0000
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://wa.me/6281300000000" target="_blank">
+                                WhatsApp: +62 813 0000 0000
+                            </a>
+                        </li>
+                    </ul>
+                    <h4 style="margin-top: 16px;">ZTP Sneakers HQ</h4>
+                    <ul>
+                        <li>Phone: +62 811 1111 111</li>
+                        <li>www.ztpsneakers.com</li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Keep in touch with us!</h4>
+                    <div class="footer-social">
+                        <a href="#" class="social-icon">
+                            <svg height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <svg height="22" viewBox="0 0 24 24" fill="white">
+                            <path d="M22 12a10 10 0 1 0-11.5 9.87v-7h-2v-3h2v-2.3c0-2.1 1.2-3.3 3-3.3 .9 0 1.8.1 1.8.1v2h-1c-1 0-1.3.62-1.3 1.25V12h2.3l-.37 3h-1.93v7A10 10 0 0 0 22 12z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <svg height="22" viewBox="0 0 24 24" fill="white">
+                            <path d="M19 6.5a5.4 5.4 0 0 1-3-1v8.2a5.3 5.3 0 1 1-5.3-5.3c.3 0 .7 0 1 .1v2.2a2.9 2.9 0 1 0 2 2.7V2h2.2c0 .6.2 1.1.5 1.6a3.3 3.3 0 0 0 1.7 1.3v1.6z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <svg height="22" viewBox="0 0 24 24" fill="white">
+                            <path d="M7 6V5a5 5 0 0 1 10 0v1h3v14H4V6h3zm2 0h6V5a3 3 0 0 0-6 0v1z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <svg height="22" viewBox="0 0 24 24" fill="white">
+                            <path d="M23 7a3 3 0 0 0-2-2c-1.6-.4-8-.4-8-.4s-6.4 0-8 .4A3 3 0 0 0 3 7a31 31 0 0 0 0 10 3 3 0 0 0 2 2c1.6.4 8 .4 8 .4s6.4 0 8-.4a3 3 0 0 0 2-2 31 31 0 0 0 0-10z"/>
+                            <polygon fill="#efefef" points="10 15 15 12 10 9"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========== FOOTER BOTTOM BLACK BAR ========== -->
+        <section class="footer-bottom-black">
+            <div class="footer-bottom-inner">
+            {% for icon in footer_icons %}
+            <img src="{{ icon.image.url }}" alt="{{ icon.title }}" class="footer-bottom-icon">
+            {% endfor %}
+            </div>
+        </section>  
+    </footer>
+
+    <!-- JS -->
+    <script src="{% static 'assets/js/script.js' %}"></script>
+</body>
+</html>

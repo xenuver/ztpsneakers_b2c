@@ -1,0 +1,57 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block title %}Daftar - ZTP Sneakers{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'assets/css/sign.css' %}">
+
+<div class="container">
+  <div class="left-section">
+    <h1>Hello!</h1>
+    <p>Sepertinya Anda belum memiliki akun.</p>
+    <p>Lengkapi detail di samping untuk bergabung bersama kami.</p>
+    <a href="{% url 'userauths:entry' %}" class="btn-outline">Kembali</a>
+  </div>
+  
+  <div class="right-section">
+    <h2>Create Account</h2>
+    
+    {% if messages %}
+      <div class="alert-container" style="color: #d9534f; background: #f9f2f2; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          {% for message in messages %}
+            <li style="margin-bottom: 5px;">⚠️ {{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      
+      <div class="form-group">
+          {{ form.username }}
+      </div>
+      
+      <div class="form-group">
+          {{ form.email }}
+      </div>
+      
+      <div class="form-group">
+          {{ form.phone_number }}
+      </div>
+      
+      <div class="form-group">
+          {{ form.password1 }}  
+      </div>
+      
+      <div class="form-group">
+          {{ form.password2 }}  
+      </div>
+      
+      <button type="submit" class="btn">Sign Up</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

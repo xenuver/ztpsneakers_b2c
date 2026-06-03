@@ -1,0 +1,32 @@
+/* Ubah warna brand / header / tombol utama Jazzmin ke warna ZTP (#ef8215) */
+
+/* Warna link brand di sidebar atas */
+.brand-link {
+    background-color: #ef8215 !important;
+}
+
+/* Tombol utama */
+.btn-primary,
+.btn-outline-primary:hover {
+    background-color: #ef8215 !important;
+    border-color: #ef8215 !important;
+}
+
+/* Link aktif di sidebar */
+.nav-sidebar .nav-item > .nav-link.active,
+.nav-sidebar .nav-item > .nav-link:hover {
+    background-color: #ef8215 !important;
+    border-radius: 8px;
+}
+
+/* Checkbox / radio primary */
+.custom-control-input:checked ~ .custom-control-label::before {
+    border-color: #ef8215 !important;
+    background-color: #ef8215 !important;
+}
+
+/* Warna highlight pada pagination aktif */
+.page-item.active .page-link {
+    background-color: #ef8215 !important;
+    border-color: #ef8215 !important;
+}

@@ -1,0 +1,40 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block title %}Login - ZTP Sneakers{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'assets/css/up.css' %}">
+
+<div class="container">
+  <div class="left-section">
+    <h1>Welcome Back!</h1>
+    <p>Bukan Anda? Ingin ganti akun?</p>
+    <a href="{% url 'userauths:entry' %}" class="btn-outline">Ganti Akun</a>
+  </div>
+
+  <div class="right-section">
+    <h2>Login</h2>
+    
+    {% if messages %}
+      <div style="color: red; margin-bottom: 15px; font-size: 14px;">
+          {% for message in messages %}
+              ⚠️ {{ message }}
+          {% endfor %}
+      </div>
+    {% endif %}
+
+    <p style="margin-bottom: 15px; color: #555;">Melanjutkan sebagai: <strong>{{ identifier }}</strong></p>
+    
+    <form method="POST">
+      {% csrf_token %}
+      <div class="input-group">
+        {{ form.password }}
+        <span class="icon">🔒</span>
+      </div>
+      <a href="#" class="forgot-password">Forgot password?</a>
+      <button type="submit" class="btn">Login</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
