@@ -18,11 +18,11 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#059669` | `--color-primary` |
-| Secondary | `#10B981` | `--color-secondary` |
-| CTA/Accent | `#F97316` | `--color-cta` |
-| Background | `#ECFDF5` | `--color-background` |
-| Text | `#064E3B` | `--color-text` |
+| Primary | `#0B6A42` | `--color-primary` |
+| Secondary | `#0B6A42` | `--color-secondary` |
+| CTA/Accent | `#0B6A42` | `--color-cta` |
+| Background | `#F9F9F9` | `--color-background` |
+| Text | `#000000` | `--color-text` |
 
 **Color Notes:** Success green + urgency orange
 
@@ -68,7 +68,7 @@
 ```css
 /* Primary Button */
 .btn-primary {
-  background: #F97316;
+  background: #0B6A42;
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
@@ -85,8 +85,8 @@
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #059669;
-  border: 2px solid #059669;
+  color: #0B6A42;
+  border: 2px solid #0B6A42;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;

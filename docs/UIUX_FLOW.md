@@ -21,7 +21,8 @@
 --text-secondary: #666666;    /* teks muted */
 --text-hint:      #999999;    /* placeholder, hint */
 
---accent-black:   #000000;    /* CTA utama — minimalis/premium */
+--accent-black:   #000000;    /* Text bold default */
+--accent-green:   #0B6A42;    /* CTA utama — Buttons (Forest Green bg-primary text-white) */
 --accent-red:     #E53935;    /* flash sale, error, sold out */
 --success:        #2E7D32;
 --warning:        #F57C00;

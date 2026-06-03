@@ -144,8 +144,7 @@
 
                     <form method="POST" action="">
                         {% csrf_token %}
-                        <!-- Hidden fields for submission -->
-                        <button type="submit" class="w-full bg-primary border border-transparent rounded-md shadow-sm py-4 px-4 text-sm font-bold text-white hover:bg-green-800 transition uppercase tracking-widest">
+                        <button type="submit" class="w-full bg-primary border border-transparent rounded-md shadow-sm py-4 px-4 text-sm font-bold text-white hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-primary uppercase tracking-widest transition">
                             Buat Pesanan
                         </button>
                     </form>

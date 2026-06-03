@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from products.models import Banner, Product, Category
+from products.models import Banner, Product, Category, Brand
 
 def home_view(request):
     banners = Banner.objects.filter(is_active=True).order_by('order', '-id')

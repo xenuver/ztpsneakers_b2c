@@ -24,6 +24,15 @@
                     fontFamily: {
                         sans: ['Jost', 'ui-sans-serif', 'system-ui', 'sans-serif'],
                         serif: ['"Bodoni Moda"', 'ui-serif', 'Georgia', 'serif'],
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(-20%)' },
+                            '100%': { transform: 'translateX(100vw)' },
+                        }
+                    },
+                    animation: {
+                        marquee: 'marquee 25s linear infinite',
                     }
                 }
             }
@@ -39,7 +48,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-light text-textPrimary font-sans antialiased h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<body class="bg-light text-textPrimary font-sans antialiased h-screen">
     
     {% if messages %}
         <div class="fixed top-4 right-4 z-50 flex flex-col gap-2">

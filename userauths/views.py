@@ -13,7 +13,14 @@ def auth_check(request):
     if request.method == "POST":
         identifier = request.POST.get("identifier", "").strip()
         if not identifier:
-            return HttpResponse("Silakan masukkan email atau nomor HP", status=400)
+            response = HttpResponse('<div class="text-red-500 font-bold mb-4 text-center text-sm">Silakan masukkan email atau nomor HP yang valid</div>')
+            response['HX-Retarget'] = '#auth-error'
+            return response
+            
+        if identifier.isdigit() and len(identifier) < 12:
+            response = HttpResponse('<div class="text-red-500 font-bold mb-4 text-center text-sm">Nomor HP harus minimal 12 digit</div>')
+            response['HX-Retarget'] = '#auth-error'
+            return response
             
         user = User.objects.filter(Q(email=identifier) | Q(phone_number=identifier)).first()
         
