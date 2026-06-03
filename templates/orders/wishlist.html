@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Wishlist - ZTPSneakers{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-extrabold text-black uppercase tracking-tight mb-8">Wishlist Anda</h1>
+        
+        {% if wishlists %}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {% for item in wishlists %}
+            <div class="group relative card-product bg-white rounded-md shadow-sm border border-gray-100 overflow-hidden">
+                <a href="{% url 'storefront:product_detail' item.product.slug %}" class="block">
+                    <div class="w-full h-64 bg-gray-100 flex items-center justify-center relative">
+                        {% if item.product.get_primary_image %}
+                            <img src="{{ item.product.get_primary_image }}" alt="{{ item.product.name }}" class="w-full h-full object-center object-cover group-hover:opacity-75 transition-opacity">
+                        {% else %}
+                            <span class="text-gray-400">No Image</span>
+                        {% endif %}
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-sm font-medium text-black truncate">{{ item.product.name }}</h3>
+                        <p class="mt-1 text-xs text-gray-500">{{ item.product.brand.name }}</p>
+                        <div class="mt-2 flex items-center gap-2">
+                            <p class="text-sm font-bold text-black">Rp {{ item.product.price|floatformat:"0" }}</p>
+                        </div>
+                    </div>
+                </a>
+                <button type="button" 
+                        hx-post="{% url 'orders:toggle_wishlist' item.product.id %}?from_wishlist=1" 
+                        hx-target="closest .card-product" 
+                        hx-swap="outerHTML"
+                        class="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm text-red-500 hover:text-red-700 transition">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+            <svg class="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Wishlist Anda Masih Kosong</h3>
+            <p class="text-sm text-gray-500 mb-6">Temukan sneakers favorit Anda dan simpan di sini untuk dibeli nanti.</p>
+            <a href="{% url 'storefront:catalog' %}" class="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-primary hover:bg-green-800 transition uppercase tracking-wider">
+                Mulai Belanja
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

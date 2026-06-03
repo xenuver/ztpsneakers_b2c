@@ -102,7 +102,7 @@
 - [x] Filter + sort via HTMX (update grid tanpa reload halaman)
 - [x] HTMX live search (debounce 300ms)
 - [x] Produk card: foto hover scale, nama, harga, badge SOLD OUT / NEW
-- [ ] Pagination infinite scroll via HTMX `hx-trigger="revealed"`
+- [x] Pagination infinite scroll via HTMX `hx-trigger="revealed"`
 
 ### Storefront — Detail Produk
 - [x] Galeri foto: foto utama besar + thumbnail kecil, klik ganti foto utama
@@ -122,15 +122,15 @@
 ### Wishlist
 - [x] Model `Wishlist`: customer (FK), product (FK), created_at
 - [x] HTMX toggle wishlist dari card produk dan halaman detail
-- [ ] Halaman `/wishlist/` — grid produk + tombol hapus
-- [ ] Kirim email notifikasi jika produk di wishlist stok hampir habis (≤ 2)
+- [x] Halaman `/wishlist/` — grid produk + tombol hapus
+- [x] Kirim email notifikasi jika produk di wishlist stok hampir habis (≤ 2)
 
 ### Keranjang
 - [x] Model `Cart` + `CartItem`
 - [x] Persistent cart: simpan ke DB jika login, session jika guest → merge saat login
-- [x] Sidebar cart (drawer kanan) via HTMX `hx-swap="innerHTML"`
-- [ ] Update qty + hapus item via HTMX
-- [ ] Halaman `/cart/` — full cart view
+- [x] Tambah ke keranjang (dengan pilihan ukuran) via HTMX
+- [x] HTMX Keranjang: update qty (+/-), hapus item (tanpa reload)
+- [x] Cart drawer (slide dari samping kanan) + halaman `/cart/` penuh
 - [ ] Validasi stok saat add to cart dan saat checkout
 
 ### Checkout

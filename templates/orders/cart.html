@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Keranjang - ZTPSneakers{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" hx-get="{% url 'orders:cart_page' %}" hx-trigger="cartUpdated from:body" hx-select="#cart-container" hx-swap="outerHTML">
+        <div id="cart-container">
+            <h1 class="text-3xl font-extrabold text-black uppercase tracking-tight mb-8">Keranjang Belanja</h1>
+            
+            {% if cart and cart.items.exists %}
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Cart Items -->
+                <div class="lg:col-span-8 space-y-4">
+                    {% for item in cart.items.all %}
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex gap-4 items-center">
+                        <div class="w-24 h-24 bg-gray-100 rounded-md flex-shrink-0">
+                            {% if item.product.get_primary_image %}
+                                <img src="{{ item.product.get_primary_image }}" alt="{{ item.product.name }}" class="w-full h-full object-cover rounded-md">
+                            {% else %}
+                                <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-base font-bold text-gray-900 truncate">{{ item.product.name }}</h3>
+                            <p class="text-sm text-gray-500 mt-1">Size: {{ item.size.size }}</p>
+                            <p class="text-sm font-bold text-black mt-2">Rp {{ item.product.price|floatformat:"0" }}</p>
+                        </div>
+                        <div class="flex flex-col items-end gap-4">
+                            <button type="button" 
+                                    hx-post="{% url 'orders:remove_cart_item' item.id %}" 
+                                    hx-swap="none"
+                                    class="text-red-500 hover:text-red-700 p-1">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                            <div class="flex items-center border border-gray-200 rounded-md">
+                                <button type="button" 
+                                        hx-post="{% url 'orders:update_cart_item' item.id %}" 
+                                        hx-vals='{"action": "decrease"}'
+                                        hx-swap="none"
+                                        class="px-2 py-1 text-gray-600 hover:bg-gray-100 transition">-</button>
+                                <span class="px-2 text-sm font-medium">{{ item.quantity }}</span>
+                                <button type="button" 
+                                        hx-post="{% url 'orders:update_cart_item' item.id %}" 
+                                        hx-vals='{"action": "increase"}'
+                                        hx-swap="none"
+                                        class="px-2 py-1 text-gray-600 hover:bg-gray-100 transition"
+                                        {% if item.quantity >= item.size.stock %}disabled{% endif %}>+</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Order Summary -->
+                <div class="lg:col-span-4">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-24">
+                        <h2 class="text-lg font-bold text-gray-900 mb-4 uppercase">Ringkasan Belanja</h2>
+                        <div class="space-y-2 mb-4 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Total Harga ({{ cart.items.count }} Barang)</span>
+                                <span class="font-medium text-black">Rp {{ cart.get_total_price|floatformat:"0" }}</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-200 pt-4 mb-6">
+                            <div class="flex justify-between items-center">
+                                <span class="text-base font-bold text-gray-900">Total Tagihan</span>
+                                <span class="text-lg font-bold text-black">Rp {{ cart.get_total_price|floatformat:"0" }}</span>
+                            </div>
+                        </div>
+                        <a href="{% url 'orders:checkout' %}" class="w-full block text-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-primary hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition uppercase tracking-wider">
+                            Lanjut ke Checkout
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+                <svg class="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Keranjang Anda Kosong</h3>
+                <p class="text-sm text-gray-500 mb-6">Temukan sneakers favorit Anda dan tambahkan ke keranjang.</p>
+                <a href="{% url 'storefront:catalog' %}" class="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-primary hover:bg-green-800 transition uppercase tracking-wider">
+                    Mulai Belanja
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

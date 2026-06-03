@@ -94,6 +94,29 @@ class ProductSize(models.Model):
     def __str__(self):
         return f"{self.product.name} - Size {self.size}"
 
+    def save(self, *args, **kwargs):
+        # Determine if this is an update that drops total stock to <= 2
+        is_existing = self.pk is not None
+        super().save(*args, **kwargs)
+        
+        # Calculate total stock
+        total_stock = sum(s.stock for s in self.product.sizes.all())
+        if total_stock <= 2:
+            from django.apps import apps
+            Wishlist = apps.get_model('orders', 'Wishlist')
+            Notification = apps.get_model('core', 'Notification')
+            
+            wishlists = Wishlist.objects.filter(product=self.product)
+            for w in wishlists:
+                # Check if unread notification already exists to avoid spamming
+                if not Notification.objects.filter(user=w.user, title="Stok Hampir Habis!", message__contains=self.product.name, is_read=False).exists():
+                    Notification.objects.create(
+                        user=w.user,
+                        title="Stok Hampir Habis!",
+                        message=f"Produk wishlist Anda '{self.product.name}' sisa {total_stock} stok terakhir. Beli sekarang sebelum kehabisan!",
+                        link=f"/produk/{self.product.slug}/"
+                    )
+
 class Banner(models.Model):
     title = models.CharField(max_length=200)
     subtitle = models.CharField(max_length=200, blank=True)

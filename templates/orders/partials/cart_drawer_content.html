@@ -41,9 +41,10 @@
                                         </div>
                                         <div class="flex-1 flex items-end justify-between text-sm">
                                             <p class="text-gray-500">Qty {{ item.quantity }}</p>
-                                            <div class="flex">
-                                                <button type="button" class="font-medium text-black hover:text-gray-800 underline">Hapus</button>
-                                            </div>
+                                                <button type="button" 
+                                                        hx-post="{% url 'orders:remove_cart_item' item.id %}" 
+                                                        hx-swap="none"
+                                                        class="font-medium text-black hover:text-gray-800 underline">Hapus</button>
                                         </div>
                                     </div>
                                 </li>
@@ -63,8 +64,9 @@
                         <p>Rp {{ cart.get_total_price|floatformat:"0" }}</p>
                     </div>
                     <p class="mt-0.5 text-sm text-gray-500">Ongkos kirim dan pajak dihitung saat checkout.</p>
-                    <div class="mt-6">
+                    <div class="mt-6 flex flex-col gap-3">
                         <a href="{% url 'orders:checkout' %}" class="flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800">Checkout</a>
+                        <a href="{% url 'orders:cart_page' %}" class="flex justify-center items-center px-6 py-3 border border-black rounded-md shadow-sm text-base font-medium text-black bg-white hover:bg-gray-50">Lihat Keranjang</a>
                     </div>
                     <div class="mt-6 flex justify-center text-sm text-center text-gray-500">
                         <p>

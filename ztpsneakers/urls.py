@@ -26,6 +26,7 @@ urlpatterns = [
     path("pesanan/", include("orders.urls")),
     path("user/", include("userauths.urls")),
     path("accounts/", include("allauth.urls")),
+    path("core/", include("core.urls")),
 ]
 
 if settings.DEBUG:

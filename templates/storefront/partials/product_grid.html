@@ -1,5 +1,10 @@
 {% for product in products %}
-<a href="{% url 'storefront:product_detail' product.slug %}" class="group relative card-product">
+<a href="{% url 'storefront:product_detail' product.slug %}" class="group relative card-product"
+{% if forloop.last and products.has_next %}
+    hx-get="?page={{ products.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if brand_id %}&brand={{ brand_id }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+    hx-trigger="revealed"
+    hx-swap="afterend"
+{% endif %}>
     <div class="w-full h-64 bg-gray-100 rounded-t-md overflow-hidden flex items-center justify-center relative">
         {% if product.get_primary_image %}
             <img src="{{ product.get_primary_image }}" alt="{{ product.name }}" class="w-full h-full object-center object-cover group-hover:opacity-75 transition-opacity">

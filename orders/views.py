@@ -28,6 +28,9 @@ def toggle_wishlist(request, product_id):
     else:
         is_wished = True
         
+    if request.GET.get('from_wishlist') and not is_wished:
+        return HttpResponse("")
+        
     # Kembalikan ikon heart via HTMX
     svg_fill = "currentColor" if is_wished else "none"
     text_color = "text-red-500" if is_wished else "text-gray-400"
@@ -78,6 +81,43 @@ def cart_drawer(request):
     cart = get_or_create_cart(request)
     return render(request, "orders/partials/cart_drawer_content.html", {'cart': cart})
 
+def update_cart_item(request, item_id):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        cart = get_or_create_cart(request)
+        item = get_object_or_404(CartItem, id=item_id, cart=cart)
+        
+        if action == 'increase':
+            if item.quantity < item.size.stock:
+                item.quantity += 1
+                item.save()
+        elif action == 'decrease':
+            if item.quantity > 1:
+                item.quantity -= 1
+                item.save()
+            else:
+                item.delete()
+                
+        # Return empty response but trigger events to reload cart components
+        response = HttpResponse()
+        response['HX-Trigger'] = 'cartUpdated'
+        return response
+    return HttpResponseForbidden()
+
+def remove_cart_item(request, item_id):
+    if request.method in ['POST', 'DELETE']:
+        cart = get_or_create_cart(request)
+        item = get_object_or_404(CartItem, id=item_id, cart=cart)
+        item.delete()
+        response = HttpResponse()
+        response['HX-Trigger'] = 'cartUpdated'
+        return response
+    return HttpResponseForbidden()
+
+def cart_view(request):
+    cart = get_or_create_cart(request)
+    return render(request, "orders/cart.html", {'cart': cart})
+
 def checkout_view(request):
     cart = get_or_create_cart(request)
     if not cart.items.exists():
@@ -92,3 +132,13 @@ def checkout_view(request):
         'provinces': provinces,
     }
     return render(request, "orders/checkout.html", context)
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def wishlist_view(request):
+    wishlists = request.user.wishlists.all()
+    context = {
+        'wishlists': wishlists,
+    }
+    return render(request, "orders/wishlist.html", context)
