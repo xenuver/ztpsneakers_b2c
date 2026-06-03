@@ -23,7 +23,7 @@ class BrandAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'brand', 'category', 'price', 'is_active', 'is_featured')
-    list_filter = ('is_active', 'is_featured', 'condition', 'brand', 'category')
+    list_filter = ('is_active', 'is_featured', 'condition', 'color', 'brand', 'category')
     search_fields = ('name', 'description')
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline, ProductSizeInline]
