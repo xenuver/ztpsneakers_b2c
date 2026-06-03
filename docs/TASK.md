@@ -255,37 +255,37 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 > **Evaluasi Sistem Saat Ini:** Berdasarkan audit sistem, ditemukan beberapa *bottleneck* kritis pada alur checkout yang menyebabkan performa lambat, *state* keranjang hilang, dan disfungsi pada API pihak ketiga. Berikut adalah rancangan arsitektur perbaikannya:
 
 ### A. Persistensi Keranjang (Cart Session Fix)
-- **Masalah:** Saat ini *guest user* (belum login) kehilangan keranjang belanja saat kembali ke halaman utama (*homepage*). Ini terjadi karena `request.session.create()` di Django tidak otomatis mengirimkan *cookie* jika tidak ada data sesi yang secara spesifik dimodifikasi (aturan *session.modified*).
-- **Desain Solusi:** 
-  - Modifikasi fungsi `get_or_create_cart` di `orders/views.py`.
-  - Berikan trigger mutasi sesi: `request.session['cart_initialized'] = True` tepat setelah membuat sesi baru. Hal ini memaksa *middleware* Django untuk menyimpan *cookie* `sessionid` di peramban (browser) pengguna.
+- [x] **Masalah:** Saat ini *guest user* (belum login) kehilangan keranjang belanja saat kembali ke halaman utama (*homepage*). Ini terjadi karena `request.session.create()` di Django tidak otomatis mengirimkan *cookie* jika tidak ada data sesi yang secara spesifik dimodifikasi (aturan *session.modified*).
+- [x] **Desain Solusi:** 
+  - [x] Modifikasi fungsi `get_or_create_cart` di `orders/views.py`.
+  - [x] Berikan trigger mutasi sesi: `request.session['cart_initialized'] = True` tepat setelah membuat sesi baru. Hal ini memaksa *middleware* Django untuk menyimpan *cookie* `sessionid` di peramban (browser) pengguna.
 
 ### B. Optimasi Kecepatan Checkout & Integrasi RajaOngkir
-- **Masalah:** Halaman `/checkout/` memuat sangat lambat karena melakukan panggilan API *Synchronous* ke RajaOngkir (`get_rajaongkir_provinces`) setiap kali halaman di-*load*.
-- **Desain Solusi:**
-  1. **Caching Layer:** Terapkan `django.core.cache` (Memcached/Redis atau FileBasedCache) untuk menyimpan data Provinsi dan Kota selama minimal 24 jam. Hal ini akan memangkas waktu muat dari 2000ms menjadi 10ms.
-  2. **Validasi Kredensial:** Pastikan `RAJAONGKIR_API_KEY` di *Environment* (`.env`) adalah kunci yang valid (bukan *dummy*), karena API tidak akan membalas dengan JSON yang benar jika kuncinya ditolak.
-  3. **Error Handling UI:** Tambahkan *fallback* teks merah di UI menggunakan HTMX jika API RajaOngkir *timeout* atau gagal (saat ini error *backend* hanya ditangkap oleh `print()`).
+- [x] **Masalah:** Halaman `/checkout/` memuat sangat lambat karena melakukan panggilan API *Synchronous* ke RajaOngkir (`get_rajaongkir_provinces`) setiap kali halaman di-*load*.
+- [x] **Desain Solusi:**
+  - [x] **Caching Layer:** Terapkan `django.core.cache` (Memcached/Redis atau FileBasedCache) untuk menyimpan data Provinsi dan Kota selama minimal 24 jam. Hal ini akan memangkas waktu muat dari 2000ms menjadi 10ms.
+  - [ ] **Validasi Kredensial:** Pastikan `RAJAONGKIR_API_KEY` di *Environment* (`.env`) adalah kunci yang valid (bukan *dummy*), karena API tidak akan membalas dengan JSON yang benar jika kuncinya ditolak.
+  - [ ] **Error Handling UI:** Tambahkan *fallback* teks merah di UI menggunakan HTMX jika API RajaOngkir *timeout* atau gagal (saat ini error *backend* hanya ditangkap oleh `print()`).
 
 ### C. Pembayaran Midtrans Snap
-- **Masalah:** *Popup* Midtrans belum muncul dengan benar.
-- **Desain Solusi:**
-  - Kunci `MIDTRANS_SERVER_KEY` dan `MIDTRANS_CLIENT_KEY` di `.env` harus valid (gunakan *sandbox* untuk pengujian).
-  - Pastikan di `checkout_success.html` sudah me-render `<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ client_key }}"></script>` dan otomatis men-trigger `window.snap.pay('{{ order.midtrans_transaction_id }}')`.
+- [ ] **Masalah:** *Popup* Midtrans belum muncul dengan benar.
+- [ ] **Desain Solusi:**
+  - [ ] Kunci `MIDTRANS_SERVER_KEY` dan `MIDTRANS_CLIENT_KEY` di `.env` harus valid (gunakan *sandbox* untuk pengujian).
+  - [ ] Pastikan di `checkout_success.html` sudah me-render `<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ client_key }}"></script>` dan otomatis men-trigger `window.snap.pay('{{ order.midtrans_transaction_id }}')`.
 
 ### D. Sistem Voucher (Ekspansi Masa Depan)
 > Fitur ini ditambahkan ke antrean *backlog* (*task list*) untuk dieksekusi agar pembeli bisa menggunakan kode promo (karena fitur "ZTP Point" telah resmi dihapus untuk menyederhanakan UX).
 
-- **Skema Database (`Voucher` Model):**
-  - `code` (CharField, unique)
-  - `discount_type` (Choices: 'percentage' atau 'nominal')
-  - `discount_value` (DecimalField)
-  - `min_purchase` (DecimalField)
-  - `valid_from` & `valid_to` (DateTimeField)
-  - `quota` (IntegerField)
-  - `is_active` (BooleanField)
-- **Modifikasi Cart:** Tambahkan relasi `voucher = models.ForeignKey(Voucher, null=True, blank=True)` pada model `Cart`.
-- **API HTMX (`/api/apply-voucher/`):** Endpoint yang menerima input teks, memvalidasi aturan voucher, mengunci *state* ke keranjang pengguna, dan mengembalikan *swap* nilai pada blok `#total-payment` beserta diskonnya.
+- [ ] **Skema Database (`Voucher` Model):**
+  - [ ] `code` (CharField, unique)
+  - [ ] `discount_type` (Choices: 'percentage' atau 'nominal')
+  - [ ] `discount_value` (DecimalField)
+  - [ ] `min_purchase` (DecimalField)
+  - [ ] `valid_from` & `valid_to` (DateTimeField)
+  - [ ] `quota` (IntegerField)
+  - [ ] `is_active` (BooleanField)
+- [ ] **Modifikasi Cart:** Tambahkan relasi `voucher = models.ForeignKey(Voucher, null=True, blank=True)` pada model `Cart`.
+- [ ] **API HTMX (`/api/apply-voucher/`):** Endpoint yang menerima input teks, memvalidasi aturan voucher, mengunci *state* ke keranjang pengguna, dan mengembalikan *swap* nilai pada blok `#total-payment` beserta diskonnya.
 
 ---
 

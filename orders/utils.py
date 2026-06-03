@@ -59,7 +59,7 @@ def calculate_shipping_cost(origin_city, destination_city, weight, courier):
 def generate_midtrans_snap_token(order):
     server_key = getattr(settings, 'MIDTRANS_SERVER_KEY', '')
     client_key = getattr(settings, 'MIDTRANS_CLIENT_KEY', '')
-    is_production = False # sandbox
+    is_production = not server_key.startswith('SB-')
     
     snap = midtransclient.Snap(
         is_production=is_production,
