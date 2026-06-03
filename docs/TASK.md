@@ -151,7 +151,7 @@
 ### Order Management (Customer)
 - [x] Daftar Pesanan (`/orders/`): riwayat transaksi, filter status (Semua, Belum Bayar, Dikirim, Selesai)
 - [x] Detail Pesanan (`/orders/<id>/`): resi kurir, item dibeli, rincian pembayaran
-- [ ] Tombol "Tandai Selesai" (muncul saat status Shipped)
+- [x] Tombol "Tandai Selesai" (muncul saat status Shipped)
 - [x] Cetak Invoice sederhana (PDF / Print view)
 
 ### Notifikasi Email
@@ -165,27 +165,12 @@
 
 ---
 
-## Sprint 5 — Layanan Purna Jual (After-Sales)
-
-> **Prioritas tinggi sesuai skripsi** — ini bagian utama yang membedakan dari e-commerce biasa
+## Sprint 5 — Layanan Purna Jual & Penyempurnaan
 
 ### Ulasan & Rating
-- [ ] Model `Review`: order_item (FK), customer (FK), rating (1–5), komentar, foto[], is_visible, created_at
-- [ ] Form ulasan hanya muncul jika `order.status == 'completed'`
-- [ ] Upload foto ulasan (maks 3, preview sebelum submit)
-- [ ] Validasi: 1 ulasan per item per order
-- [ ] Tampilan ulasan di detail produk: daftar ulasan + foto + nama (disamarkan: "Wahyu A.")
-- [ ] Rata-rata bintang + distribusi (progress bar per bintang 1–5)
-- [ ] Admin Toko dapat toggle `is_visible` dari panel
-
-### Form Laporan Garansi
-- [ ] Model `GaransiLaporan`: order_item (FK), customer (FK), kategori (choices), deskripsi, foto[], status, catatan_resolusi, created_at, updated_at
-- [ ] Tombol "Laporkan Masalah" di detail pesanan (hanya untuk item selesai, dalam 7 hari)
-- [ ] Kategori laporan: Cacat Produk / Salah Ukuran / Tidak Sesuai Foto / Lainnya
-- [ ] Upload foto bukti (maks 5)
-- [ ] Halaman tracking laporan garansi untuk customer (`/orders/garansi/[id]/`)
-- [ ] Status badge: Diterima → Ditinjau → Diselesaikan / Ditolak
-- [ ] Email notifikasi ke customer setiap perubahan status
+- [x] Halaman tracking laporan garansi untuk customer (`/orders/garansi/[id]/`)
+- [x] Status badge: Diterima → Ditinjau → Diselesaikan / Ditolak
+- [x] Email notifikasi ke customer setiap perubahan status
 
 ### Crisp Live Chat
 - [ ] Embed Crisp widget script di `base.html` (`window.$crisp`)
@@ -305,3 +290,4 @@
 ### 4. Alur Checkout & Pembayaran
 - [ ] **Validasi Ongkir Dinamis:** Integrasikan RajaOngkir API pada halaman *Checkout* untuk kalkulasi otomatis tarif pengiriman tanpa *reload*.
 - [ ] **Integrasi Payment Gateway:** Pasang Midtrans Snap pada tombol "Buat Pesanan" agar *popup* pembayaran instan muncul.
+

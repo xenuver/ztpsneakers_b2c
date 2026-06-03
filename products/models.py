@@ -69,6 +69,16 @@ class Product(models.Model):
             return primary.image.url
         first_img = self.images.first()
         return first_img.image.url if first_img else None
+        
+    @property
+    def average_rating(self):
+        from django.db.models import Avg
+        avg = self.reviews.aggregate(Avg('rating'))['rating__avg']
+        return round(avg, 1) if avg else 0
+
+    @property
+    def review_count(self):
+        return self.reviews.count()
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
@@ -130,3 +140,20 @@ class Banner(models.Model):
 
     def __str__(self):
         return self.title
+
+from django.conf import settings
+
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    order_item = models.OneToOneField('orders.OrderItem', on_delete=models.SET_NULL, null=True, blank=True)
+    rating = models.PositiveSmallIntegerField(choices=[(i, i) for i in range(1, 6)])
+    comment = models.TextField()
+    image = models.ImageField(upload_to='reviews/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return f"{self.user.email} - {self.product.name} ({self.rating}/5)"

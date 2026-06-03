@@ -21,4 +21,6 @@ urlpatterns = [
     path('history/<str:order_number>/', views.order_detail_view, name='order_detail'),
     path('history/<str:order_number>/invoice/', views.print_invoice, name='print_invoice'),
     path('history/<str:order_number>/complete/', views.complete_order, name='complete_order'),
+    path('item/<int:item_id>/review/', views.create_review, name='create_review'),
+    path('item/<int:item_id>/warranty/', views.create_warranty_claim, name='create_warranty_claim'),
 ]

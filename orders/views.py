@@ -372,3 +372,68 @@ def complete_order(request, order_number):
             
         return redirect('orders:order_detail', order_number=order.order_number)
     return HttpResponseForbidden()
+
+from products.models import Review
+
+@login_required
+def create_review(request, item_id):
+    order_item = get_object_or_404(OrderItem, id=item_id, order__user=request.user)
+    
+    if order_item.order.status != 'completed':
+        return HttpResponseForbidden("Anda hanya dapat memberikan ulasan untuk pesanan yang telah selesai.")
+        
+    if order_item.has_review:
+        from django.contrib import messages
+        messages.info(request, "Anda sudah memberikan ulasan untuk produk ini.")
+        return redirect('orders:order_detail', order_number=order_item.order.order_number)
+        
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        image = request.FILES.get('image')
+        
+        Review.objects.create(
+            product=order_item.product,
+            user=request.user,
+            order_item=order_item,
+            rating=rating,
+            comment=comment,
+            image=image
+        )
+        
+        from django.contrib import messages
+        messages.success(request, "Ulasan berhasil dikirim. Terima kasih!")
+        return redirect('orders:order_detail', order_number=order_item.order.order_number)
+        
+    return render(request, "orders/review_form.html", {'item': order_item})
+
+from .models import WarrantyClaim
+
+@login_required
+def create_warranty_claim(request, item_id):
+    order_item = get_object_or_404(OrderItem, id=item_id, order__user=request.user)
+    
+    if order_item.order.status != 'completed':
+        return HttpResponseForbidden("Klaim garansi hanya bisa dilakukan untuk pesanan yang sudah selesai.")
+        
+    if order_item.has_warranty_claim:
+        from django.contrib import messages
+        messages.info(request, "Anda sudah mengajukan klaim garansi untuk produk ini.")
+        return redirect('orders:order_detail', order_number=order_item.order.order_number)
+        
+    if request.method == 'POST':
+        reason = request.POST.get('reason')
+        evidence_image = request.FILES.get('evidence_image')
+        
+        WarrantyClaim.objects.create(
+            order_item=order_item,
+            user=request.user,
+            reason=reason,
+            evidence_image=evidence_image
+        )
+        
+        from django.contrib import messages
+        messages.success(request, "Klaim garansi berhasil diajukan dan akan segera kami proses.")
+        return redirect('orders:order_detail', order_number=order_item.order.order_number)
+        
+    return render(request, "orders/warranty_form.html", {'item': order_item})

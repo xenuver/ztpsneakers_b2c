@@ -92,6 +92,14 @@ class OrderItem(models.Model):
     def get_cost(self):
         return self.price * self.quantity
 
+    @property
+    def has_review(self):
+        return hasattr(self, 'review')
+        
+    @property
+    def has_warranty_claim(self):
+        return hasattr(self, 'warranty_claim')
+
     def __str__(self):
         return f"{self.quantity} x {self.product_name}"
 
@@ -109,3 +117,25 @@ class ShippingAddress(models.Model):
 
     def __str__(self):
         return f"Address for Order {self.order.order_number}"
+
+class WarrantyClaim(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Menunggu Pengecekan'),
+        ('approved', 'Disetujui'),
+        ('rejected', 'Ditolak'),
+        ('resolved', 'Selesai'),
+    ]
+    order_item = models.OneToOneField(OrderItem, on_delete=models.CASCADE, related_name='warranty_claim')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    reason = models.TextField()
+    evidence_image = models.ImageField(upload_to='warranties/')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    admin_notes = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return f"Claim for {self.order_item.product_name} - {self.get_status_display()}"

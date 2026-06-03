@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Klaim Garansi - ZTPSneakers{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-12">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-extrabold text-black uppercase tracking-tight mb-8">Klaim Garansi</h1>
+        
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-yellow-700">
+                        Pastikan Anda melampirkan foto bukti yang jelas terkait kondisi barang. Klaim garansi akan diproses dalam 1-3 hari kerja.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 flex items-center">
+            <div class="w-16 h-16 bg-gray-50 rounded-md border border-gray-100 flex items-center justify-center p-1 mr-4">
+                {% if item.product and item.product.get_primary_image %}
+                <img src="{{ item.product.get_primary_image }}" alt="{{ item.product_name }}" class="w-full h-full object-contain">
+                {% endif %}
+            </div>
+            <div>
+                <p class="text-black font-bold uppercase tracking-wide">{{ item.product_name }}</p>
+                <p class="text-gray-500 text-sm mt-1">Size: {{ item.size_str }} | Pesanan: #{{ item.order.order_number }}</p>
+            </div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            {% csrf_token %}
+            
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">Alasan Klaim</label>
+                <textarea name="reason" rows="5" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black placeholder-gray-400" placeholder="Jelaskan secara detail masalah pada produk..."></textarea>
+            </div>
+            
+            <div class="mb-8">
+                <label class="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">Foto Bukti (Wajib)</label>
+                <input type="file" name="evidence_image" required accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-black hover:file:bg-gray-100">
+            </div>
+            
+            <div class="flex justify-end gap-4 border-t border-gray-100 pt-6">
+                <a href="{% url 'orders:order_detail' item.order.order_number %}" class="inline-flex justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 transition uppercase tracking-wider">
+                    Batal
+                </a>
+                <button type="submit" class="inline-flex justify-center px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-black hover:bg-gray-800 transition uppercase tracking-wider">
+                    Ajukan Klaim
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
