@@ -362,7 +362,7 @@ def checkout_success(request, order_number):
     # Midtrans client key for frontend Snap popup
     server_key = getattr(settings, 'MIDTRANS_SERVER_KEY', '')
     client_key = getattr(settings, 'MIDTRANS_CLIENT_KEY', '')
-    is_production = not server_key.startswith('SB-')
+    is_production = getattr(settings, 'MIDTRANS_IS_PRODUCTION', False)
     
     context = {
         'order': order,
@@ -420,7 +420,7 @@ def order_detail_view(request, order_number):
     
     server_key = getattr(settings, 'MIDTRANS_SERVER_KEY', '')
     client_key = getattr(settings, 'MIDTRANS_CLIENT_KEY', '')
-    is_production = not server_key.startswith('SB-')
+    is_production = getattr(settings, 'MIDTRANS_IS_PRODUCTION', False)
     
     context = {
         'order': order,
