@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout Berhasil - ZTPSneakers{% endblock %}
+
+{% block content %}
+<div class="bg-[#F9F9F9] min-h-screen py-12">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
+                <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            
+            <h1 class="text-3xl font-extrabold text-gray-900 uppercase tracking-tight mb-2">Pesanan Dibuat!</h1>
+            <p class="text-lg text-gray-600 mb-8">Terima kasih, pesanan Anda <span class="font-bold text-black">{{ order.order_number }}</span> telah berhasil dibuat.</p>
+            
+            <div class="bg-gray-50 rounded-lg p-6 text-left mb-8">
+                <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-200 pb-2">Ringkasan Pesanan</h2>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Status</span>
+                        <span class="font-bold text-yellow-600 uppercase">{{ order.get_status_display }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Total Pembayaran</span>
+                        <span class="font-bold text-black">Rp {{ order.total|floatformat:"0" }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            {% if order.status == 'pending' and order.midtrans_transaction_id %}
+            <div class="mb-8">
+                <p class="text-sm text-gray-500 mb-4">Silakan selesaikan pembayaran Anda untuk memproses pesanan.</p>
+                <button id="pay-button" class="inline-flex justify-center w-full sm:w-auto px-8 py-4 border border-transparent text-sm font-bold rounded-md text-white bg-primary hover:bg-green-800 transition uppercase tracking-widest">
+                    Bayar Sekarang
+                </button>
+            </div>
+            {% endif %}
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="{% url 'storefront:home' %}" class="inline-flex justify-center px-6 py-3 border border-gray-300 shadow-sm text-sm font-bold rounded-md text-gray-700 bg-white hover:bg-gray-50 transition uppercase tracking-wider">
+                    Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if order.status == 'pending' and order.midtrans_transaction_id %}
+<!-- Midtrans Snap JS -->
+<!-- Note: for production change to https://app.midtrans.com/snap/snap.js -->
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ client_key }}"></script>
+<script type="text/javascript">
+    document.getElementById('pay-button').onclick = function(){
+        snap.pay('{{ order.midtrans_transaction_id }}', {
+            // Optional
+            onSuccess: function(result){
+                window.location.reload();
+            },
+            // Optional
+            onPending: function(result){
+                window.location.reload();
+            },
+            // Optional
+            onError: function(result){
+                alert("Pembayaran gagal!");
+            }
+        });
+    };
+</script>
+{% endif %}
+
+{% endblock %}

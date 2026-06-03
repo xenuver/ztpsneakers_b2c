@@ -118,14 +118,99 @@ def cart_view(request):
     cart = get_or_create_cart(request)
     return render(request, "orders/cart.html", {'cart': cart})
 
+from django.utils.crypto import get_random_string
+from .models import Order, OrderItem, ShippingAddress
+
 def checkout_view(request):
     cart = get_or_create_cart(request)
     if not cart.items.exists():
-        # TODO: return message or redirect
         return HttpResponse("""<script>window.location.href='/';</script>""")
         
-    from .utils import get_rajaongkir_provinces
+    from .utils import get_rajaongkir_provinces, generate_midtrans_snap_token
     provinces = get_rajaongkir_provinces()
+    
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            # Harusnya dicegah dari awal atau diarahkan ke login, tapi ini fallback
+            return redirect('userauths:auth_main')
+            
+        shipping_service_raw = request.POST.get('shipping_service', '')
+        shipping_service = ""
+        shipping_cost = 0
+        if shipping_service_raw:
+            try:
+                parts = shipping_service_raw.split('|')
+                shipping_service = parts[0]
+                shipping_cost = float(parts[1])
+            except:
+                pass
+                
+        subtotal = cart.get_total_price()
+        total = subtotal + shipping_cost
+        
+        # Validasi stok
+        for item in cart.items.all():
+            if item.size.stock < item.quantity:
+                # Stock insufficient, redirect back to cart with error or handle gracefully
+                # For now, let's just return HttpResponse error. Ideally we use messages framework
+                from django.contrib import messages
+                messages.error(request, f"Stok untuk {item.product.name} (Size: {item.size.size}) tidak mencukupi. Tersisa {item.size.stock}.")
+                return redirect('orders:cart_page')
+        
+        # Buat Order
+        order_number = f"ZTP-{get_random_string(10).upper()}"
+        order = Order.objects.create(
+            user=request.user,
+            order_number=order_number,
+            status='pending',
+            courier='jne', # Defaulting to JNE for now
+            shipping_service=shipping_service,
+            shipping_cost=shipping_cost,
+            subtotal=subtotal,
+            total=total
+        )
+        
+        # Buat OrderItems
+        for item in cart.items.all():
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                size_str=item.size.size,
+                product_name=item.product.name,
+                price=item.product.price,
+                quantity=item.quantity
+            )
+            # Kurangi stok
+            if item.size.stock >= item.quantity:
+                item.size.stock -= item.quantity
+                item.size.save()
+        
+        # Buat ShippingAddress
+        # For city_name and province_name we'd ideally fetch them from the API or select text,
+        # but for simplicity we'll just save the IDs for now
+        ShippingAddress.objects.create(
+            order=order,
+            recipient_name=request.POST.get('recipient_name', ''),
+            phone_number=request.POST.get('phone_number', ''),
+            province_id=request.POST.get('province_id', ''),
+            province_name='Provinsi',
+            city_id=request.POST.get('city_id', ''),
+            city_name='Kota',
+            district_name=request.POST.get('district_name', ''),
+            postal_code=request.POST.get('postal_code', ''),
+            full_address=request.POST.get('full_address', '')
+        )
+        
+        # Generate Snap Token
+        snap_token = generate_midtrans_snap_token(order)
+        if snap_token:
+            order.midtrans_transaction_id = snap_token # We can store token here temporarily
+            order.save()
+            
+        # Clear Cart
+        cart.items.all().delete()
+        
+        return redirect('orders:checkout_success', order_number=order.order_number)
     
     context = {
         'cart': cart,
@@ -142,3 +227,128 @@ def wishlist_view(request):
         'wishlists': wishlists,
     }
     return render(request, "orders/wishlist.html", context)
+
+def get_cities(request):
+    province_id = request.GET.get('province_id')
+    if not province_id:
+        return HttpResponse('<option value="">Pilih Kota</option>')
+    
+    from .utils import get_rajaongkir_cities
+    cities = get_rajaongkir_cities(province_id)
+    
+    html = '<option value="">Pilih Kota</option>'
+    for city in cities:
+        html += f'<option value="{city.get("city_id")}">{city.get("type")} {city.get("city_name")}</option>'
+    return HttpResponse(html)
+
+def get_shipping_cost(request):
+    province_id = request.GET.get('province_id')
+    city_id = request.GET.get('city_id')
+    
+    if not city_id:
+        return HttpResponse('')
+        
+    from .utils import calculate_shipping_cost
+    # Asumsi origin Jakarta Pusat (ID: 152), berat 1000 gram (1kg)
+    origin_city = "152"
+    weight = 1000
+    courier = "jne" # default courier
+    
+    results = calculate_shipping_cost(origin_city, city_id, weight, courier)
+    
+    html = ""
+    if results and len(results) > 0:
+        costs = results[0].get('costs', [])
+        for cost in costs:
+            service = cost.get('service')
+            price = cost.get('cost', [{}])[0].get('value', 0)
+            etd = cost.get('cost', [{}])[0].get('etd', '')
+            html += f"""
+            <label class="relative block bg-white border border-gray-200 rounded-lg shadow-sm px-4 py-4 cursor-pointer sm:flex sm:justify-between hover:border-gray-300">
+                <input type="radio" name="shipping_service" value="{service}|{price}" class="sr-only" required hx-post="/pesanan/api/update-total/" hx-target="#total-payment">
+                <div class="flex items-center">
+                    <div class="text-sm">
+                        <p class="font-bold text-black uppercase tracking-wider">{results[0].get('code')} - {service}</p>
+                        <p class="text-gray-500 text-xs">Estimasi: {etd} hari</p>
+                    </div>
+                </div>
+                <div class="mt-2 sm:mt-0 sm:block text-right">
+                    <p class="font-bold text-black">Rp {price}</p>
+                </div>
+            </label>
+            """
+    else:
+        html = '<p class="text-red-500 text-sm">Gagal mengambil data ongkos kirim. Pastikan API Key valid.</p>'
+        
+    return HttpResponse(html)
+
+def update_total(request):
+    cart = get_or_create_cart(request)
+    shipping_service = request.POST.get('shipping_service')
+    subtotal = cart.get_total_price()
+    shipping_cost = 0
+    if shipping_service:
+        try:
+            shipping_cost = float(shipping_service.split('|')[1])
+        except:
+            pass
+            
+    total = subtotal + shipping_cost
+    
+    html = f"""
+    <div id="total-payment" class="border-t border-gray-100 pt-4 mb-6 flex justify-between items-center">
+        <span class="text-base font-bold text-black uppercase tracking-wider">Total Pembayaran</span>
+        <div class="text-right">
+            <span class="text-xs text-gray-500 block mb-1">Subtotal + Ongkir (Rp {shipping_cost:,.0f})</span>
+            <span class="text-2xl font-extrabold text-primary">Rp {total:,.0f}</span>
+        </div>
+    </div>
+    """
+    return HttpResponse(html)
+
+@login_required
+def checkout_success(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number, user=request.user)
+    
+    # Midtrans client key for frontend Snap popup
+    client_key = getattr(settings, 'MIDTRANS_CLIENT_KEY', '')
+    
+    context = {
+        'order': order,
+        'client_key': client_key,
+    }
+    return render(request, "orders/checkout_success.html", context)
+
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt
+def midtrans_webhook(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            order_id = data.get('order_id')
+            transaction_status = data.get('transaction_status')
+            
+            if order_id:
+                order = Order.objects.filter(order_number=order_id).first()
+                if order:
+                    if transaction_status in ['capture', 'settlement']:
+                        order.status = 'paid'
+                        # Notify user
+                        from django.apps import apps
+                        Notification = apps.get_model('core', 'Notification')
+                        Notification.objects.create(
+                            user=order.user,
+                            title="Pembayaran Berhasil",
+                            message=f"Pembayaran untuk pesanan {order.order_number} telah berhasil dikonfirmasi.",
+                            link=f"/pesanan/history/"
+                        )
+                    elif transaction_status in ['deny', 'cancel', 'expire']:
+                        order.status = 'cancelled'
+                    order.save()
+            return HttpResponse("OK")
+        except Exception as e:
+            print(f"Webhook error: {e}")
+            return HttpResponse("Error", status=400)
+    return HttpResponseForbidden()

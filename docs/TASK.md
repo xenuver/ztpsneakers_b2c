@@ -131,19 +131,17 @@
 - [x] Tambah ke keranjang (dengan pilihan ukuran) via HTMX
 - [x] HTMX Keranjang: update qty (+/-), hapus item (tanpa reload)
 - [x] Cart drawer (slide dari samping kanan) + halaman `/cart/` penuh
-- [ ] Validasi stok saat add to cart dan saat checkout
+- [x] Validasi stok saat add to cart dan saat checkout
 
 ### Checkout
-- [x] Multi-step checkout (3 langkah, progress bar):
-  1. **Alamat**: nama penerima, telepon, provinsi, kota, kecamatan, detail alamat, kode pos
-  2. **Pengiriman**: pilih ekspedisi + layanan (dari RajaOngkir), tampilkan estimasi + biaya
-  3. **Pembayaran**: ringkasan order + tombol bayar via Midtrans
-- [ ] Autocomplete alamat (dropdown province → city → subdistrict via RajaOngkir atau data statis)
-- [x] RajaOngkir API: `ongkoskirim` endpoint, dipanggil dari backend Django (key tidak exposed ke frontend)
 - [x] Model `Order`, `OrderItem`, `ShippingAddress`
-- [ ] Integrasi Midtrans Snap: buat transaksi dari backend, tampilkan Snap popup
-- [ ] Webhook Midtrans: update `Order.status` berdasarkan notifikasi payment
-- [ ] Halaman sukses pembayaran + redirect ke detail order
+- [x] RajaOngkir API: `ongkoskirim` endpoint, dipanggil dari backend Django (key tidak exposed ke frontend)
+- [x] Autocomplete Provinsi & Kota via RajaOngkir API (AJAX/HTMX)
+- [x] Hitung ongkos kirim berdasarkan berat dan tujuan (RajaOngkir)
+- [x] Generate Snap Token untuk pesanan
+- [x] Popup Midtrans Snap di halaman checkout sukses
+- [x] Webhook endpoint untuk update status otomatis (Pending → Paid)
+- [x] Kirim email notifikasi / in-app notif setelah bayar sukses pembayaran + redirect ke detail order
 - [ ] Email konfirmasi order (HTML template branded)
 
 ---
