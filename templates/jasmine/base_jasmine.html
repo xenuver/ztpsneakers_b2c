@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Jasmine Owner Dashboard{% endblock %}</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        jasminedark: '#0A0A0A',
+                        jasminedark2: '#171717',
+                        jasminegold: '#D4AF37',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #fff; }
+        .sidebar-active { background-color: #171717; color: #D4AF37; border-right: 3px solid #D4AF37; }
+        .sidebar-link { color: #a1a1aa; }
+        .sidebar-link:hover { color: #D4AF37; background-color: rgba(23, 23, 23, 0.5); }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-jasminedark border-r border-zinc-900 flex-shrink-0 flex flex-col h-full hidden md:flex">
+        <div class="h-20 flex flex-col justify-center px-6 border-b border-zinc-900">
+            <h1 class="text-2xl font-extrabold uppercase tracking-widest text-white">ZTP<span class="text-jasminegold font-light ml-1">Jasmine</span></h1>
+            <p class="text-xs text-zinc-500 tracking-widest uppercase mt-1">Executive Board</p>
+        </div>
+        <nav class="flex-1 px-4 py-8 space-y-3 overflow-y-auto">
+            <a href="{% url 'jasmine:dashboard' %}" class="sidebar-link flex items-center px-4 py-3 rounded-l-lg text-sm transition uppercase tracking-wider font-bold {% if request.resolver_match.url_name == 'dashboard' %}sidebar-active{% endif %}">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                Analytics
+            </a>
+            <!-- Using Django Admin for full control -->
+            <a href="/admin/" target="_blank" class="sidebar-link flex items-center px-4 py-3 rounded-l-lg text-sm transition uppercase tracking-wider font-bold">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Master Data
+            </a>
+            <a href="{% url 'jasmine:export_excel' %}" class="sidebar-link flex items-center px-4 py-3 rounded-l-lg text-sm transition uppercase tracking-wider font-bold">
+                <svg class="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Export Laporan
+            </a>
+        </nav>
+        <div class="p-6 border-t border-zinc-900">
+            <a href="/" target="_blank" class="flex items-center px-4 py-2 text-sm text-zinc-500 hover:text-jasminegold transition uppercase tracking-wider font-bold">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                Lihat Store
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <!-- Topbar -->
+        <header class="h-20 bg-jasminedark border-b border-zinc-900 flex items-center justify-between px-8 flex-shrink-0">
+            <div class="flex items-center md:hidden">
+                <button class="text-zinc-500 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+                <h1 class="text-xl font-extrabold uppercase tracking-widest text-jasminegold ml-4">Jasmine</h1>
+            </div>
+            <div class="hidden md:block">
+                <h2 class="text-lg font-light text-zinc-300 tracking-wide">Selamat datang kembali, <span class="text-white font-bold">{{ request.user.get_full_name|default:"Owner" }}</span></h2>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <button class="relative text-zinc-400 hover:text-jasminegold transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-jasminedark bg-red-500"></span>
+                </button>
+                <div class="flex items-center gap-3 border-l border-zinc-800 pl-6">
+                    <div class="w-10 h-10 rounded-full border border-jasminegold flex items-center justify-center font-bold text-jasminegold bg-zinc-900">
+                        {{ request.user.email|make_list|first|upper }}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <main class="flex-1 overflow-y-auto p-8 bg-black">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

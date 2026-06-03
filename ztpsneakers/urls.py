@@ -27,6 +27,8 @@ urlpatterns = [
     path("user/", include("userauths.urls")),
     path("accounts/", include("allauth.urls")),
     path("core/", include("core.urls")),
+    path("admin-toko/", include("admin_toko.urls")),
+    path("jasmine/", include("jasmine.urls")),
 ]
 
 if settings.DEBUG:
