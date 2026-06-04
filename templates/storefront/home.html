@@ -276,7 +276,7 @@ terbaik di ZTP Sneakers.{% endblock %}
                     <a href="{% url 'storefront:product_detail' product.slug %}"
                         class="text-base font-bold text-white hover:text-[#ef8215] transition truncate block">{{
                         product.name }}</a>
-                    <p class="text-lg font-extrabold text-[#ef8215] mt-3">Rp {{ product.price|intcomma }}</p>
+                    <p class="text-lg font-extrabold text-[#ef8215] mt-3">Rp {{ product.price|floatformat:"0"|intcomma }}</p>
                 </div>
             </div>
             {% endfor %}

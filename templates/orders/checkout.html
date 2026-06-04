@@ -129,7 +129,7 @@
                                 <div class="flex-auto min-w-0">
                                     <h3 class="text-black font-bold uppercase tracking-wider text-sm truncate">{{ item.product.name }}</h3>
                                     <p class="text-gray-500 text-xs mt-0.5">{{ item.product.brand.name }} &middot; Size {{ item.size.size }} &middot; Qty: {{ item.quantity }}</p>
-                                    <p class="text-sm text-black font-extrabold mt-2">Rp {{ item.get_cost|intcomma }}</p>
+                                    <p class="text-sm text-black font-extrabold mt-2">Rp {{ item.get_cost|floatformat:"0"|intcomma }}</p>
                                 </div>
                             </li>
                             {% empty %}
@@ -150,7 +150,7 @@
                             <dl class="text-sm font-medium text-gray-500 space-y-3 mb-6">
                                 <div class="flex justify-between">
                                     <dt>Subtotal Produk ({{ cart.items.count }} item)</dt>
-                                    <dd class="text-black font-semibold">Rp {{ cart.get_total_price|intcomma }}</dd>
+                                    <dd class="text-black font-semibold">Rp {{ cart.get_total_price|floatformat:"0"|intcomma }}</dd>
                                 </div>
                                 <div class="flex justify-between" id="shipping-summary-row">
                                     <dt>Ongkos Kirim</dt>
@@ -174,14 +174,14 @@
                                 </div>
                                 <div id="voucher-msg">
                                     {% if applied_voucher %}
-                                        <div class="text-green-600 text-sm mt-1 font-bold">Voucher aktif! Diskon Rp {{ applied_voucher.discount_amount|intcomma }}</div>
+                                        <div class="text-green-600 text-sm mt-1 font-bold">Voucher aktif! Diskon Rp {{ applied_voucher.discount_amount|floatformat:"0"|intcomma }}</div>
                                     {% endif %}
                                 </div>
                             </div>
                             
                             <div id="total-payment" class="border-t border-gray-200 pt-4 mb-6 flex justify-between items-center">
                                 <span class="text-base font-bold text-black uppercase tracking-wider">Total</span>
-                                <span class="text-2xl font-extrabold text-primary">Rp {{ cart.get_total_price|intcomma }}</span>
+                                <span class="text-2xl font-extrabold text-primary">Rp {{ cart.get_total_price|floatformat:"0"|intcomma }}</span>
                             </div>
 
                             <button type="submit" id="btn-checkout" 

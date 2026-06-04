@@ -88,23 +88,23 @@
                     <td><strong>{{ item.product_name }}</strong></td>
                     <td class="text-center">{{ item.size_str }}</td>
                     <td class="text-center">{{ item.quantity }}</td>
-                    <td class="text-right">Rp {{ item.price|intcomma }}</td>
-                    <td class="text-right">Rp {{ item.get_cost|intcomma }}</td>
+                    <td class="text-right">Rp {{ item.price|floatformat:"0"|intcomma }}</td>
+                    <td class="text-right">Rp {{ item.get_cost|floatformat:"0"|intcomma }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="4" class="text-right" style="padding-top: 20px;">Subtotal</td>
-                    <td class="text-right" style="padding-top: 20px;">Rp {{ order.subtotal|intcomma }}</td>
+                    <td class="text-right" style="padding-top: 20px;">Rp {{ order.subtotal|floatformat:"0"|intcomma }}</td>
                 </tr>
                 <tr>
                     <td colspan="4" class="text-right">Ongkos Kirim ({{ order.courier|upper }} - {{ order.shipping_service }})</td>
-                    <td class="text-right">Rp {{ order.shipping_cost|intcomma }}</td>
+                    <td class="text-right">Rp {{ order.shipping_cost|floatformat:"0"|intcomma }}</td>
                 </tr>
                 <tr class="total-row">
                     <td colspan="4" class="text-right">TOTAL</td>
-                    <td class="text-right">Rp {{ order.total|intcomma }}</td>
+                    <td class="text-right">Rp {{ order.total|floatformat:"0"|intcomma }}</td>
                 </tr>
             </tfoot>
         </table>

@@ -54,7 +54,7 @@
                         </div>
                         <h3 class="product-name">{{ p.name }}</h3>
                         <p class="product-price">
-                            Rp {{ p.price|intcomma }}
+                            Rp {{ p.price|floatformat:"0"|intcomma }}
                         </p>
                         </article>
                     {% empty %}

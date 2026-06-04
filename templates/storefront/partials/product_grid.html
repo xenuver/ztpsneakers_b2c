@@ -122,9 +122,9 @@
             {% endif %}
         </div>
         <div class="mt-auto pt-3 flex items-center gap-2">
-            <p class="text-sm font-bold text-black">Rp {{ product.price|intcomma }}</p>
+            <p class="text-sm font-bold text-black">Rp {{ product.price|floatformat:"0"|intcomma }}</p>
             {% if product.crossed_price %}
-                <p class="text-xs text-gray-400 line-through">Rp {{ product.crossed_price|intcomma }}</p>
+                <p class="text-xs text-gray-400 line-through">Rp {{ product.crossed_price|floatformat:"0"|intcomma }}</p>
             {% endif %}
         </div>
     </div>

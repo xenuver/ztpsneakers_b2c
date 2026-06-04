@@ -12,7 +12,7 @@
                 </div>
                 <div class="ml-3 flex-1 min-w-0">
                     <p class="text-sm font-bold text-black truncate">{{ product.name }}</p>
-                    <p class="text-xs text-gray-500 mt-0.5">Rp {{ product.price|intcomma }}</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Rp {{ product.price|floatformat:"0"|intcomma }}</p>
                 </div>
             </a>
         </li>

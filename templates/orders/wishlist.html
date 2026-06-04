@@ -23,7 +23,7 @@
                         <h3 class="text-sm font-medium text-black truncate">{{ item.product.name }}</h3>
                         <p class="mt-1 text-xs text-gray-500">{{ item.product.brand.name }}</p>
                         <div class="mt-2 flex items-center gap-2">
-                            <p class="text-sm font-bold text-black">Rp {{ item.product.price|intcomma }}</p>
+                            <p class="text-sm font-bold text-black">Rp {{ item.product.price|floatformat:"0"|intcomma }}</p>
                         </div>
                     </div>
                 </a>

@@ -14,7 +14,7 @@
     <div class="bg-jasminedark2 border border-zinc-800 rounded-xl p-6 relative overflow-hidden group">
         <div class="absolute top-0 right-0 w-24 h-24 bg-jasminegold opacity-5 rounded-bl-full transform group-hover:scale-110 transition duration-500"></div>
         <p class="text-xs text-zinc-400 font-bold uppercase tracking-widest mb-2">Total Pendapatan</p>
-        <p class="text-3xl font-extrabold text-white tracking-tight">Rp {{ revenue_this_month|intcomma }}</p>
+        <p class="text-3xl font-extrabold text-white tracking-tight">Rp {{ revenue_this_month|floatformat:"0"|intcomma }}</p>
     </div>
     
     <!-- Orders -->
