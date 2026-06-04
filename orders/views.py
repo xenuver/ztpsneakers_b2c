@@ -210,7 +210,7 @@ def checkout_view(request):
             total=total
         )
         
-        # Buat OrderItems
+        # Buat OrderItems dan kurangi stok (Booking Stock)
         for item in cart.items.all():
             OrderItem.objects.create(
                 order=order,
@@ -220,6 +220,11 @@ def checkout_view(request):
                 price=item.product.price,
                 quantity=item.quantity
             )
+            
+            # Booking Stock: Kurangi stok langsung
+            if item.size.stock >= item.quantity:
+                item.size.stock -= item.quantity
+                item.size.save()
         
         # Buat ShippingAddress
         # For city_name and province_name we'd ideally fetch them from the API or select text,
@@ -449,20 +454,19 @@ def midtrans_webhook(request):
                         if order.status != 'paid':
                             order.status = 'paid'
                             order.save()
-                            # Kurangi stok saat pembayaran berhasil
+                    elif transaction_status in ['deny', 'cancel', 'expire']:
+                        if order.status != 'cancelled':
+                            order.status = 'cancelled'
+                            order.save()
+                            # Kembalikan stok yang sudah dibooking
                             for item in order.items.all():
-                                # Cari ProductSize yang sesuai
                                 from products.models import ProductSize
                                 try:
                                     product_size = ProductSize.objects.get(product=item.product, size=item.size_str)
-                                    if product_size.stock >= item.quantity:
-                                        product_size.stock -= item.quantity
-                                        product_size.save()
+                                    product_size.stock += item.quantity
+                                    product_size.save()
                                 except ProductSize.DoesNotExist:
                                     pass
-                    elif transaction_status in ['deny', 'cancel', 'expire']:
-                        order.status = 'cancelled'
-                        order.save()
             return HttpResponse("OK")
         except Exception as e:
             print(f"Webhook error: {e}")
@@ -644,8 +648,20 @@ def manual_check_payment_status(request, order_number):
         elif transaction_status in ['pending']:
             messages.warning(request, f'Pembayaran pesanan {order_number} masih pending.')
         elif transaction_status in ['deny', 'cancel', 'expire']:
-            order.status = 'cancelled'
-            order.save()
+            if order.status != 'cancelled':
+                order.status = 'cancelled'
+                order.save()
+                
+                # Kembalikan stok yang sudah dibooking
+                for item in order.items.all():
+                    from products.models import ProductSize
+                    try:
+                        product_size = ProductSize.objects.get(product=item.product, size=item.size_str)
+                        product_size.stock += item.quantity
+                        product_size.save()
+                    except ProductSize.DoesNotExist:
+                        pass
+                        
             messages.error(request, f'Pembayaran pesanan {order_number} gagal/dibatalkan.')
         else:
             messages.info(request, f'Status transaksi: {transaction_status}')

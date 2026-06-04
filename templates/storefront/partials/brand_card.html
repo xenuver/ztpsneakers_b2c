@@ -1,0 +1,23 @@
+<div class="brand-card group snap-center min-w-[200px] w-[200px] md:min-w-[0] md:w-full bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col h-full" onclick="window.location.href='{% url 'storefront:catalog' %}?brand={{ brand.id }}'">
+    <!-- Top: Product Image representation -->
+    <div class="aspect-[5/4] bg-gray-50 flex items-center justify-center p-4 overflow-hidden relative">
+        {% with primary_img=brand.products.first.get_primary_image %}
+        {% if primary_img %}
+        <img src="{{ primary_img }}" alt="Produk dari {{ brand.name }}" class="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-500" loading="lazy">
+        {% else %}
+        <div class="text-gray-300 font-heading font-bold text-4xl uppercase tracking-widest opacity-30">{{ brand.name|slice:":2" }}</div>
+        {% endif %}
+        {% endwith %}
+        <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    </div>
+    
+    <!-- Bottom: Brand Name & Logo -->
+    <div class="p-4 flex items-center justify-between border-t border-gray-50 mt-auto bg-white">
+        <h3 class="text-sm font-bold text-black uppercase tracking-widest truncate pr-2 group-hover:text-primary transition-colors">{{ brand.name }}</h3>
+        {% if brand.logo %}
+        <div class="w-8 h-8 flex-shrink-0 bg-white rounded-full flex items-center justify-center border border-gray-100 overflow-hidden shadow-sm">
+            <img src="{{ brand.logo.url }}" alt="{{ brand.name }} logo" class="w-5 h-5 object-contain" loading="lazy">
+        </div>
+        {% endif %}
+    </div>
+</div>

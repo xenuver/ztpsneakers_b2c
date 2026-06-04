@@ -1,5 +1,5 @@
 {% for product in products %}
-<div class="group relative card-product bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:border-gray-300"
+<div class="group relative card-product bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:border-gray-300 {{ scroll_snap }}"
 {% if forloop.last and products.has_next %}
     hx-get="?page={{ products.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if brand_id %}&brand={{ brand_id }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
     hx-trigger="revealed"

@@ -1,9 +1,17 @@
 from django.shortcuts import render
 from products.models import Banner, Product, Category, Brand
 
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
+
 def home_view(request):
     banners = Banner.objects.filter(is_active=True).order_by('order', '-id')
-    featured_products = Product.objects.filter(is_active=True).order_by('-created_at')[:8]
+    
+    bestseller_products = Product.objects.filter(is_active=True).annotate(
+        total_sold=Coalesce(Sum('orderitem__quantity'), 0)
+    ).order_by('-total_sold')[:10]
+    
+    new_products = Product.objects.filter(is_active=True).order_by('-created_at')[:10]
     categories = Category.objects.all().order_by('order')
 
     wishlist_product_ids = []
@@ -23,7 +31,8 @@ def home_view(request):
 
     context = {
         'banners': banners,
-        'featured_products': featured_products,
+        'bestseller_products': bestseller_products,
+        'new_products': new_products,
         'hot_items': hot_items,
         'brands': brands,
         'categories': categories,
@@ -67,7 +76,16 @@ def catalog_view(request):
     if condition in ['new', 'second']:
         products = products.filter(condition=condition)
         
-    if sort in ['-created_at', 'price', '-price']:
+    if sort == 'featured':
+        products = products.filter(is_featured=True)
+    elif sort == 'newest':
+        products = products.order_by('-created_at')
+    elif sort == 'hot':
+        from django.db.models import Avg
+        products = products.annotate(
+            avg_rating=Avg('reviews__rating')
+        ).filter(avg_rating__gte=4.0).order_by('-avg_rating')
+    elif sort in ['-created_at', 'price', '-price']:
         products = products.order_by(sort)
 
     paginator = Paginator(products, 12) # 12 items per page
