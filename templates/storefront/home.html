@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}ZTP Sneakers | Toko Sepatu Second Premium Authentic{% endblock %}
-{% block meta_description %}Toko Sepatu Sneakers Indonesia Original 100% Authentic. Temukan koleksi sepatu second
-original terbaik di ZTP Sneakers.{% endblock %}
-{% block og_title %}ZTP Sneakers | Toko Sepatu Second Premium Authentic{% endblock %}
-{% block og_description %}Toko Sepatu Sneakers Indonesia Original 100% Authentic. Temukan koleksi sepatu second original
+{% block title %}ZTP Sneakers | Toko Sepatu Second Premium{% endblock %}
+{% block meta_description %}Toko Sepatu Sneakers Indonesia. Temukan koleksi sepatu second
+terbaik di ZTP Sneakers.{% endblock %}
+{% block og_title %}ZTP Sneakers | Toko Sepatu Second Premium{% endblock %}
+{% block og_description %}Toko Sepatu Sneakers Indonesia. Temukan koleksi sepatu second
 terbaik di ZTP Sneakers.{% endblock %}
 
 {% block extra_head %}
@@ -96,7 +96,7 @@ terbaik di ZTP Sneakers.{% endblock %}
 <section class="bg-white py-6 md:py-8 border-b border-gray-100 animate-on-scroll">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="font-heading text-lg md:text-xl font-extrabold text-black tracking-tight mb-2">
-            Toko Sepatu Sneakers Indonesia Original 100% Authentic
+            Toko Sepatu Sneakers Indonesia
         </h2>
         <p class="text-xs md:text-sm text-gray-500 font-medium">
             Berdiri sejak 2022 <span class="text-gray-400 font-bold px-1.5">•</span>
@@ -115,10 +115,10 @@ terbaik di ZTP Sneakers.{% endblock %}
                 class="text-sm font-bold text-black border-b border-black pb-1 hover:text-primary hover:border-primary transition uppercase">Lihat
                 Semua</a>
         </div>
-        <div
-            class="grid grid-flow-col auto-cols-[160px] md:auto-cols-[calc(16.6666%-1.25rem)] gap-4 md:gap-6 overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar">
-            {% include "storefront/partials/product_grid.html" with products=bestseller_products
-            scroll_snap="snap-center" %}
+        <div class="grid grid-flow-col auto-cols-[160px] md:auto-cols-[calc(16.6666%-1.25rem)] gap-4 md:gap-6 overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar">
+            {% with products=bestseller_products scroll_snap="snap-center" %}
+                {% include "storefront/partials/product_grid.html" %}
+            {% endwith %}
         </div>
     </div>
 </div>
@@ -156,9 +156,10 @@ terbaik di ZTP Sneakers.{% endblock %}
                 class="text-sm font-bold text-black border-b border-black pb-1 hover:text-primary hover:border-primary transition uppercase">Lihat
                 Semua</a>
         </div>
-        <div
-            class="grid grid-flow-col auto-cols-[160px] md:auto-cols-[calc(16.6666%-1.25rem)] gap-4 md:gap-6 overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar">
-            {% include "storefront/partials/product_grid.html" with products=new_products scroll_snap="snap-center" %}
+        <div class="grid grid-flow-col auto-cols-[160px] md:auto-cols-[calc(16.6666%-1.25rem)] gap-4 md:gap-6 overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar">
+            {% with products=new_products scroll_snap="snap-center" %}
+                {% include "storefront/partials/product_grid.html" %}
+            {% endwith %}
         </div>
     </div>
 </div>

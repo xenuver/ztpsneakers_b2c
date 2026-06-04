@@ -27,14 +27,13 @@
         PEMBELIAN &nbsp;·&nbsp; PROMO TERBATAS HARI INI &nbsp;·&nbsp; BELANJA SEKARANG UNTUK DISKON SPESIAL!
     </div>
     <button
-        onclick="sessionStorage.setItem('promoClosed','true'); document.getElementById('promo-banner').style.display='none';"
+        onclick="document.getElementById('promo-banner').style.display='none';"
         class="absolute right-4 text-white hover:text-gray-300 bg-transparent p-1 z-10">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
         </svg>
     </button>
 </div>
-<script>if (sessionStorage.getItem('promoClosed') === 'true') { document.getElementById('promo-banner').style.display = 'none'; }</script>
 
 <!-- ===== MAIN NAVBAR ===== -->
 <nav id="main-navbar" class="bg-white border-b border-gray-200 sticky top-0 z-50 transition-all duration-300">
@@ -167,9 +166,9 @@
                             {% if unread_notifications_count > 0 %}
                             <span class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
                                 <span
-                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ef8215] opacity-75"></span>
                                 <span
-                                    class="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500 text-[8px] text-white justify-center items-center font-bold">{{
+                                    class="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#ef8215] text-[8px] text-white justify-center items-center font-bold">{{
                                     unread_notifications_count }}</span>
                             </span>
                             {% endif %}

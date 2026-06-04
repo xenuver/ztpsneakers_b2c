@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %}{{ product.name }} - ZTP Sneakers | Sepatu Second Premium{% endblock %}
-{% block meta_description %}Beli {{ product.name }} original kualitas premium di ZTP Sneakers. Sepatu {{ product.brand.name }} second original harga terbaik.{% endblock %}
+{% block meta_description %}Beli {{ product.name }} kualitas premium di ZTP Sneakers. Sepatu {{ product.brand.name }} second harga terbaik.{% endblock %}
 {% block og_title %}{{ product.name }} - ZTP Sneakers{% endblock %}
-{% block og_description %}Beli {{ product.name }} original kualitas premium di ZTP Sneakers. Sepatu {{ product.brand.name }} second original harga terbaik.{% endblock %}
+{% block og_description %}Beli {{ product.name }} kualitas premium di ZTP Sneakers. Sepatu {{ product.brand.name }} second harga terbaik.{% endblock %}
 {% block meta_og_image %}
     {% if product.get_primary_image %}
     <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ product.get_primary_image }}">
@@ -187,7 +187,7 @@
                 <!-- Value Props -->
                 <div class="flex flex-wrap items-center gap-4 text-xs font-bold uppercase tracking-wider text-black mb-8 border-b border-gray-200 pb-8">
                     <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Exchange Size Warranty</span>
-                    <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Authentic.</span>
+                    <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Verified.</span>
                     <span class="flex items-center">Trusted.</span>
                     <span class="flex items-center">Best Price.</span>
                 </div>
@@ -323,7 +323,7 @@
 
                     <div x-show="tab === 'warranty'" class="text-gray-500 text-sm leading-relaxed animate-[fadeIn_0.3s_ease-out]" style="display: none;">
                         <h4 class="font-bold text-black mb-2">Kebijakan Garansi</h4>
-                        <p class="mb-4">Semua produk kami dijamin 100% original. Jika Anda menerima barang palsu atau cacat pabrik, garansi uang kembali sepenuhnya berlaku dalam 3x24 jam sejak barang diterima.</p>
+                        <p class="mb-4">Semua produk kami dijamin berkualitas. Jika Anda menerima barang cacat pabrik, garansi uang kembali sepenuhnya berlaku dalam 3x24 jam sejak barang diterima.</p>
                         
                         <h4 class="font-bold text-black mb-2">Penukaran Ukuran</h4>
                         <p class="mb-4">Salah ukuran? Tenang, kami menyediakan penukaran ukuran (size exchange) secara gratis selama stok tersedia, maksimal 2x24 jam setelah pesanan tiba di tujuan.</p>
