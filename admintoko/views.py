@@ -85,6 +85,14 @@ def product_create_view(request):
             brand_id=brand_id,
             category_id=category_id
         )
+        
+        sizes = request.POST.getlist('sizes[]')
+        stocks = request.POST.getlist('stocks[]')
+        for size, stock in zip(sizes, stocks):
+            if size.strip():
+                stock_val = int(stock) if stock.isdigit() else 0
+                ProductSize.objects.create(product=product, size=size.strip(), stock=stock_val)
+                
         messages.success(request, f"Produk {product.name} berhasil ditambahkan.")
         return redirect('admintoko:products')
         
@@ -105,6 +113,29 @@ def product_edit_view(request, product_id):
         product.brand_id = request.POST.get('brand')
         product.category_id = request.POST.get('category')
         product.save()
+        
+        sizes = request.POST.getlist('sizes[]')
+        stocks = request.POST.getlist('stocks[]')
+        existing_sizes = {s.size: s for s in product.sizes.all()}
+        new_sizes = set()
+        
+        for size, stock in zip(sizes, stocks):
+            size = size.strip()
+            if size:
+                new_sizes.add(size)
+                stock_val = int(stock) if stock.isdigit() else 0
+                if size in existing_sizes:
+                    ps = existing_sizes[size]
+                    ps.stock = stock_val
+                    ps.save()
+                else:
+                    ProductSize.objects.create(product=product, size=size, stock=stock_val)
+                    
+        for size_str, ps in existing_sizes.items():
+            if size_str not in new_sizes:
+                ps.stock = 0
+                ps.save()
+                
         messages.success(request, f"Produk {product.name} berhasil diperbarui.")
         return redirect('admintoko:products')
         
@@ -202,3 +233,36 @@ def customers_view(request):
     }
     return render(request, 'admintoko/customers.html', context)
 
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
+def category_create_view(request):
+    if request.method == 'POST':
+        from products.models import Category
+        name = request.POST.get('name')
+        if name:
+            Category.objects.create(name=name)
+            messages.success(request, f"Kategori {name} berhasil ditambahkan.")
+            return redirect('admintoko:products')
+    return render(request, 'admintoko/category_form.html')
+
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
+def brand_create_view(request):
+    if request.method == 'POST':
+        from products.models import Brand
+        name = request.POST.get('name')
+        if name:
+            Brand.objects.create(name=name)
+            messages.success(request, f"Brand {name} berhasil ditambahkan.")
+            return redirect('admintoko:products')
+    return render(request, 'admintoko/brand_form.html')
+
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
+def categories_view(request):
+    from products.models import Category
+    categories = Category.objects.all().order_by('name')
+    return render(request, 'admintoko/categories.html', {'categories': categories})
+
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
+def brands_view(request):
+    from products.models import Brand
+    brands = Brand.objects.all().order_by('name')
+    return render(request, 'admintoko/brands.html', {'brands': brands})

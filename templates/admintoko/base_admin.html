@@ -11,7 +11,7 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#4F46E5', // Indigo 600
+                        primary: '#ef8215', // Orange
                         secondary: '#10B981', // Emerald 500
                         dark: '#0F172A', // Slate 900
                     },
@@ -89,6 +89,16 @@
             <a href="{% url 'admintoko:products' %}" class="nav-link flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 {% if request.resolver_match.url_name == 'products' %}nav-active{% endif %}">
                 <svg class="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                 Katalog Produk
+            </a>
+            
+            <a href="{% url 'admintoko:categories' %}" class="nav-link flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 {% if request.resolver_match.url_name == 'categories' %}nav-active{% endif %}">
+                <svg class="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                Kategori Produk
+            </a>
+            
+            <a href="{% url 'admintoko:brands' %}" class="nav-link flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 {% if request.resolver_match.url_name == 'brands' %}nav-active{% endif %}">
+                <svg class="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path></svg>
+                Brand Produk
             </a>
             
             <p class="px-4 text-xs font-bold tracking-wider text-slate-400 uppercase mb-3 mt-6">Layanan Purna Jual</p>
