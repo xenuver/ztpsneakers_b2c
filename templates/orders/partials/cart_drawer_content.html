@@ -34,7 +34,7 @@
                                         <div>
                                             <div class="flex justify-between text-base font-medium text-gray-900">
                                                 <h3><a href="#">{{ item.product.name }}</a></h3>
-                                                <p class="ml-4">Rp {{ item.get_cost|floatformat:"0" }}</p>
+                                                <p class="ml-4">Rp {{ item.get_cost|intcomma }}</p>
                                             </div>
                                             <p class="mt-1 text-sm text-gray-500">{{ item.product.brand.name }} | Size: {{ item.size.size }}</p>
                                         </div>
@@ -67,7 +67,7 @@
                 <div class="border-t border-gray-200 py-6 px-4 sm:px-6">
                     <div class="flex justify-between text-base font-medium text-gray-900">
                         <p>Subtotal</p>
-                        <p>Rp {{ cart.get_total_price|floatformat:"0" }}</p>
+                        <p>Rp {{ cart.get_total_price|intcomma }}</p>
                     </div>
                     <p class="mt-0.5 text-sm text-gray-500">Ongkos kirim dan pajak dihitung saat checkout.</p>
                     <div class="mt-6 flex flex-col gap-3">

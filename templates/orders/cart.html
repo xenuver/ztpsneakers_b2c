@@ -24,7 +24,7 @@
                         <div class="flex-1 min-w-0">
                             <h3 class="text-base font-bold text-gray-900 truncate">{{ item.product.name }}</h3>
                             <p class="text-sm text-gray-500 mt-1">Size: {{ item.size.size }}</p>
-                            <p class="text-sm font-bold text-black mt-2">Rp {{ item.product.price|floatformat:"0" }}</p>
+                            <p class="text-sm font-bold text-black mt-2">Rp {{ item.product.price|intcomma }}</p>
                         </div>
                         <div class="flex flex-col items-end gap-4">
                             <button type="button" 
@@ -61,16 +61,16 @@
                         <div class="space-y-2 mb-4 text-sm">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Total Harga ({{ cart.items.count }} Barang)</span>
-                                <span class="font-medium text-black">Rp {{ cart.get_total_price|floatformat:"0" }}</span>
+                                <span class="font-medium text-black">Rp {{ cart.get_total_price|intcomma }}</span>
                             </div>
                         </div>
                         <div class="border-t border-gray-200 pt-4 mb-6">
                             <div class="flex justify-between items-center">
                                 <span class="text-base font-bold text-gray-900">Total Tagihan</span>
-                                <span class="text-lg font-bold text-black">Rp {{ cart.get_total_price|floatformat:"0" }}</span>
+                                <span class="text-lg font-bold text-black">Rp {{ cart.get_total_price|intcomma }}</span>
                             </div>
                         </div>
-                        <a href="{% url 'orders:checkout' %}" class="w-full block text-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-primary hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition uppercase tracking-wider">
+                        <a href="{% url 'orders:checkout' %}" class="w-full block text-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-primary hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition uppercase tracking-wider">
                             Lanjut ke Checkout
                         </a>
                     </div>
@@ -83,7 +83,7 @@
                 </svg>
                 <h3 class="text-lg font-bold text-gray-900 mb-2">Keranjang Anda Kosong</h3>
                 <p class="text-sm text-gray-500 mb-6">Temukan sneakers favorit Anda dan tambahkan ke keranjang.</p>
-                <a href="{% url 'storefront:catalog' %}" class="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-primary hover:bg-green-800 transition uppercase tracking-wider">
+                <a href="{% url 'storefront:catalog' %}" class="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-primary hover:bg-orange-600 transition uppercase tracking-wider">
                     Mulai Belanja
                 </a>
             </div>

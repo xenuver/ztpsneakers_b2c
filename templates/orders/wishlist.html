@@ -23,7 +23,7 @@
                         <h3 class="text-sm font-medium text-black truncate">{{ item.product.name }}</h3>
                         <p class="mt-1 text-xs text-gray-500">{{ item.product.brand.name }}</p>
                         <div class="mt-2 flex items-center gap-2">
-                            <p class="text-sm font-bold text-black">Rp {{ item.product.price|floatformat:"0" }}</p>
+                            <p class="text-sm font-bold text-black">Rp {{ item.product.price|intcomma }}</p>
                         </div>
                     </div>
                 </a>
@@ -46,7 +46,7 @@
             </svg>
             <h3 class="text-lg font-bold text-gray-900 mb-2">Wishlist Anda Masih Kosong</h3>
             <p class="text-sm text-gray-500 mb-6">Temukan sneakers favorit Anda dan simpan di sini untuk dibeli nanti.</p>
-            <a href="{% url 'storefront:catalog' %}" class="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-primary hover:bg-green-800 transition uppercase tracking-wider">
+            <a href="{% url 'storefront:catalog' %}" class="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-primary hover:bg-orange-600 transition uppercase tracking-wider">
                 Mulai Belanja
             </a>
         </div>

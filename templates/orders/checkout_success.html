@@ -28,11 +28,11 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Ongkos Kirim</span>
-                        <span class="font-bold text-black">Rp {{ order.shipping_cost|floatformat:"0" }}</span>
+                        <span class="font-bold text-black">Rp {{ order.shipping_cost|intcomma }}</span>
                     </div>
                     <div class="flex justify-between border-t border-gray-200 pt-3">
                         <span class="text-gray-500 font-bold">Total Pembayaran</span>
-                        <span class="font-extrabold text-primary text-lg">Rp {{ order.total|floatformat:"0" }}</span>
+                        <span class="font-extrabold text-primary text-lg">Rp {{ order.total|intcomma }}</span>
                     </div>
                 </div>
             </div>

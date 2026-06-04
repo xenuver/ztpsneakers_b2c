@@ -91,6 +91,9 @@ TEMPLATES = [
                 'core.context_processors.store_settings_processor',
                 'core.context_processors.nav_context_processor',
             ],
+            'builtins': [
+                'django.contrib.humanize.templatetags.humanize',
+            ],
         },
     },
 ]
