@@ -789,27 +789,3 @@ python manage.py shell
 ```
 
 ---
-
-## 📄 Informasi Proyek
-
-| | |
-|---|---|
-| **Judul** | ZTP Sneakers B2C Platform |
-| **Jenis** | Skripsi / Tugas Akhir |
-| **Penulis** | Wahyu Ahmad Cahyadi (221103805) |
-| **Tahun** | 2026 |
-| **Stack** | Python 3.12 + Django 5.2 + HTMX 2.x + Tailwind CSS 3.x + PostgreSQL |
-| **Database** | PostgreSQL 16 (nama DB: `db_ztpsneakers`) |
-| **Deploy Target** | Shared Hosting cPanel (Niagahoster) + Passenger WSGI |
-
-### Dokumentasi Lengkap
-
-- 📋 [PRD.md](docs/PRD.md) — Product Requirements Document
-- 📐 [UIUX_FLOW.md](docs/UIUX_FLOW.md) — UI/UX Flow & Design System
-- ✅ [TASK.md](docs/TASK.md) — Task list & progress pengembangan
-
----
-
-<p align="center">
-  Dibuat dengan ❤️ untuk ZTP Sneakers, Pontianak · 2026
-</p>
