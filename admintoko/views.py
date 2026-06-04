@@ -36,7 +36,7 @@ def login_view(request):
             
     return render(request, 'admintoko/login.html')
 
-@user_passes_test(is_admin_toko, login_url='/auth/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def dashboard_view(request):
     today = timezone.now().date()
     
@@ -60,7 +60,7 @@ def dashboard_view(request):
     }
     return render(request, 'admintoko/dashboard.html', context)
 
-@user_passes_test(is_admin_toko, login_url='/admin-toko/login/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def products_view(request):
     products = Product.objects.all().order_by('-created_at')
     context = {
@@ -68,7 +68,7 @@ def products_view(request):
     }
     return render(request, 'admintoko/products.html', context)
 
-@user_passes_test(is_admin_toko, login_url='/admin-toko/login/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def product_create_view(request):
     from products.models import Category, Brand
     if request.method == 'POST':
@@ -94,7 +94,7 @@ def product_create_view(request):
     }
     return render(request, 'admintoko/product_form.html', context)
 
-@user_passes_test(is_admin_toko, login_url='/admin-toko/login/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def product_edit_view(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     from products.models import Category, Brand
@@ -115,7 +115,7 @@ def product_edit_view(request, product_id):
     }
     return render(request, 'admintoko/product_form.html', context)
 
-@user_passes_test(is_admin_toko, login_url='/auth/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def orders_view(request):
     status_filter = request.GET.get('status', 'all')
     orders = Order.objects.all().order_by('-created_at')
@@ -129,7 +129,7 @@ def orders_view(request):
     }
     return render(request, 'admintoko/orders.html', context)
 
-@user_passes_test(is_admin_toko, login_url='/auth/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def warranty_view(request):
     claims = WarrantyClaim.objects.all().order_by('-created_at')
     context = {
@@ -137,7 +137,7 @@ def warranty_view(request):
     }
     return render(request, 'admintoko/warranty.html', context)
 
-@user_passes_test(is_admin_toko, login_url='/auth/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def reviews_view(request):
     reviews = Review.objects.all().order_by('-created_at')
     context = {
@@ -145,7 +145,7 @@ def reviews_view(request):
     }
     return render(request, 'admintoko/reviews.html', context)
 
-@user_passes_test(is_admin_toko, login_url='/auth/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def product_toggle_view(request, product_id):
     if request.method == 'POST':
         product = get_object_or_404(Product, id=product_id)
@@ -154,7 +154,7 @@ def product_toggle_view(request, product_id):
         messages.success(request, f"Status produk {product.name} berhasil diperbarui.")
     return redirect('admintoko:products')
 
-@user_passes_test(is_admin_toko, login_url='/auth/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def order_update_status(request, order_id):
     if request.method == 'POST':
         order = get_object_or_404(Order, id=order_id)
@@ -169,7 +169,7 @@ def order_update_status(request, order_id):
         messages.success(request, f"Pesanan #{order.order_number} berhasil diperbarui.")
     return redirect('admintoko:orders')
 
-@user_passes_test(is_admin_toko, login_url='/auth/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def warranty_update_status(request, claim_id):
     if request.method == 'POST':
         claim = get_object_or_404(WarrantyClaim, id=claim_id)
@@ -184,7 +184,7 @@ def warranty_update_status(request, claim_id):
         messages.success(request, f"Klaim garansi #{claim.id} berhasil diperbarui.")
     return redirect('admintoko:warranty')
 
-@user_passes_test(is_admin_toko, login_url='/auth/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def review_toggle_view(request, review_id):
     if request.method == 'POST':
         review = get_object_or_404(Review, id=review_id)
@@ -193,7 +193,7 @@ def review_toggle_view(request, review_id):
         messages.success(request, f"Visibilitas ulasan berhasil diperbarui.")
     return redirect('admintoko:reviews')
 
-@user_passes_test(is_admin_toko, login_url='/auth/')
+@user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def customers_view(request):
     from userauths.models import User
     customers = User.objects.filter(is_staff=False, is_superuser=False).order_by('-date_joined')

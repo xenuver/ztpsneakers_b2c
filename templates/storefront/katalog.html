@@ -32,6 +32,7 @@
                         hx-get="{% url 'storefront:catalog' %}"
                         hx-target="#product-grid"
                         hx-include="#filter-form"
+                        hx-indicator="#loading-indicator"
                         hx-swap="innerHTML">
                     <option value="-created_at">Pilihan Utama</option>
                     <option value="price_asc">Harga Terendah</option>
@@ -64,6 +65,7 @@
                 <form id="filter-form" class="space-y-8" 
                       hx-get="{% url 'storefront:catalog' %}" 
                       hx-target="#product-grid" 
+                      hx-indicator="#loading-indicator"
                       hx-trigger="change">
                     
                     <!-- Search -->
@@ -154,7 +156,21 @@
             </div>
 
             <!-- Product Grid -->
-            <div class="flex-1">
+            <div class="flex-1 relative">
+                <!-- Skeleton Loader -->
+                <div id="loading-indicator" class="htmx-indicator absolute inset-0 z-10 bg-white/80">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-6">
+                        {% for i in "1234"|make_list %}
+                        <div class="animate-pulse">
+                            <div class="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg"></div>
+                            <div class="mt-4 h-4 bg-gray-200 rounded w-3/4"></div>
+                            <div class="mt-2 h-3 bg-gray-200 rounded w-1/2"></div>
+                            <div class="mt-2 h-4 bg-gray-200 rounded w-1/4"></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
                 <div id="product-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-6">
                     {% include "storefront/partials/product_grid.html" %}
                 </div>

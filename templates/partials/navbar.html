@@ -14,8 +14,12 @@
 <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
-            <!-- Logo -->
-            <div class="flex-shrink-0 flex items-center">
+            <!-- Logo and Mobile Menu Button -->
+            <div class="flex-shrink-0 flex items-center gap-3">
+                <!-- Mobile Hamburger Button -->
+                <button type="button" class="md:hidden text-black hover:text-primary transition" onclick="document.getElementById('mobile-drawer').classList.remove('translate-x-full'); document.getElementById('mobile-drawer-overlay').classList.remove('hidden');">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
                 <a href="/" class="text-3xl font-extrabold tracking-tighter text-black flex items-center gap-1">
                     8<svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
                         <path
@@ -48,21 +52,33 @@
 
             <!-- Search and Icons -->
             <div class="flex items-center space-x-6">
-                <!-- Search -->
+                <!-- Desktop Search -->
                 <form id="search-form-navbar" action="{% url 'storefront:catalog' %}" method="GET" class="hidden md:block relative w-64 lg:w-96 group">
                     <input type="text" name="q" placeholder="Search for products and brand" autocomplete="off"
                         hx-get="{% url 'storefront:live_search' %}"
                         hx-trigger="keyup changed delay:500ms, search"
                         hx-target="#search-results"
-                        class="w-full bg-gray-50 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-black placeholder-gray-400">
+                        hx-indicator="#search-loading"
+                        class="w-full bg-gray-50 border-none rounded-full py-2 pl-10 pr-10 text-sm focus:ring-1 focus:ring-black placeholder-gray-400">
                     <svg class="w-4 h-4 text-gray-400 absolute left-4 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                    <!-- Dropdown -->
+                    <div id="search-loading" class="htmx-indicator absolute right-4 top-2.5">
+                        <svg class="animate-spin h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
                     <div id="search-results" class="absolute left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-lg shadow-lg z-50 empty:hidden"></div>
                 </form>
 
-                <div class="flex items-center space-x-5">
+                <div class="flex items-center space-x-4 sm:space-x-5">
+                    <!-- Mobile Search Icon -->
+                    <button type="button" class="md:hidden text-black hover:text-primary transition hover:scale-110 relative" onclick="document.getElementById('mobile-search-bar').classList.toggle('hidden')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
                     <!-- Cart -->
                     <button type="button" class="text-black hover:text-primary transition hover:scale-110 relative" hx-get="{% url 'orders:cart_drawer' %}" hx-target="#cart-drawer-container" hx-swap="innerHTML">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,5 +170,59 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Mobile Search Expandable Bar -->
+        <div id="mobile-search-bar" class="hidden md:hidden pb-4">
+            <form action="{% url 'storefront:catalog' %}" method="GET" class="relative">
+                <input type="text" name="q" placeholder="Search products..." autocomplete="off"
+                    class="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-1 focus:ring-black">
+                <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </form>
+        </div>
     </div>
 </nav>
+
+<!-- Mobile Menu Drawer Overlay -->
+<div id="mobile-drawer-overlay" class="fixed inset-0 bg-black/50 z-[60] hidden transition-opacity" onclick="document.getElementById('mobile-drawer').classList.add('translate-x-full'); this.classList.add('hidden');"></div>
+
+<!-- Mobile Menu Drawer -->
+<div id="mobile-drawer" class="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white z-[70] transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
+    <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+        <span class="text-xl font-extrabold tracking-tighter text-black">MENU</span>
+        <button onclick="document.getElementById('mobile-drawer').classList.add('translate-x-full'); document.getElementById('mobile-drawer-overlay').classList.add('hidden');" class="text-gray-400 hover:text-black">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+    </div>
+    
+    <div class="overflow-y-auto flex-1 px-6 py-6 space-y-6">
+        {% if user.is_authenticated %}
+        <div class="pb-6 border-b border-gray-100">
+            <a href="{% url 'userauths:profile' %}" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                    {{ user.email|make_list|first|upper }}
+                </div>
+                <div>
+                    <p class="font-bold text-black text-sm">{{ user.username|default:user.email|truncatechars:20 }}</p>
+                    <p class="text-xs text-gray-500">Lihat Profil</p>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+        
+        <div class="space-y-4 flex flex-col">
+            <a href="{% url 'storefront:catalog' %}" class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-primary">Browse All</a>
+            <a href="{% url 'storefront:catalog' %}?sort=-created_at" class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-primary">Hot Items</a>
+            <a href="{% url 'orders:wishlist' %}" class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-primary">Wishlist</a>
+        </div>
+        
+        <div class="pt-6 border-t border-gray-100">
+            {% if not user.is_authenticated %}
+            <a href="{% url 'userauths:auth_main' %}" class="block w-full py-3 text-center bg-black text-white text-sm font-bold uppercase tracking-wider rounded-md">Sign In / Register</a>
+            {% else %}
+            <a href="{% url 'userauths:auth_logout' %}" class="block w-full py-3 text-center bg-gray-100 text-red-600 text-sm font-bold uppercase tracking-wider rounded-md hover:bg-gray-200">Logout</a>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Brand, Product, ProductImage, ProductSize, Banner
+from .models import Category, Brand, Product, ProductImage, ProductSize, Banner, Review
 
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
@@ -33,3 +33,10 @@ class BannerAdmin(admin.ModelAdmin):
     list_display = ('title', 'order', 'is_active')
     list_filter = ('is_active',)
     search_fields = ('title', 'subtitle')
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('product', 'user', 'rating', 'created_at', 'is_visible')
+    list_filter = ('rating', 'is_visible', 'created_at')
+    search_fields = ('product__name', 'user__username', 'comment')
+

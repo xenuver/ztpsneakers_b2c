@@ -48,8 +48,15 @@
                                     </div>
                                 </li>
                                 {% empty %}
-                                <li class="py-12 text-center text-gray-500">
-                                    Keranjang Anda masih kosong.
+                                <li class="py-12 flex flex-col items-center justify-center text-center">
+                                    <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                    <h3 class="text-sm font-bold text-gray-900 mb-1">Keranjang Kosong</h3>
+                                    <p class="text-xs text-gray-500 mb-4">Belum ada sneakers yang Anda pilih.</p>
+                                    <button type="button" onclick="closeCart()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-xs font-bold rounded text-white bg-black hover:bg-gray-800 uppercase tracking-wider">
+                                        Mulai Belanja
+                                    </button>
                                 </li>
                                 {% endfor %}
                             </ul>

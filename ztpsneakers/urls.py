@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/export-excel/', include([
         path('', getattr(__import__('orders.admin_export', fromlist=['export_excel_admin_view']), 'export_excel_admin_view'), name='admin_export_excel'),
     ])),
+    path('admin/analytics/', getattr(__import__('orders.admin_views', fromlist=['dashboard_analytics_api']), 'dashboard_analytics_api'), name='admin_analytics_api'),
     path('admin/', admin.site.urls),
     path("",include("storefront.urls")),
     path("pesanan/", include("orders.urls")),

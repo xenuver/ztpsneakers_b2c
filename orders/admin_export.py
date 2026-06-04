@@ -12,6 +12,14 @@ def export_excel_admin_view(request):
     
     orders = Order.objects.all().order_by('-created_at')
     
+    month = request.GET.get('month')
+    year = request.GET.get('year')
+    if month and year:
+        try:
+            orders = orders.filter(created_at__year=int(year), created_at__month=int(month))
+        except ValueError:
+            pass
+            
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Laporan Transaksi"
