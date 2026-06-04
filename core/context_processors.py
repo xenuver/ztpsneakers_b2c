@@ -12,12 +12,6 @@ def notifications_processor(request):
         'latest_notifications': []
     }
 
-def store_settings_processor(request):
-    from .models import StoreSetting
-    setting = StoreSetting.objects.first()
-    return {
-        'store_setting': setting
-    }
 
 def nav_context_processor(request):
     """Global context for navbar: categories & brands available on every page."""
