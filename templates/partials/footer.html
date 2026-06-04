@@ -72,13 +72,11 @@
                 <h3 class="text-sm font-bold mb-6 tracking-wider">Information</h3>
                 <!-- TODO: Ganti href="#" dengan URL halaman statis yang benar -->
                 <ul class="space-y-4 text-sm font-medium opacity-90">
-                    <li><a href="#" class="hover:opacity-75 transition">FAQ</a></li>
-                    <li><a href="#" class="hover:opacity-75 transition">Privacy Policy</a></li>
-                    <li><a href="#" class="hover:opacity-75 transition">Authenticity & Guarantees</a></li>
-                    <li><a href="#" class="hover:opacity-75 transition">Return Policy</a></li>
-                    <li><a href="#" class="hover:opacity-75 transition">Blog</a></li>
-                    <li><a href="#" class="hover:opacity-75 transition">About Us</a></li>
-                    <li><a href="#" class="hover:opacity-75 transition">Contact Us</a></li>
+                    <li><a href="{% url 'core:faq' %}" class="hover:opacity-75 transition">FAQ</a></li>
+                    <li><a href="{% url 'core:privacy' %}" class="hover:opacity-75 transition">Privacy Policy</a></li>
+                    <li><a href="{% url 'core:return_policy' %}" class="hover:opacity-75 transition">Return Policy</a></li>
+                    <li><a href="{% url 'core:about' %}" class="hover:opacity-75 transition">About Us</a></li>
+                    <li><a href="{% url 'core:contact' %}" class="hover:opacity-75 transition">Contact Us</a></li>
                 </ul>
             </div>
 
