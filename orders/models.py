@@ -1,6 +1,39 @@
 from django.db import models
 from django.conf import settings
 from products.models import Product, ProductSize
+from django.utils import timezone
+
+class Voucher(models.Model):
+    DISCOUNT_TYPES = [
+        ('percentage', 'Percentage'),
+        ('nominal', 'Nominal'),
+    ]
+    code = models.CharField(max_length=20, unique=True)
+    discount_type = models.CharField(max_length=20, choices=DISCOUNT_TYPES)
+    discount_value = models.DecimalField(max_digits=10, decimal_places=2)
+    min_purchase = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    valid_from = models.DateTimeField()
+    valid_to = models.DateTimeField()
+    is_active = models.BooleanField(default=True)
+
+    def is_valid(self, purchase_amount):
+        now = timezone.now()
+        if not self.is_active:
+            return False
+        if now < self.valid_from or now > self.valid_to:
+            return False
+        if purchase_amount < self.min_purchase:
+            return False
+        return True
+        
+    def calculate_discount(self, purchase_amount):
+        if self.discount_type == 'percentage':
+            return (purchase_amount * self.discount_value) / 100
+        return min(self.discount_value, purchase_amount)
+
+    def __str__(self):
+        return self.code
+
 
 class Wishlist(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='wishlists')
@@ -63,6 +96,10 @@ class Order(models.Model):
     shipping_service = models.CharField(max_length=100) # REG, YES, dll
     shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     tracking_number = models.CharField(max_length=100, null=True, blank=True)
+    
+    # Voucher Info
+    voucher = models.ForeignKey(Voucher, on_delete=models.SET_NULL, null=True, blank=True)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
     # Cost Summary
     subtotal = models.DecimalField(max_digits=12, decimal_places=2)

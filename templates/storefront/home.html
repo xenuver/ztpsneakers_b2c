@@ -1,10 +1,31 @@
 {% extends "base.html" %}
 
+{% block title %}ZTP Sneakers | Toko Sepatu Second Premium Authentic{% endblock %}
+{% block meta_description %}Toko Sepatu Sneakers Indonesia Original 100% Authentic. Temukan koleksi sepatu second original terbaik di ZTP Sneakers.{% endblock %}
+{% block og_title %}ZTP Sneakers | Toko Sepatu Second Premium Authentic{% endblock %}
+{% block og_description %}Toko Sepatu Sneakers Indonesia Original 100% Authentic. Temukan koleksi sepatu second original terbaik di ZTP Sneakers.{% endblock %}
+
 {% block extra_head %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <style>
     .swiper-pagination-bullet { background: #9ca3af; opacity: 1; }
     .swiper-pagination-bullet-active { background: var(--color-primary, #0B6A42); width: 24px; border-radius: 4px; }
+    @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+        animation: marquee 15s linear infinite;
+        display: inline-block;
+        white-space: nowrap;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
 </style>
 {% endblock %}
 
@@ -29,9 +50,29 @@
         <div class="swiper-pagination absolute bottom-6 z-30"></div>
     </div>
     
-    <div class="text-center mt-8">
+    <div class="text-center mt-8 mb-6">
         <h2 class="text-lg md:text-xl font-bold text-black">Toko Sepatu Sneakers Indonesia Original 100% Authentic</h2>
         <p class="text-xs md:text-sm text-gray-500 mt-1">Berdiri sejak 2016 • 6 Lokasi Cabang • Ribuan Customer • Bisa kirim seluruh Indonesia gratis ongkir</p>
+    </div>
+</div>
+
+<!-- Trust Badge Marquee -->
+<div class="bg-black py-3 overflow-hidden whitespace-nowrap mb-8">
+    <div class="animate-marquee text-sm font-bold uppercase tracking-widest text-[#E8FF00]">
+        &nbsp;&nbsp;&nbsp;&nbsp;⭐ 100% ORIGINAL AUTHENTIC&nbsp;&nbsp;&nbsp;&nbsp;⭐ GARANSI UANG KEMBALI&nbsp;&nbsp;&nbsp;&nbsp;⭐ GRATIS ONGKIR SELURUH INDONESIA&nbsp;&nbsp;&nbsp;&nbsp;⭐ CICILAN 0% VIA MIDTRANS&nbsp;&nbsp;&nbsp;&nbsp;⭐ PENGIRIMAN CEPAT & AMAN&nbsp;&nbsp;&nbsp;&nbsp;⭐ 100% ORIGINAL AUTHENTIC&nbsp;&nbsp;&nbsp;&nbsp;⭐ GARANSI UANG KEMBALI&nbsp;&nbsp;&nbsp;&nbsp;⭐ GRATIS ONGKIR SELURUH INDONESIA&nbsp;&nbsp;&nbsp;&nbsp;⭐ CICILAN 0% VIA MIDTRANS&nbsp;&nbsp;&nbsp;&nbsp;⭐ PENGIRIMAN CEPAT & AMAN
+    </div>
+</div>
+
+<!-- Brand Strip -->
+<div class="bg-gray-50 py-10 border-y border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-center gap-8 md:gap-16 flex-wrap opacity-60">
+            {% for brand in brands %}
+                <a href="{% url 'storefront:catalog' %}?brand={{ brand.id }}" class="hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                    <h3 class="text-xl md:text-2xl font-black uppercase tracking-widest text-black">{{ brand.name }}</h3>
+                </a>
+            {% endfor %}
+        </div>
     </div>
 </div>
 
@@ -57,6 +98,34 @@
     });
 </script>
 {% endblock %}
+
+<!-- Hot Items Section -->
+{% if hot_items %}
+<div class="bg-[#0D0D0D] py-16 text-white overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-end mb-8">
+            <h2 class="text-2xl font-extrabold uppercase tracking-tight text-[#E8FF00]">🔥 Trending Sekarang</h2>
+        </div>
+        <div class="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar">
+            {% for product in hot_items %}
+            <div class="min-w-[280px] w-[280px] sm:min-w-[320px] sm:w-[320px] snap-center bg-gray-900 rounded-xl overflow-hidden shadow-xl border border-gray-800 shrink-0">
+                <a href="{% url 'storefront:product_detail' product.slug %}" class="block h-64 bg-gray-800 relative">
+                    {% if product.get_primary_image %}
+                    <img src="{{ product.get_primary_image }}" alt="{{ product.name }}" class="w-full h-full object-cover" loading="lazy">
+                    {% endif %}
+                    <div class="absolute top-3 right-3 bg-[#E8FF00] text-black text-xs font-bold px-2 py-1 rounded">⭐ {{ product.avg_rating|floatformat:"1" }}</div>
+                </a>
+                <div class="p-5">
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">{{ product.brand.name }}</p>
+                    <a href="{% url 'storefront:product_detail' product.slug %}" class="text-base font-bold text-white hover:text-[#E8FF00] transition truncate block">{{ product.name }}</a>
+                    <p class="text-lg font-extrabold text-[#E8FF00] mt-3">Rp {{ product.price|floatformat:"0" }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <!-- Product Grids Section -->
 <div class="bg-white py-16">

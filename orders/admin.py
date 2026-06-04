@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Wishlist, Cart, CartItem, Order, OrderItem, ShippingAddress
+from .models import Wishlist, Cart, CartItem, Order, OrderItem, ShippingAddress, Voucher
+
+@admin.register(Voucher)
+class VoucherAdmin(admin.ModelAdmin):
+    list_display = ('code', 'discount_type', 'discount_value', 'is_active', 'valid_from', 'valid_to')
+    list_filter = ('is_active', 'discount_type')
+    search_fields = ('code',)
 
 @admin.register(Wishlist)
 class WishlistAdmin(admin.ModelAdmin):

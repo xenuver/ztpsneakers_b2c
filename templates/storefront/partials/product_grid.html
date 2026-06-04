@@ -7,7 +7,7 @@
 {% endif %}>
     <div class="w-full h-64 bg-gray-100 rounded-t-md overflow-hidden flex items-center justify-center relative">
         {% if product.get_primary_image %}
-            <img src="{{ product.get_primary_image }}" alt="{{ product.name }}" class="w-full h-full object-center object-cover group-hover:opacity-75 transition-opacity">
+            <img src="{{ product.get_primary_image }}" alt="{{ product.name }}" class="w-full h-full object-center object-cover group-hover:opacity-75 transition-opacity" loading="lazy">
         {% else %}
             <span class="text-gray-400">No Image</span>
         {% endif %}

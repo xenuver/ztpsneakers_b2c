@@ -11,9 +11,21 @@ def home_view(request):
         from orders.models import Wishlist
         wishlist_product_ids = list(Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True))
 
+    from django.db.models import Avg
+    
+    # Hot items (rating >= 4.5)
+    hot_items = Product.objects.filter(is_active=True).annotate(
+        avg_rating=Avg('reviews__rating')
+    ).filter(avg_rating__gte=4.5).order_by('-avg_rating')[:8]
+    
+    # Brands for strip
+    brands = Brand.objects.all().order_by('name')
+
     context = {
         'banners': banners,
         'featured_products': featured_products,
+        'hot_items': hot_items,
+        'brands': brands,
         'categories': categories,
         'wishlist_product_ids': wishlist_product_ids,
     }

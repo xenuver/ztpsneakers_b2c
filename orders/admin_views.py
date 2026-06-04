@@ -62,6 +62,43 @@ def dashboard_analytics_api(request):
         chart_labels.append(label)
         chart_data.append(round(week_revenue_million, 2))
 
+    # 3. Heatmap Data (Orders count by day and hour)
+    from django.db.models.functions import ExtractWeekDay, ExtractHour
+    heatmap_qs = Order.objects.filter(
+        status__in=['paid', 'processing', 'shipped', 'completed']
+    ).annotate(
+        weekday=ExtractWeekDay('created_at'),
+        hour=ExtractHour('created_at')
+    ).values('weekday', 'hour').annotate(count=Count('id'))
+
+    # Weekday mapping in Django (1=Sunday, 2=Monday, ..., 7=Saturday)
+    days_map = {2: 'Mon', 3: 'Tue', 4: 'Wed', 5: 'Thu', 6: 'Fri', 7: 'Sat', 1: 'Sun'}
+    heatmap_data = []
+    
+    for item in heatmap_qs:
+        day_str = days_map.get(item['weekday'], 'Mon')
+        hour_str = f"{item['hour']:02d}:00"
+        heatmap_data.append({
+            'x': day_str,
+            'y': hour_str,
+            'v': item['count']
+        })
+
+    # 4. Recent Sales (Laporan Penjualan Terakhir)
+    recent_orders_qs = Order.objects.filter(
+        status__in=['paid', 'processing', 'shipped', 'completed']
+    ).order_by('-created_at')[:10]
+    
+    recent_orders = []
+    for o in recent_orders_qs:
+        recent_orders.append({
+            'order_number': o.order_number,
+            'user': o.user.email if o.user else 'Guest',
+            'date': o.created_at.strftime('%d %b %Y %H:%M'),
+            'total': float(o.total),
+            'status': o.get_status_display()
+        })
+
     data = {
         'kpis': {
             'total_revenue_month': total_revenue_month,
@@ -72,7 +109,9 @@ def dashboard_analytics_api(request):
         'chart': {
             'labels': chart_labels,
             'data': chart_data
-        }
+        },
+        'heatmap': heatmap_data,
+        'recent_orders': recent_orders
     }
     
     return JsonResponse(data)

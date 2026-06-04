@@ -24,3 +24,22 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.title}"
+
+class StoreSetting(models.Model):
+    name = models.CharField(max_length=255, default="ZTP Sneakers")
+    logo = models.ImageField(upload_to="store/", blank=True, null=True)
+    whatsapp_number = models.CharField(max_length=20, blank=True, null=True, help_text="Format: 62812xxx")
+    instagram_url = models.URLField(blank=True, null=True)
+    crisp_website_id = models.CharField(max_length=100, blank=True, null=True, help_text="ID Token dari Crisp Chat")
+
+    class Meta:
+        verbose_name = "Pengaturan Toko"
+        verbose_name_plural = "Pengaturan Toko"
+
+    def __str__(self):
+        return "Pengaturan Toko"
+
+    def save(self, *args, **kwargs):
+        if not self.pk and StoreSetting.objects.exists():
+            return
+        return super(StoreSetting, self).save(*args, **kwargs)

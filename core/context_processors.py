@@ -11,3 +11,10 @@ def notifications_processor(request):
         'unread_notifications_count': 0,
         'latest_notifications': []
     }
+
+def store_settings_processor(request):
+    from .models import StoreSetting
+    setting = StoreSetting.objects.first()
+    return {
+        'store_setting': setting
+    }

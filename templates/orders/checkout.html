@@ -158,6 +158,27 @@
                                 </div>
                             </dl>
                             
+                            <!-- Voucher -->
+                            <div class="mb-6">
+                                <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Punya Kode Voucher?</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="voucher_code" name="voucher_code" 
+                                           value="{{ applied_voucher.code|default:'' }}"
+                                           placeholder="Masukkan kode" 
+                                           class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition uppercase">
+                                    <button type="button" 
+                                            hx-post="{% url 'orders:apply_voucher' %}"
+                                            hx-include="#voucher_code"
+                                            hx-target="#voucher-msg"
+                                            class="bg-gray-900 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-black transition">Terapkan</button>
+                                </div>
+                                <div id="voucher-msg">
+                                    {% if applied_voucher %}
+                                        <div class="text-green-600 text-sm mt-1 font-bold">Voucher aktif! Diskon Rp {{ applied_voucher.discount_amount|floatformat:"0" }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
                             <div id="total-payment" class="border-t border-gray-200 pt-4 mb-6 flex justify-between items-center">
                                 <span class="text-base font-bold text-black uppercase tracking-wider">Total</span>
                                 <span class="text-2xl font-extrabold text-primary">Rp {{ cart.get_total_price|floatformat:"0" }}</span>
@@ -231,7 +252,8 @@
             const parts = e.target.value.split('|');
             const shippingCost = parseFloat(parts[1]) || 0;
             const subtotal = {{ cart.get_total_price }};
-            const total = subtotal + shippingCost;
+            const discount = {{ applied_voucher.discount_amount|default:"0" }};
+            const total = subtotal - discount + shippingCost;
             
             // Update shipping summary
             document.getElementById('shipping-summary-row').innerHTML = `

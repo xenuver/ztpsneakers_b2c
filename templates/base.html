@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ZTP Sneakers{% endblock %}</title>
-
+    <meta name="description" content="{% block meta_description %}Beli sepatu sneakers original second berkualitas tinggi dengan harga terjangkau di ZTP Sneakers.{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}ZTP Sneakers{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Beli sepatu sneakers original second berkualitas tinggi dengan harga terjangkau di ZTP Sneakers.{% endblock %}">
+    {% block meta_og_image %}{% endblock %}
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,9 +121,10 @@
     </script>
 
     <!-- Crisp Live Chat -->
+    {% if store_setting and store_setting.crisp_website_id %}
     <script type="text/javascript">
         window.$crisp = [];
-        window.CRISP_WEBSITE_ID = "fb6ee011-d83f-4903-a864-5ddce8aa5572";
+        window.CRISP_WEBSITE_ID = "{{ store_setting.crisp_website_id }}";
         (function () {
             var d = document;
             var s = d.createElement("script");
@@ -133,6 +137,7 @@
         window.$crisp.push(["set", "user:nickname", ["{{ user.get_full_name }}"]]); {% endif %}
         {% endif %}
     </script>
+    {% endif %}
 
 
 </body>

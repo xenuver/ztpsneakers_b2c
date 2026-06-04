@@ -589,28 +589,28 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 
 ## 🟠 DEVIASI DESIGN SYSTEM — Tidak sesuai PRD
 
-- [ ] **[DESIGN-03]** Navbar mobile — tambahkan hamburger menu button + slide-out drawer. Saat ini navigasi hilang total di layar ≤ md.
+- [x] **[DESIGN-03]** Navbar mobile — tambahkan hamburger menu button + slide-out drawer. Saat ini navigasi hilang total di layar ≤ md.
   - File: `templates/partials/navbar.html`
 
 ---
 
 ## 🟡 UX IMPROVEMENT — Pengalaman pengguna lebih baik
 
-- [ ] **[UX-01]** Tambahkan `hx-indicator` pada semua HTMX request — filter katalog, pilih kota, hitung ongkir, search. User tidak tahu request sedang berjalan.
+- [x] **[UX-01]** Tambahkan `hx-indicator` pada semua HTMX request — filter katalog, pilih kota, hitung ongkir, search. User tidak tahu request sedang berjalan.
   - File: `templates/storefront/katalog.html`, `templates/orders/checkout.html`, `templates/partials/navbar.html`
-- [ ] **[UX-02]** Search bar mobile — saat ini hidden di mobile. Tambahkan toggle search icon yang expand input saat diklik di mobile.
+- [x] **[UX-02]** Search bar mobile — saat ini hidden di mobile. Tambahkan toggle search icon yang expand input saat diklik di mobile.
   - File: `templates/partials/navbar.html`
-- [ ] **[UX-03]** Loading skeleton saat katalog difilter — tampilkan placeholder card abu-abu saat HTMX sedang fetch.
+- [x] **[UX-03]** Loading skeleton saat katalog difilter — tampilkan placeholder card abu-abu saat HTMX sedang fetch.
   - File: `templates/storefront/partials/product_grid.html`
-- [ ] **[UX-04]** Empty state halaman wishlist — jika wishlist kosong, tampilkan ilustrasi + CTA ke katalog.
+- [x] **[UX-04]** Empty state halaman wishlist — jika wishlist kosong, tampilkan ilustrasi + CTA ke katalog.
   - File: `templates/orders/wishlist.html`
-- [ ] **[UX-05]** Empty state halaman keranjang — jika cart kosong, tampilkan ilustrasi + CTA ke katalog.
+- [x] **[UX-05]** Empty state halaman keranjang — jika cart kosong, tampilkan ilustrasi + CTA ke katalog.
   - File: `templates/orders/cart.html`
-- [ ] **[UX-06]** Tambah breadcrumb di halaman detail produk (Home > Katalog > Brand > Nama Produk).
+- [x] **[UX-06]** Tambah breadcrumb di halaman detail produk (Home > Katalog > Brand > Nama Produk).
   - File: `templates/storefront/detail.html`
-- [ ] **[UX-07]** Tombol "Chat dengan Kami" (link buka Crisp) di halaman detail produk dan halaman detail pesanan.
+- [x] **[UX-07]** Tombol "Chat dengan Kami" (link buka Crisp) di halaman detail produk dan halaman detail pesanan.
   - File: `templates/storefront/detail.html`, `templates/orders/detail.html`
-- [ ] **[UX-08]** Validasi form checkout client-side — tampilkan error inline (bukan redirect) jika field kosong saat submit.
+- [x] **[UX-08]** Validasi form checkout client-side — tampilkan error inline (bukan redirect) jika field kosong saat submit.
   - File: `templates/orders/checkout.html` → JS validation sebelum form submit
 
 ---
@@ -639,4 +639,4 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 - [ ] **[BONUS-09]** Notifikasi email after-sales (7 hari setelah order Selesai) via SMTP Gmail jika hosting support.
 - [ ] **[BONUS-10]** Jasmine: Heatmap jam sibuk penjualan (Chart.js matrix plugin).
 - [ ] **[BONUS-11]** Admin Toko: Halaman laporan penjualan (tabel, no export button sesuai PRD §4.2).
-- [ ] **[BONUS-12]** Jasmine: Pengaturan toko — SMTP config, Crisp token, logo toko, teks header/footer.
+- [ ] **[BONUS-12]** Jasmine: Pengaturan toko — SMTP config, logo toko, teks header/footer.

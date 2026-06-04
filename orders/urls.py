@@ -16,6 +16,7 @@ urlpatterns = [
     path('api/cities/', views.get_cities, name='get_cities'),
     path('api/shipping-cost/', views.get_shipping_cost, name='get_shipping_cost'),
     path('api/update-total/', views.update_total, name='update_total'),
+    path('api/apply-voucher/', views.apply_voucher, name='apply_voucher'),
     path('checkout/success/<str:order_number>/', views.checkout_success, name='checkout_success'),
     path('midtrans/webhook/', views.midtrans_webhook, name='midtrans_webhook'),
     path('history/<str:order_number>/', views.order_detail_view, name='order_detail'),

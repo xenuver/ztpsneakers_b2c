@@ -167,7 +167,21 @@ def checkout_view(request):
                 pass
                 
         subtotal = cart.get_total_price()
-        total = subtotal + shipping_cost
+        
+        applied_voucher_data = request.session.get('applied_voucher', None)
+        discount_amount = Decimal('0')
+        voucher_obj = None
+        
+        if applied_voucher_data:
+            from .models import Voucher
+            try:
+                voucher_obj = Voucher.objects.get(code=applied_voucher_data['code'])
+                if voucher_obj.is_valid(subtotal):
+                    discount_amount = Decimal(str(applied_voucher_data['discount_amount']))
+            except Voucher.DoesNotExist:
+                pass
+                
+        total = subtotal - discount_amount + shipping_cost
         
         # Validasi stok
         for item in cart.items.all():
@@ -190,6 +204,8 @@ def checkout_view(request):
             courier=selected_courier,
             shipping_service=shipping_service,
             shipping_cost=shipping_cost,
+            voucher=voucher_obj,
+            discount_amount=discount_amount,
             subtotal=subtotal,
             total=total
         )
@@ -227,13 +243,19 @@ def checkout_view(request):
             order.midtrans_transaction_id = snap_token # We can store token here temporarily
             order.save()
             
-        # Clear Cart
+        # Clear Cart and Voucher
         cart.items.all().delete()
+        if 'applied_voucher' in request.session:
+            del request.session['applied_voucher']
         
         return redirect('orders:checkout_success', order_number=order.order_number)
     
+    # Pass applied voucher to template
+    applied_voucher = request.session.get('applied_voucher', None)
+    
     context = {
         'cart': cart,
+        'applied_voucher': applied_voucher,
     }
     return render(request, "orders/checkout.html", context)
 
@@ -350,13 +372,29 @@ def update_total(request):
         except:
             pass
             
-    total = subtotal + shipping_cost
+    applied_voucher_data = request.session.get('applied_voucher', None)
+    discount_amount = Decimal('0')
+    if applied_voucher_data:
+        from .models import Voucher
+        try:
+            voucher_obj = Voucher.objects.get(code=applied_voucher_data['code'])
+            if voucher_obj.is_valid(subtotal):
+                discount_amount = Decimal(str(applied_voucher_data['discount_amount']))
+        except Voucher.DoesNotExist:
+            pass
+            
+    total = subtotal - discount_amount + shipping_cost
     
     html = f"""
     <div id="total-payment" class="border-t border-gray-100 pt-4 mb-6 flex justify-between items-center">
         <span class="text-base font-bold text-black uppercase tracking-wider">Total Pembayaran</span>
         <div class="text-right">
             <span class="text-xs text-gray-500 block mb-1">Subtotal + Ongkir (Rp {shipping_cost:,.0f})</span>
+            """
+    if discount_amount > 0:
+        html += f'<span class="text-xs text-green-600 font-bold block mb-1">Diskon (Rp {discount_amount:,.0f})</span>'
+            
+    html += f"""
             <span class="text-2xl font-extrabold text-primary">Rp {total:,.0f}</span>
         </div>
     </div>
@@ -615,3 +653,32 @@ def manual_check_payment_status(request, order_number):
         messages.error(request, 'Gagal mengecek status ke Midtrans. Pastikan pesanan sudah dibuat di Midtrans (token valid).')
         
     return redirect('orders:order_detail', order_number=order_number)
+
+@login_required
+def apply_voucher(request):
+    if request.method == 'POST':
+        code = request.POST.get('voucher_code', '').strip()
+        cart = request.user.cart if hasattr(request.user, 'cart') else None
+        
+        if not cart or cart.items.count() == 0:
+            return HttpResponse('<div class="text-red-500 text-sm mt-1">Keranjang kosong.</div>')
+            
+        subtotal = cart.get_total_price()
+        
+        from .models import Voucher
+        try:
+            voucher = Voucher.objects.get(code__iexact=code)
+            if voucher.is_valid(subtotal):
+                discount = voucher.calculate_discount(subtotal)
+                # Simpan voucher ke sesi agar bisa dipakai saat checkout
+                request.session['applied_voucher'] = {
+                    'code': voucher.code,
+                    'discount_amount': float(discount)
+                }
+                return HttpResponse(f'<div class="text-green-600 text-sm mt-1 font-bold">Voucher berhasil diterapkan! Diskon Rp {discount:,.0f}</div><script>setTimeout(() => window.location.reload(), 1000);</script>')
+            else:
+                return HttpResponse('<div class="text-red-500 text-sm mt-1">Voucher tidak valid atau syarat pembelian belum terpenuhi.</div>')
+        except Voucher.DoesNotExist:
+            return HttpResponse('<div class="text-red-500 text-sm mt-1">Kode voucher tidak ditemukan.</div>')
+            
+    return HttpResponse('')
