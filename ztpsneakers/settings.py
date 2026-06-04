@@ -206,3 +206,4 @@ RAJAONGKIR_API_KEY = os.getenv('RAJAONGKIR_API_KEY', '')
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Restart trigger

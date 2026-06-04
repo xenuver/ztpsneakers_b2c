@@ -52,12 +52,8 @@
                     </svg>
                 </button>
                 <!-- Logo -->
-                <a href="/" class="font-heading font-extrabold text-2xl tracking-tight nav-link leading-none">
-                    {% if store_setting and store_setting.logo %}
-                    <img src="{{ store_setting.logo.url }}" alt="{{ store_setting.name }}" class="h-9">
-                    {% else %}
-                    ZTP<span class="text-[#E8FF00]">.</span>
-                    {% endif %}
+                <a href="/" class="flex items-center">
+                    <img src="{% static 'images/logo.png' %}" alt="ZTP Sneakers" class="h-9 md:h-12 w-auto object-contain">
                 </a>
             </div>
 
