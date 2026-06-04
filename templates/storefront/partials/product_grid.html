@@ -1,13 +1,17 @@
 {% for product in products %}
-<a href="{% url 'storefront:product_detail' product.slug %}" class="group relative card-product hover:scale-105 transition-transform duration-300 block"
+<div class="group relative card-product bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:border-gray-300"
 {% if forloop.last and products.has_next %}
     hx-get="?page={{ products.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if brand_id %}&brand={{ brand_id }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
     hx-trigger="revealed"
     hx-swap="afterend"
 {% endif %}>
-    <div class="w-full h-64 bg-gray-100 rounded-t-md overflow-hidden flex items-center justify-center relative">
+    
+    <!-- Link overlay covers entire card -->
+    <a href="{% url 'storefront:product_detail' product.slug %}" class="absolute inset-0 z-10"><span class="sr-only">View {{ product.name }}</span></a>
+
+    <div class="w-full aspect-[4/3] sm:aspect-square bg-gray-100 flex items-center justify-center relative overflow-hidden">
         {% if product.get_primary_image %}
-            <img src="{{ product.get_primary_image }}" alt="{{ product.name }}" class="w-full h-full object-center object-cover group-hover:opacity-75 transition-opacity" loading="lazy">
+            <img src="{{ product.get_primary_image }}" alt="{{ product.name }}" class="w-full h-full object-center object-cover group-hover:scale-105 group-hover:opacity-80 transition-all duration-500" loading="lazy">
         {% else %}
             <span class="text-gray-400">No Image</span>
         {% endif %}
@@ -33,13 +37,13 @@
             {% endif %}
         </div>
 
-        <!-- Wishlist Button -->
+        <!-- Wishlist Button MUST have high z-index and not be nested in <a> -->
         <button type="button" 
                 hx-post="{% url 'orders:toggle_wishlist' product.id %}" 
                 hx-swap="innerHTML"
                 hx-target="this"
                 onclick="event.preventDefault();"
-                class="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm hover:scale-110 transition-transform">
+                class="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm hover:scale-110 transition-transform z-30">
             {% if product.id in wishlist_product_ids %}
             <svg class="w-6 h-6 flex-shrink-0 text-red-500" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
@@ -51,14 +55,14 @@
             {% endif %}
         </button>
         <!-- Quick Add-to-Cart Overlay -->
-        <div class="absolute inset-x-0 bottom-0 bg-white/90 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center p-3 backdrop-blur-sm">
+        <div class="absolute inset-x-0 bottom-0 bg-white/90 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center p-3 backdrop-blur-sm z-20 pointer-events-none">
             <span class="text-xs font-bold text-black uppercase tracking-wider flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 Pilih Ukuran
             </span>
         </div>
     </div>
-    <div class="p-4">
+    <div class="p-4 relative z-0 flex flex-col flex-1">
         <div class="flex justify-between items-start">
             <h3 class="text-sm font-medium text-black truncate pr-2">{{ product.name }}</h3>
             {% if product.review_count > 0 %}
@@ -117,14 +121,14 @@
                 {% endif %}
             {% endif %}
         </div>
-        <div class="mt-2 flex items-center gap-2">
+        <div class="mt-auto pt-3 flex items-center gap-2">
             <p class="text-sm font-bold text-black">Rp {{ product.price|floatformat:"0" }}</p>
             {% if product.crossed_price %}
                 <p class="text-xs text-gray-400 line-through">Rp {{ product.crossed_price|floatformat:"0" }}</p>
             {% endif %}
         </div>
     </div>
-</a>
+</div>
 {% empty %}
 <div class="col-span-full py-12 text-center">
     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

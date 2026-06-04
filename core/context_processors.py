@@ -18,3 +18,11 @@ def store_settings_processor(request):
     return {
         'store_setting': setting
     }
+
+def nav_context_processor(request):
+    """Global context for navbar: categories & brands available on every page."""
+    from products.models import Category, Brand
+    return {
+        'nav_categories': Category.objects.all().order_by('order', 'name'),
+        'nav_brands': Brand.objects.all().order_by('name'),
+    }

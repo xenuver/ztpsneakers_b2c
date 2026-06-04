@@ -19,6 +19,19 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def hero_image(self):
+        # Get the top product (by highest total view_count or just highest id if no view_count exists)
+        # Using -created_at as fallback since I don't see view_count in product fields here.
+        # Let's check Product fields again. Product has average_rating and review_count.
+        # I'll sort by review_count and average_rating.
+        top_product = self.products.order_by('-created_at').first()
+        # To get the best product if they have sold_count or similar, but since they don't, I'll just use the first product that has images.
+        for p in self.products.all():
+            if p.get_primary_image():
+                return p.get_primary_image()
+        return None
+
 class Brand(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True)

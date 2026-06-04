@@ -1,27 +1,46 @@
 {% extends "base.html" %}
 
 {% block title %}ZTP Sneakers | Toko Sepatu Second Premium Authentic{% endblock %}
-{% block meta_description %}Toko Sepatu Sneakers Indonesia Original 100% Authentic. Temukan koleksi sepatu second original terbaik di ZTP Sneakers.{% endblock %}
+{% block meta_description %}Toko Sepatu Sneakers Indonesia Original 100% Authentic. Temukan koleksi sepatu second
+original terbaik di ZTP Sneakers.{% endblock %}
 {% block og_title %}ZTP Sneakers | Toko Sepatu Second Premium Authentic{% endblock %}
-{% block og_description %}Toko Sepatu Sneakers Indonesia Original 100% Authentic. Temukan koleksi sepatu second original terbaik di ZTP Sneakers.{% endblock %}
+{% block og_description %}Toko Sepatu Sneakers Indonesia Original 100% Authentic. Temukan koleksi sepatu second original
+terbaik di ZTP Sneakers.{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <style>
-    .swiper-pagination-bullet { background: #9ca3af; opacity: 1; }
-    .swiper-pagination-bullet-active { background: var(--color-primary, #0B6A42); width: 24px; border-radius: 4px; }
-    @keyframes marquee {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
+    .swiper-pagination-bullet {
+        background: #9ca3af;
+        opacity: 1;
     }
+
+    .swiper-pagination-bullet-active {
+        background: var(--color-primary, #0B6A42);
+        width: 24px;
+        border-radius: 4px;
+    }
+
+    @keyframes marquee {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
     .animate-marquee {
         animation: marquee 15s linear infinite;
         display: inline-block;
         white-space: nowrap;
     }
+
     .hide-scrollbar::-webkit-scrollbar {
         display: none;
     }
+
     .hide-scrollbar {
         -ms-overflow-style: none;
         scrollbar-width: none;
@@ -32,92 +51,156 @@
 {% block content %}
 <!-- Hero Section -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-8">
-    <div class="swiper hero-swiper relative bg-gradient-to-r from-gray-300 to-gray-200 rounded-lg overflow-hidden min-h-[400px]">
+    <div
+        class="swiper hero-swiper relative bg-gradient-to-r from-gray-300 to-gray-200 rounded-lg overflow-hidden min-h-[250px] md:min-h-[400px]">
         <div class="swiper-wrapper h-full">
             {% if banners %}
-                {% for banner in banners %}
-                <div class="swiper-slide h-[400px] w-full">
-                    <div class="w-full h-full bg-cover bg-center absolute inset-0 opacity-90" style="background-image: url('{{ banner.image.url }}');"></div>
-                </div>
-                {% endfor %}
+            {% for banner in banners %}
+            <div class="swiper-slide h-[250px] md:h-[400px] w-full">
+                <div class="w-full h-full bg-cover bg-center absolute inset-0 opacity-90"
+                    style="background-image: url('{{ banner.image.url }}');"></div>
+            </div>
+            {% endfor %}
             {% else %}
-                <div class="swiper-slide h-[400px] w-full">
-                    <div class="w-full h-full bg-cover bg-center absolute inset-0 opacity-90" style="background-image: url('https://via.placeholder.com/1200x400?text=NO+BANNER');"></div>
-                </div>
+            <div class="swiper-slide h-[250px] md:h-[400px] w-full">
+                <div class="w-full h-full bg-cover bg-center absolute inset-0 opacity-90"
+                    style="background-image: url('https://via.placeholder.com/1200x400?text=NO+BANNER');"></div>
+            </div>
             {% endif %}
         </div>
         <!-- Pagination dots -->
         <div class="swiper-pagination absolute bottom-6 z-30"></div>
-    </div>
-    
-    <div class="text-center mt-8 mb-6">
-        <h2 class="text-lg md:text-xl font-bold text-black">Toko Sepatu Sneakers Indonesia Original 100% Authentic</h2>
-        <p class="text-xs md:text-sm text-gray-500 mt-1">Berdiri sejak 2016 • 6 Lokasi Cabang • Ribuan Customer • Bisa kirim seluruh Indonesia gratis ongkir</p>
+        <!-- Navigation Buttons -->
+        <div class="swiper-button-next text-white drop-shadow-md hidden md:flex"></div>
+        <div class="swiper-button-prev text-white drop-shadow-md hidden md:flex"></div>
     </div>
 </div>
 
-<!-- Trust Badge Marquee -->
-<div class="bg-black py-3 overflow-hidden whitespace-nowrap mb-8">
-    <div class="animate-marquee text-sm font-bold uppercase tracking-widest text-[#E8FF00]">
-        &nbsp;&nbsp;&nbsp;&nbsp;⭐ 100% ORIGINAL AUTHENTIC&nbsp;&nbsp;&nbsp;&nbsp;⭐ GARANSI UANG KEMBALI&nbsp;&nbsp;&nbsp;&nbsp;⭐ GRATIS ONGKIR SELURUH INDONESIA&nbsp;&nbsp;&nbsp;&nbsp;⭐ CICILAN 0% VIA MIDTRANS&nbsp;&nbsp;&nbsp;&nbsp;⭐ PENGIRIMAN CEPAT & AMAN&nbsp;&nbsp;&nbsp;&nbsp;⭐ 100% ORIGINAL AUTHENTIC&nbsp;&nbsp;&nbsp;&nbsp;⭐ GARANSI UANG KEMBALI&nbsp;&nbsp;&nbsp;&nbsp;⭐ GRATIS ONGKIR SELURUH INDONESIA&nbsp;&nbsp;&nbsp;&nbsp;⭐ CICILAN 0% VIA MIDTRANS&nbsp;&nbsp;&nbsp;&nbsp;⭐ PENGIRIMAN CEPAT & AMAN
+<!-- Trust Badge Strip -->
+<div class="bg-[#1A1A1A] py-3 text-white border-b border-[#2A2A2A]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+            class="flex items-center justify-center gap-6 sm:gap-10 flex-wrap text-xs font-bold tracking-wider uppercase">
+            <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#E8FF00] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                    </path>
+                </svg>
+                <span>Garansi Puas</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#E8FF00] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                </svg>
+                <span>7 Hari Return</span>
+            </div>
+            <div class="hidden sm:flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#E8FF00] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                </svg>
+                <span>Free Ongkir</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#E8FF00] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>100% Authentic</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hero Stats Section -->
+<div class="bg-[#111111] py-12 border-b border-[#2A2A2A] animate-on-scroll">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <h2 class="font-heading text-2xl md:text-3xl font-bold text-white uppercase tracking-tight">
+                {% if store_setting and store_setting.short_description %}{{ store_setting.short_description }}{% else
+                %}Toko Sepatu Sneakers Indonesia &mdash; Original &amp; 100% Authentic{% endif %}
+            </h2>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4">
+            <div class="flex flex-col items-center justify-center py-6 px-4 border-r border-[#2A2A2A] animate-on-scroll"
+                data-delay="0ms">
+                <p class="font-heading text-4xl font-bold text-[#E8FF00] mb-2">{% if store_setting %}{{
+                    store_setting.established_year }}{% else %}2022{% endif %}</p>
+                <p class="text-sm font-medium uppercase tracking-wider" style="color: #A0A0A0;">Tahun Berdiri</p>
+            </div>
+            <div class="flex flex-col items-center justify-center py-6 px-4 border-r border-[#2A2A2A] md:border-r animate-on-scroll"
+                data-delay="100ms">
+                <p class="font-heading text-4xl font-bold text-[#E8FF00] mb-2">{% if store_setting %}{{
+                    store_setting.branches_count }}{% else %}1{% endif %}</p>
+                <p class="text-sm font-medium uppercase tracking-wider" style="color: #A0A0A0;">Cabang Offline</p>
+            </div>
+            <div class="flex flex-col items-center justify-center py-6 px-4 border-r border-[#2A2A2A] border-t md:border-t-0 animate-on-scroll"
+                data-delay="200ms">
+                <p class="font-heading text-4xl font-bold text-[#E8FF00] mb-2">{% if store_setting %}{{
+                    store_setting.customers_count_label }}{% else %}1000+{% endif %}</p>
+                <p class="text-sm font-medium uppercase tracking-wider" style="color: #A0A0A0;">Pelanggan</p>
+            </div>
+            <div class="flex flex-col items-center justify-center py-6 px-4 border-t md:border-t-0 animate-on-scroll"
+                data-delay="300ms">
+                <p class="font-heading text-4xl font-bold text-[#E8FF00] mb-2">100%</p>
+                <p class="text-sm font-medium uppercase tracking-wider" style="color: #A0A0A0;">Authentic</p>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Brand Strip -->
-<div class="bg-gray-50 py-10 border-y border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-center gap-8 md:gap-16 flex-wrap opacity-60">
+<div class="bg-gray-50 py-16 border-y border-gray-100 animate-on-scroll">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-2xl font-heading font-extrabold text-black uppercase tracking-tight mb-10">Brand Koleksi Kami
+        </h2>
+        <div class="flex items-center justify-center gap-10 md:gap-20 flex-wrap animate-on-scroll" data-delay="200ms">
             {% for brand in brands %}
-                <a href="{% url 'storefront:catalog' %}?brand={{ brand.id }}" class="hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
-                    <h3 class="text-xl md:text-2xl font-black uppercase tracking-widest text-black">{{ brand.name }}</h3>
-                </a>
+            <a href="{% url 'storefront:catalog' %}?brand={{ brand.id }}"
+                class="group transition-all duration-300 transform hover:-translate-y-1">
+                {% if brand.logo %}
+                <img src="{{ brand.logo.url }}" alt="{{ brand.name }}"
+                    class="h-12 md:h-16 object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
+                {% else %}
+                <h3
+                    class="text-xl md:text-2xl font-black uppercase tracking-widest text-gray-400 group-hover:text-black transition-colors duration-300">
+                    {{ brand.name }}</h3>
+                {% endif %}
+            </a>
             {% endfor %}
         </div>
     </div>
 </div>
 
-{% block extra_scripts %}
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const swiper = new Swiper('.hero-swiper', {
-            loop: true,
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false,
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-            effect: 'fade',
-            fadeEffect: {
-                crossFade: true
-            }
-        });
-    });
-</script>
-{% endblock %}
+
 
 <!-- Hot Items Section -->
 {% if hot_items %}
-<div class="bg-[#0D0D0D] py-16 text-white overflow-hidden">
+<div class="bg-[#0D0D0D] py-16 text-white overflow-hidden animate-on-scroll">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-end mb-8">
-            <h2 class="text-2xl font-extrabold uppercase tracking-tight text-[#E8FF00]">🔥 Trending Sekarang</h2>
+        <div class="flex justify-between items-end mb-8 animate-on-scroll">
+            <h2 class="text-2xl font-heading font-extrabold uppercase tracking-tight text-[#E8FF00]">Hot Item 🔥</h2>
         </div>
         <div class="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar">
             {% for product in hot_items %}
-            <div class="min-w-[280px] w-[280px] sm:min-w-[320px] sm:w-[320px] snap-center bg-gray-900 rounded-xl overflow-hidden shadow-xl border border-gray-800 shrink-0">
+            <div
+                class="min-w-[280px] w-[280px] sm:min-w-[320px] sm:w-[320px] snap-center bg-gray-900 rounded-xl overflow-hidden shadow-xl border border-gray-800 shrink-0">
                 <a href="{% url 'storefront:product_detail' product.slug %}" class="block h-64 bg-gray-800 relative">
                     {% if product.get_primary_image %}
-                    <img src="{{ product.get_primary_image }}" alt="{{ product.name }}" class="w-full h-full object-cover" loading="lazy">
+                    <img src="{{ product.get_primary_image }}" alt="{{ product.name }}"
+                        class="w-full h-full object-cover" loading="lazy">
                     {% endif %}
-                    <div class="absolute top-3 right-3 bg-[#E8FF00] text-black text-xs font-bold px-2 py-1 rounded">⭐ {{ product.avg_rating|floatformat:"1" }}</div>
+                    <div class="absolute top-3 right-3 bg-[#E8FF00] text-black text-xs font-bold px-2 py-1 rounded">⭐ {{
+                        product.avg_rating|floatformat:"1" }}</div>
                 </a>
                 <div class="p-5">
-                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">{{ product.brand.name }}</p>
-                    <a href="{% url 'storefront:product_detail' product.slug %}" class="text-base font-bold text-white hover:text-[#E8FF00] transition truncate block">{{ product.name }}</a>
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">{{ product.brand.name }}
+                    </p>
+                    <a href="{% url 'storefront:product_detail' product.slug %}"
+                        class="text-base font-bold text-white hover:text-[#E8FF00] transition truncate block">{{
+                        product.name }}</a>
                     <p class="text-lg font-extrabold text-[#E8FF00] mt-3">Rp {{ product.price|floatformat:"0" }}</p>
                 </div>
             </div>
@@ -128,13 +211,15 @@
 {% endif %}
 
 <!-- Product Grids Section -->
-<div class="bg-white py-16">
+<div class="bg-white py-16 animate-on-scroll">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-end mb-8">
-            <h2 class="text-2xl font-extrabold text-black uppercase tracking-tight">Koleksi Terbaru</h2>
-            <a href="{% url 'storefront:catalog' %}" class="text-sm font-bold text-black border-b border-black pb-1 hover:text-primary hover:border-primary transition uppercase">Lihat Semua</a>
+        <div class="flex justify-between items-end mb-8 animate-on-scroll">
+            <h2 class="text-2xl font-heading font-extrabold text-black uppercase tracking-tight">Koleksi Baru Masuk</h2>
+            <a href="{% url 'storefront:catalog' %}"
+                class="text-sm font-bold text-black border-b border-black pb-1 hover:text-primary hover:border-primary transition uppercase">Lihat
+                Semua</a>
         </div>
-        
+
         <!-- Product Grid -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             {% include "storefront/partials/product_grid.html" with products=featured_products %}
@@ -143,28 +228,104 @@
 </div>
 
 <!-- Category Banners -->
-<div class="bg-gray-50 py-16">
+<div class="bg-gray-50 py-16 animate-on-scroll">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="flex justify-between items-end mb-8 animate-on-scroll">
+            <h2 class="text-2xl font-heading font-extrabold text-black uppercase tracking-tight">Belanja Berdasarkan
+                Kategori</h2>
+        </div>
+        <!-- Bento Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[250px] md:auto-rows-[280px]">
             {% for category in categories %}
-            <div class="relative bg-gray-200 h-80 rounded-xl overflow-hidden group cursor-pointer">
-                {% if category.icon %}
-                <img src="{{ category.icon.url }}" alt="{{ category.name }}" class="absolute inset-0 w-full h-full object-cover">
-                {% else %}
-                <div class="absolute inset-0 bg-gray-300"></div>
+            <div class="relative rounded-3xl overflow-hidden group cursor-pointer shadow-lg hover:shadow-2xl border border-gray-100 transition-all duration-500 animate-on-scroll
+                {% if forloop.counter0|divisibleby:5 %} md:col-span-8 md:row-span-2
+                {% elif forloop.counter0|add:'-1'|divisibleby:5 %} md:col-span-4 md:row-span-1
+                {% elif forloop.counter0|add:'-2'|divisibleby:5 %} md:col-span-4 md:row-span-1
+                {% elif forloop.counter0|add:'-3'|divisibleby:5 %} md:col-span-6 md:row-span-1
+                {% else %} md:col-span-6 md:row-span-1
                 {% endif %}
-                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition duration-300 z-10"></div>
+            ">
+                {% if category.hero_image %}
+                <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-in-out transform group-hover:scale-105"
+                    style="background-image: url('{{ category.hero_image }}');"></div>
+                <div class="absolute inset-0 transition-opacity duration-500 z-10 opacity-90 group-hover:opacity-100"
+                    style="background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);">
+                </div>
+                {% elif category.icon %}
+                <img src="{{ category.icon.url }}" alt="{{ category.name }}"
+                    class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition duration-700 ease-in-out">
+                <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10 group-hover:from-black/90 transition duration-500">
+                </div>
+                {% else %}
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-gray-800 to-black transform group-hover:scale-105 transition duration-700 ease-in-out">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent z-10"></div>
+                {% endif %}
+
+                <!-- Hover Accent Line -->
+                <div
+                    class="absolute bottom-0 left-0 w-full h-1 bg-[#E8FF00] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left z-30">
+                </div>
+
                 <div class="absolute inset-0 flex flex-col justify-end p-8 z-20">
-                    <h3 class="text-2xl md:text-3xl font-extrabold text-white uppercase tracking-tight mb-2">{{ category.name }}</h3>
-                    <a href="{% url 'storefront:catalog' %}?category={{ category.id }}" class="inline-block text-white font-bold border-b-2 border-white pb-1 w-max opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Shop Now</a>
+                    <div class="transform group-hover:-translate-y-2 transition duration-500 ease-in-out">
+                        <h3
+                            class="text-3xl font-heading font-extrabold text-white uppercase tracking-tight mb-2 drop-shadow-md">
+                            {{ category.name }}</h3>
+                        <div class="overflow-hidden">
+                            <a href="{% url 'storefront:catalog' %}?category={{ category.id }}"
+                                class="inline-flex items-center gap-2 text-[#E8FF00] font-black text-sm tracking-widest uppercase opacity-0 transform translate-y-8 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 ease-in-out">
+                                Belanja Sekarang
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% empty %}
-            <div class="col-span-full text-center py-8 text-gray-500">
-                Kategori belum ditambahkan.
+            <div
+                class="col-span-full flex flex-col justify-center items-center py-16 px-4 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300">
+                <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                    </path>
+                </svg>
+                <p class="text-gray-500 font-medium">Kategori belum ditambahkan.</p>
             </div>
             {% endfor %}
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const swiper = new Swiper('.hero-swiper', {
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            }
+        });
+    });
+</script>
 {% endblock %}

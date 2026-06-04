@@ -630,13 +630,13 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 
 ## 🟢 NICE-TO-HAVE — Bonus / Next Sprint
 
-- [ ] **[BONUS-02]** Sistem Voucher/Promo Code — model `Voucher`, HTMX endpoint `/api/apply-voucher/`, tampilkan diskon di total checkout.
-- [ ] **[BONUS-03]** Homepage section "Hot Items" — horizontal scroll CSS snap, query produk dengan rating ≥ 4.5 + badge "🔥 TRENDING".
-- [ ] **[BONUS-04]** Brand Strip section — logo brand horizontal, grayscale → full color saat hover, klik filter katalog by brand.
-- [ ] **[BONUS-05]** Trust Badge Strip animasi marquee otomatis di mobile.
-- [ ] **[BONUS-06]** Optimasi gambar produk — resize thumbnail via Pillow + lazy loading `loading="lazy"`.
-- [ ] **[BONUS-08]** Halaman `/notifications/` — list semua notifikasi + bulk mark as read.
-- [ ] **[BONUS-09]** Notifikasi email after-sales (7 hari setelah order Selesai) via SMTP Gmail jika hosting support.
-- [ ] **[BONUS-10]** Jasmine: Heatmap jam sibuk penjualan (Chart.js matrix plugin).
-- [ ] **[BONUS-11]** Admin Toko: Halaman laporan penjualan (tabel, no export button sesuai PRD §4.2).
-- [ ] **[BONUS-12]** Jasmine: Pengaturan toko — SMTP config, logo toko, teks header/footer.
+- [x] **[BONUS-02]** Sistem Voucher/Promo Code — model `Voucher`, HTMX endpoint `/api/apply-voucher/`, tampilkan diskon di total checkout.
+- [x] **[BONUS-03]** Homepage section "Hot Items" — horizontal scroll CSS snap, query produk dengan rating ≥ 4.5 + badge "🔥 TRENDING".
+- [x] **[BONUS-04]** Brand Strip section — logo brand horizontal, grayscale → full color saat hover, klik filter katalog by brand.
+- [x] **[BONUS-05]** Trust Badge Strip animasi marquee otomatis di mobile.
+- [x] **[BONUS-06]** Optimasi gambar produk — resize thumbnail via Pillow + lazy loading `loading="lazy"`.
+- [x] **[BONUS-08]** Halaman `/notifications/` — list semua notifikasi + bulk mark as read.
+- [x] **[BONUS-09]** Notifikasi email after-sales (DIBATALKAN SESUAI INSTRUKSI).
+- [x] **[BONUS-10]** Jasmine: Heatmap jam sibuk penjualan (Chart.js matrix plugin).
+- [x] **[BONUS-11]** Admin Toko: Halaman laporan penjualan (tabel, no export button sesuai PRD §4.2).
+- [x] **[BONUS-12]** Jasmine: Pengaturan toko — SMTP config, logo toko, teks header/footer.

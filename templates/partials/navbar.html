@@ -1,236 +1,319 @@
-<!-- Top Strip -->
-<div id="promo-banner" class="bg-[#111827] text-white text-xs font-bold py-2 uppercase tracking-wider relative overflow-hidden h-8 flex items-center">
-    <div class="whitespace-nowrap animate-marquee absolute text-center text-white font-extrabold tracking-widest">
-        PROMO TERBATAS HARI INI - BELANJA SEKARANG UNTUK DISKON SPESIAL!
+{% load static %}
+
+<!-- Promo Banner CSS -->
+<style>
+    @keyframes ztp-marquee {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    .promo-marquee {
+        animation: ztp-marquee 20s linear infinite;
+        display: inline-block;
+        white-space: nowrap;
+    }
+</style>
+
+<!-- Top Strip / Promo Banner -->
+<div id="promo-banner"
+    class="bg-[#111827] text-white text-xs font-bold py-2 uppercase tracking-wider relative overflow-hidden flex items-center justify-center">
+    <div class="promo-marquee px-10 text-center font-extrabold tracking-widest">
+        PROMO TERBATAS HARI INI &nbsp;·&nbsp; BELANJA SEKARANG UNTUK DISKON SPESIAL! &nbsp;·&nbsp; GRATIS ONGKIR MIN.
+        PEMBELIAN &nbsp;·&nbsp; PROMO TERBATAS HARI INI &nbsp;·&nbsp; BELANJA SEKARANG UNTUK DISKON SPESIAL!
     </div>
-    <button onclick="document.getElementById('promo-banner').style.display='none'" class="text-white hover:text-gray-300 absolute right-4 z-10 bg-[#111827] pl-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+    <button
+        onclick="sessionStorage.setItem('promoClosed','true'); document.getElementById('promo-banner').style.display='none';"
+        class="absolute right-4 text-white hover:text-gray-300 bg-transparent p-1 z-10">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
         </svg>
     </button>
 </div>
+<script>if (sessionStorage.getItem('promoClosed') === 'true') { document.getElementById('promo-banner').style.display = 'none'; }</script>
 
-<!-- Main Navbar -->
-<nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+<!-- ===== MAIN NAVBAR ===== -->
+<nav id="main-navbar" class="bg-white border-b border-gray-200 sticky top-0 z-50 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-20">
-            <!-- Logo and Mobile Menu Button -->
-            <div class="flex-shrink-0 flex items-center gap-3">
-                <!-- Mobile Hamburger Button -->
-                <button type="button" class="md:hidden text-black hover:text-primary transition" onclick="document.getElementById('mobile-drawer').classList.remove('translate-x-full'); document.getElementById('mobile-drawer-overlay').classList.remove('hidden');">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <!-- Single row: everything flex aligned center -->
+        <div class="flex items-center justify-between h-18 py-3 gap-4">
+
+            <!-- LEFT: Hamburger + Logo -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <!-- Mobile Hamburger -->
+                <button type="button" class="md:hidden nav-link p-1"
+                    onclick="document.getElementById('mobile-drawer').classList.remove('translate-x-full'); document.getElementById('mobile-drawer-overlay').classList.remove('hidden');">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
                 </button>
-                <a href="/" class="text-3xl font-extrabold tracking-tighter text-black flex items-center gap-1">
+                <!-- Logo -->
+                <a href="/" class="font-heading font-extrabold text-2xl tracking-tight nav-link leading-none">
                     {% if store_setting and store_setting.logo %}
-                        <img src="{{ store_setting.logo.url }}" alt="{{ store_setting.name }}" class="h-8 md:h-10">
+                    <img src="{{ store_setting.logo.url }}" alt="{{ store_setting.name }}" class="h-9">
                     {% else %}
-                        {% if store_setting and store_setting.name != "ZTP Sneakers" %}
-                            {{ store_setting.name }}
-                        {% else %}
-                            8<svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z">
-                                </path>
-                            </svg>7
-                        {% endif %}
+                    ZTP<span class="text-[#E8FF00]">.</span>
                     {% endif %}
                 </a>
             </div>
 
-            <!-- Desktop Menu -->
-            <div class="hidden md:flex flex-1 justify-center space-x-8">
+            <!-- CENTER: Desktop Nav Links -->
+            <div class="hidden md:flex items-center gap-8 flex-shrink-0">
                 <a href="{% url 'storefront:catalog' %}"
-                    class="text-sm font-semibold text-black uppercase tracking-wider hover:text-primary transition">BROWSE
-                    ALL</a>
+                    class="nav-link text-sm font-bold uppercase tracking-wider whitespace-nowrap">
+                    Browse All
+                </a>
                 <a href="{% url 'storefront:catalog' %}?sort=-created_at"
-                    class="text-sm font-semibold text-black uppercase tracking-wider hover:text-primary transition">HOT
-                    ITEM</a>
-
+                    class="nav-link text-sm font-bold uppercase tracking-wider whitespace-nowrap">
+                    Hot Item
+                </a>
+                <!-- Categories Dropdown — dynamic from DB -->
                 <div class="relative group">
                     <button
-                        class="text-sm font-semibold text-black uppercase tracking-wider hover:text-primary transition flex items-center">
-                        CATEGORIES
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
+                        class="nav-link text-sm font-bold uppercase tracking-wider flex items-center gap-1 whitespace-nowrap py-4">
+                        Kategori
+                        <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
+                    <div
+                        class="absolute left-0 top-full w-48 bg-white border border-gray-100 shadow-xl rounded-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        {% for cat in nav_categories %}
+                        <a href="{% url 'storefront:catalog' %}?category={{ cat.id }}"
+                            class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-black font-medium transition-colors">
+                            {{ cat.name }}
+                        </a>
+                        {% empty %}
+                        <a href="{% url 'storefront:catalog' %}" class="block px-4 py-2.5 text-sm text-gray-500">Semua
+                            Produk</a>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
 
-            <!-- Search and Icons -->
-            <div class="flex items-center space-x-6">
+            <!-- RIGHT: Search + Icons -->
+            <div class="flex items-center gap-3">
                 <!-- Desktop Search -->
-                <form id="search-form-navbar" action="{% url 'storefront:catalog' %}" method="GET" class="hidden md:block relative w-64 lg:w-96 group">
-                    <input type="text" name="q" placeholder="Search for products and brand" autocomplete="off"
-                        hx-get="{% url 'storefront:live_search' %}"
-                        hx-trigger="keyup changed delay:500ms, search"
-                        hx-target="#search-results"
-                        hx-indicator="#search-loading"
-                        class="w-full bg-gray-50 border-none rounded-full py-2 pl-10 pr-10 text-sm focus:ring-1 focus:ring-black placeholder-gray-400">
-                    <svg class="w-4 h-4 text-gray-400 absolute left-4 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                <form id="search-form-navbar" action="{% url 'storefront:catalog' %}" method="GET"
+                    class="hidden md:block relative">
+                    <input type="text" name="q" placeholder="Cari produk & brand..." autocomplete="off"
+                        hx-get="{% url 'storefront:live_search' %}" hx-trigger="keyup changed delay:500ms, search"
+                        hx-target="#search-results-nav" hx-indicator="#search-loading"
+                        class="search-input w-48 lg:w-72 rounded-full py-2 pl-9 pr-4 text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-black bg-gray-50 placeholder-gray-400 transition-all duration-300">
+                    <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    <div id="search-loading" class="htmx-indicator absolute right-4 top-2.5">
-                        <svg class="animate-spin h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <div id="search-loading" class="htmx-indicator absolute right-3 top-2.5">
+                        <svg class="animate-spin h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                         </svg>
                     </div>
-                    <div id="search-results" class="absolute left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-lg shadow-lg z-50 empty:hidden"></div>
+                    <div id="search-results-nav"
+                        class="absolute left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-xl shadow-lg z-50 empty:hidden">
+                    </div>
                 </form>
 
-                <div class="flex items-center space-x-4 sm:space-x-5">
-                    <!-- Mobile Search Icon -->
-                    <button type="button" class="md:hidden text-black hover:text-primary transition hover:scale-110 relative" onclick="document.getElementById('mobile-search-bar').classList.toggle('hidden')">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-                    <!-- Cart -->
-                    <button type="button" class="text-black hover:text-primary transition hover:scale-110 relative" hx-get="{% url 'orders:cart_drawer' %}" hx-target="#cart-drawer-container" hx-swap="innerHTML">
+                <!-- Mobile Search Icon -->
+                <button type="button" class="md:hidden nav-link p-1"
+                    onclick="document.getElementById('mobile-search-bar').classList.toggle('hidden')">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+
+                <!-- Cart -->
+                <button type="button" class="nav-link p-1 relative" hx-get="{% url 'orders:cart_drawer' %}"
+                    hx-target="#cart-drawer-container" hx-swap="innerHTML">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span
+                        class="badge-yellow absolute -top-1.5 -right-1.5 bg-[#E8FF00] text-black text-[8px] font-extrabold w-4 h-4 flex items-center justify-center rounded-full border border-black leading-none">0</span>
+                </button>
+
+                <!-- Wishlist -->
+                <a href="{% url 'orders:wishlist' %}" class="nav-link p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                </a>
+
+                <!-- Bell / Notifications -->
+                {% if user.is_authenticated %}
+                <div class="relative" id="notif-wrapper">
+                    <button type="button" class="nav-link p-1 relative"
+                        onclick="document.getElementById('notif-dropdown').classList.toggle('hidden')">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
-                            </path>
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
-                    </button>
-                    <!-- Heart -->
-                    <a href="{% url 'orders:wishlist' %}" class="text-black hover:text-primary transition hover:scale-110 flex items-center">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
-                            </path>
-                        </svg>
-                    </a>
-                    <!-- Bell -->
-                    {% if user.is_authenticated %}
-                    <div class="relative" id="notif-wrapper">
-                        <button type="button" class="text-black hover:text-primary transition hover:scale-110 relative" onclick="document.getElementById('notif-dropdown').classList.toggle('hidden')">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                            </svg>
-                            <span id="notif-badge-wrapper" hx-get="{% url 'core:notification_count' %}" hx-trigger="every 60s" hx-swap="innerHTML">
+                        <span id="notif-badge-wrapper" hx-get="{% url 'core:notification_count' %}"
+                            hx-trigger="every 60s" hx-swap="innerHTML">
                             {% if unread_notifications_count > 0 %}
-                            <span class="absolute -top-1 -right-1 flex h-3 w-3">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 text-[8px] text-white justify-center items-center font-bold">{{ unread_notifications_count }}</span>
+                            <span class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+                                <span
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span
+                                    class="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500 text-[8px] text-white justify-center items-center font-bold">{{
+                                    unread_notifications_count }}</span>
                             </span>
                             {% endif %}
-                            </span>
-                        </button>
-                        
-                        <!-- Dropdown -->
-                        <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg border border-gray-100 z-50">
-                            <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
-                                <h3 class="text-sm font-bold text-gray-900">Notifikasi</h3>
-                                <div class="flex items-center gap-3">
-                                    {% if unread_notifications_count > 0 %}
-                                    <a href="{% url 'core:mark_notifications_read' %}" class="text-xs text-primary hover:underline">Baca Semua</a>
-                                    {% endif %}
-                                    <a href="{% url 'core:all_notifications' %}" class="text-xs font-bold text-black hover:underline">Lihat Semua</a>
-                                </div>
-                            </div>
-                            <div class="max-h-64 overflow-y-auto">
-                                {% for notif in latest_notifications %}
-                                <div class="px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition {% if not notif.is_read %}bg-blue-50/30 border-l-2 border-l-black{% endif %}">
-                                    <p class="text-xs font-bold text-gray-900">{{ notif.title }}</p>
-                                    <p class="text-xs text-gray-600 mt-1">{{ notif.message }}</p>
-                                    <div class="flex items-center justify-between mt-1">
-                                        <p class="text-[10px] text-gray-400">{{ notif.created_at|timesince }} yang lalu</p>
-                                        {% if notif.link %}
-                                        <a href="{{ notif.link }}" class="text-[10px] font-bold text-black hover:underline">Lihat →</a>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% empty %}
-                                <div class="px-4 py-6 text-center text-sm text-gray-500">
-                                    Belum ada notifikasi
-                                </div>
-                                {% endfor %}
+                        </span>
+                    </button>
+                    <!-- Notif Dropdown -->
+                    <div id="notif-dropdown"
+                        class="hidden absolute right-0 top-full mt-3 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
+                            <h3 class="text-sm font-bold text-gray-900">Notifikasi</h3>
+                            <div class="flex items-center gap-3">
+                                {% if unread_notifications_count > 0 %}
+                                <a href="{% url 'core:mark_notifications_read' %}"
+                                    class="text-xs text-primary hover:underline">Baca Semua</a>
+                                {% endif %}
+                                <a href="{% url 'core:all_notifications' %}"
+                                    class="text-xs font-bold text-black hover:underline">Lihat Semua</a>
                             </div>
                         </div>
-                    </div>
-                    {% else %}
-                    <button type="button" class="text-black hover:text-primary transition hover:scale-110" onclick="window.location.href='{% url 'userauths:auth_main' %}'">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                        </svg>
-                    </button>
-                    {% endif %}
-                    <!-- User -->
-                    {% if user.is_authenticated %}
-                    <div class="relative">
-                        <a href="{% url 'userauths:profile' %}"
-                            class="flex items-center space-x-2 bg-gray-50 rounded-full pl-1 pr-3 py-1 border border-gray-200 hover:border-primary hover:bg-gray-100 hover:scale-105 transition cursor-pointer">
+                        <div class="max-h-64 overflow-y-auto divide-y divide-gray-50">
+                            {% for notif in latest_notifications %}
                             <div
-                                class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
-                                {{ user.email|make_list|first|upper }}
+                                class="px-4 py-3 hover:bg-gray-50 transition {% if not notif.is_read %}bg-yellow-50/30{% endif %}">
+                                <p class="text-xs font-bold text-gray-900">{{ notif.title }}</p>
+                                <p class="text-xs text-gray-500 mt-0.5">{{ notif.message }}</p>
+                                <div class="flex items-center justify-between mt-1">
+                                    <p class="text-[10px] text-gray-400">{{ notif.created_at|timesince }} lalu</p>
+                                    {% if notif.link %}
+                                    <a href="{{ notif.link }}"
+                                        class="text-[10px] font-bold text-black hover:underline">Lihat →</a>
+                                    {% endif %}
+                                </div>
                             </div>
-                            <span class="text-xs font-semibold text-black">{{ user.username|default:user.email|truncatechars:10 }}</span>
-                        </a>
+                            {% empty %}
+                            <div class="px-4 py-6 text-center text-sm text-gray-400">Belum ada notifikasi</div>
+                            {% endfor %}
+                        </div>
                     </div>
-                    {% else %}
-                    <a href="{% url 'userauths:auth_main' %}"
-                        class="text-sm font-semibold text-primary uppercase tracking-wider hover:text-white transition border border-primary rounded-full px-4 py-1 hover:bg-primary">Sign
-                        In</a>
-                    {% endif %}
                 </div>
+                {% else %}
+                <a href="{% url 'userauths:auth_main' %}" class="nav-link p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </a>
+                {% endif %}
+
+                <!-- User Avatar / Sign In Button -->
+                {% if user.is_authenticated %}
+                <a href="{% url 'userauths:profile' %}"
+                    class="flex items-center gap-2 bg-gray-100 rounded-full pl-1 pr-3 py-1 border border-transparent hover:border-gray-300 transition-all duration-200 flex-shrink-0">
+                    <div
+                        class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-[11px] font-extrabold flex-shrink-0">
+                        {{ user.email|make_list|first|upper }}
+                    </div>
+                    <span class="text-xs font-semibold text-gray-800 whitespace-nowrap">
+                        {% if user.username %}{{ user.username|truncatechars:12 }}{% else %}{{ user.email|truncatechars:12 }}{% endif %}
+                    </span>
+                </a>
+                {% else %}
+                <a href="{% url 'userauths:auth_main' %}"
+                    class="hidden md:flex items-center bg-black text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full hover:bg-gray-800 transition-colors duration-200 whitespace-nowrap flex-shrink-0">
+                    Sign In
+                </a>
+                {% endif %}
             </div>
+            <!-- END RIGHT -->
+
         </div>
-        
-        <!-- Mobile Search Expandable Bar -->
-        <div id="mobile-search-bar" class="hidden md:hidden pb-4">
+
+        <!-- Mobile Search Bar -->
+        <div id="mobile-search-bar" class="hidden pb-3">
             <form action="{% url 'storefront:catalog' %}" method="GET" class="relative">
-                <input type="text" name="q" placeholder="Search products..." autocomplete="off"
-                    class="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-1 focus:ring-black">
-                <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                <input type="text" name="q" placeholder="Cari produk..."
+                    class="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-black">
+                <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             </form>
         </div>
     </div>
 </nav>
 
-<!-- Mobile Menu Drawer Overlay -->
-<div id="mobile-drawer-overlay" class="fixed inset-0 bg-black/50 z-[60] hidden transition-opacity" onclick="document.getElementById('mobile-drawer').classList.add('translate-x-full'); this.classList.add('hidden');"></div>
+<!-- Mobile Menu Overlay -->
+<div id="mobile-drawer-overlay" class="fixed inset-0 bg-black/50 z-[60] hidden"
+    onclick="document.getElementById('mobile-drawer').classList.add('translate-x-full'); this.classList.add('hidden');">
+</div>
 
-<!-- Mobile Menu Drawer -->
-<div id="mobile-drawer" class="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white z-[70] transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
-    <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-        <span class="text-xl font-extrabold tracking-tighter text-black">MENU</span>
-        <button onclick="document.getElementById('mobile-drawer').classList.add('translate-x-full'); document.getElementById('mobile-drawer-overlay').classList.add('hidden');" class="text-gray-400 hover:text-black">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+<!-- Mobile Drawer -->
+<div id="mobile-drawer"
+    class="fixed top-0 right-0 h-full w-4/5 max-w-xs bg-white z-[70] transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
+    <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
+        <span class="font-heading text-xl font-extrabold">MENU</span>
+        <button
+            onclick="document.getElementById('mobile-drawer').classList.add('translate-x-full'); document.getElementById('mobile-drawer-overlay').classList.add('hidden');"
+            class="text-gray-400 hover:text-black transition-colors p-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
         </button>
     </div>
-    
     <div class="overflow-y-auto flex-1 px-6 py-6 space-y-6">
         {% if user.is_authenticated %}
         <div class="pb-6 border-b border-gray-100">
             <a href="{% url 'userauths:profile' %}" class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                <div
+                    class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">
                     {{ user.email|make_list|first|upper }}
                 </div>
                 <div>
-                    <p class="font-bold text-black text-sm">{{ user.username|default:user.email|truncatechars:20 }}</p>
-                    <p class="text-xs text-gray-500">Lihat Profil</p>
+                    <p class="font-bold text-black text-sm">
+                        {% if user.username %}{{ user.username|truncatechars:20 }}{% else %}{{ user.email|truncatechars:20 }}{% endif %}
+                    </p>
+                    <p class="text-xs text-gray-500">Lihat Profil →</p>
                 </div>
             </a>
         </div>
         {% endif %}
-        
-        <div class="space-y-4 flex flex-col">
-            <a href="{% url 'storefront:catalog' %}" class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-primary">Browse All</a>
-            <a href="{% url 'storefront:catalog' %}?sort=-created_at" class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-primary">Hot Items</a>
-            <a href="{% url 'orders:wishlist' %}" class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-primary">Wishlist</a>
+        <div class="flex flex-col gap-5">
+            <a href="{% url 'storefront:catalog' %}"
+                class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-black">Browse All</a>
+            <a href="{% url 'storefront:catalog' %}?sort=-created_at"
+                class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-black">Hot Items</a>
+            <a href="{% url 'orders:wishlist' %}"
+                class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-black">Wishlist</a>
+            {% for cat in nav_categories %}
+            <a href="{% url 'storefront:catalog' %}?category={{ cat.id }}"
+                class="text-sm text-gray-600 hover:text-black">→ {{ cat.name }}</a>
+            {% endfor %}
         </div>
-        
         <div class="pt-6 border-t border-gray-100">
             {% if not user.is_authenticated %}
-            <a href="{% url 'userauths:auth_main' %}" class="block w-full py-3 text-center bg-black text-white text-sm font-bold uppercase tracking-wider rounded-md">Sign In / Register</a>
+            <a href="{% url 'userauths:auth_main' %}"
+                class="block w-full py-3 text-center bg-black text-white text-sm font-bold uppercase tracking-wider rounded-xl">Sign
+                In / Register</a>
             {% else %}
-            <a href="{% url 'userauths:auth_logout' %}" class="block w-full py-3 text-center bg-gray-100 text-red-600 text-sm font-bold uppercase tracking-wider rounded-md hover:bg-gray-200">Logout</a>
+            <a href="{% url 'userauths:auth_logout' %}"
+                class="block w-full py-3 text-center bg-gray-100 text-red-600 text-sm font-bold uppercase tracking-wider rounded-xl hover:bg-gray-200 transition-colors">Logout</a>
             {% endif %}
         </div>
     </div>
 </div>
+
+<!-- NOTE: Scroll animation & navbar JS is in base.html -->

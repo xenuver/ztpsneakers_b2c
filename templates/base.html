@@ -9,10 +9,68 @@
     <meta property="og:title" content="{% block og_title %}ZTP Sneakers{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Beli sepatu sneakers original second berkualitas tinggi dengan harga terjangkau di ZTP Sneakers.{% endblock %}">
     {% block meta_og_image %}{% endblock %}
-    <!-- Google Fonts: Outfit -->
+    <!-- Google Fonts: Outfit & Space Grotesk -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <style>
+        /* Scroll animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+        }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Space Grotesk heading utility */
+        .font-heading {
+            font-family: 'Space Grotesk', 'Outfit', ui-sans-serif, system-ui, sans-serif;
+        }
+        /* Navbar nav-link: default black, hover white-ish */
+        .nav-link {
+            color: #111111;
+            transition: color 0.2s, opacity 0.2s;
+        }
+        .nav-link:hover {
+            color: #555555;
+            opacity: 0.8;
+        }
+        /* Navbar scrolled state — full dark */
+        #main-navbar.scrolled {
+            background-color: rgba(10, 10, 10, 0.97);
+            border-bottom-color: #2A2A2A;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        /* In scrolled state, all nav-links turn white */
+        #main-navbar.scrolled .nav-link {
+            color: #ffffff;
+        }
+        #main-navbar.scrolled .nav-link:hover {
+            color: #E8FF00;
+            opacity: 1;
+        }
+        /* Search input in scrolled state */
+        #main-navbar.scrolled .search-input {
+            background-color: #1e1e1e;
+            border-color: #3a3a3a;
+            color: #ffffff;
+        }
+        #main-navbar.scrolled .search-input::placeholder {
+            color: #6b7280;
+        }
+        /* User avatar pill in scrolled state */
+        #main-navbar.scrolled .user-pill {
+            background-color: #1e1e1e;
+            border-color: #3a3a3a;
+            color: #ffffff;
+        }
+        /* Hide scrollbar utility */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 
 
     <!-- Tailwind CSS -->
@@ -29,6 +87,7 @@
                     fontFamily: {
                         sans: ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
                         serif: ['Outfit', 'ui-serif', 'Georgia', 'serif'],
+                        heading: ['Space Grotesk', 'ui-sans-serif', 'system-ui', 'sans-serif'],
                     },
                     keyframes: {
                         marquee: {
@@ -61,7 +120,7 @@
     {% block extra_head %}{% endblock %}
 </head>
 
-<body class="bg-light text-textPrimary font-sans antialiased h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<body class="bg-white text-gray-900 font-sans antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
     {% if messages %}
     <div class="fixed top-4 right-4 z-50 flex flex-col gap-2">
@@ -74,7 +133,7 @@
     </div>
     {% endif %}
 
-    <main class="h-full w-full">
+    <main class="w-full">
         {% include "partials/navbar.html" %}
 
         {% block content %}
@@ -98,14 +157,14 @@
             
             const toast = document.createElement('div');
             toast.className = `px-4 py-3 rounded shadow-lg flex items-center gap-2 transform transition-all duration-300 translate-x-full opacity-0 pointer-events-auto ${type === 'error' ? 'bg-red-500 text-white' : 'bg-black text-white font-bold'}`;
-            toast.innerHTML = \`
+            toast.innerHTML = `
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    \${type === 'error' ? 
+                    ${type === 'error' ? 
                     '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>' : 
                     '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>'}
                 </svg>
-                <span class="text-sm">\${msg}</span>
-            \`;
+                <span class="text-sm">${msg}</span>
+            `;
             
             container.appendChild(toast);
             
@@ -121,25 +180,57 @@
     </script>
 
     <!-- Crisp Live Chat -->
-    {% if store_setting and store_setting.crisp_website_id %}
     <script type="text/javascript">
-        window.$crisp = [];
-        window.CRISP_WEBSITE_ID = "{{ store_setting.crisp_website_id }}";
-        (function () {
-            var d = document;
-            var s = d.createElement("script");
-            s.src = "https://client.crisp.chat/l.js";
-            s.async = 1;
-            d.getElementsByTagName("head")[0].appendChild(s);
+        window.$crisp=[];window.CRISP_WEBSITE_ID="fb6ee011-d83f-4903-a864-5ddce8aa5572";
+        (function(){
+            d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";
+            s.async=1;d.getElementsByTagName("head")[0].appendChild(s);
         })();
         {% if user.is_authenticated %}
-        window.$crisp.push(["set", "user:email", ["{{ user.email }}"]]); {% if user.get_full_name %}
-        window.$crisp.push(["set", "user:nickname", ["{{ user.get_full_name }}"]]); {% endif %}
+        window.$crisp.push(["set", "user:email", ["{{ user.email }}"]]); 
+        {% if user.get_full_name %}
+        window.$crisp.push(["set", "user:nickname", ["{{ user.get_full_name }}"]]); 
+        {% endif %}
         {% endif %}
     </script>
-    {% endif %}
 
 
+    <!-- Global Scroll Animations & Navbar -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // ── Intersection Observer for scroll animations ──
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { root: null, rootMargin: '0px', threshold: 0.08 });
+
+            document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                if (el.dataset.delay) {
+                    el.style.transitionDelay = el.dataset.delay;
+                }
+                observer.observe(el);
+            });
+
+            // ── Navbar Scroll Aware ──
+            const navbar = document.getElementById('main-navbar');
+            if (navbar) {
+                let lastScroll = 0;
+                window.addEventListener('scroll', () => {
+                    const currentScroll = window.scrollY;
+                    if (currentScroll > 60) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                    lastScroll = currentScroll;
+                }, { passive: true });
+            }
+        });
+    </script>
 </body>
 
 </html>

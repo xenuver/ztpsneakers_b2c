@@ -31,7 +31,13 @@ class StoreSetting(models.Model):
     whatsapp_number = models.CharField(max_length=20, blank=True, null=True, help_text="Format: 62812xxx")
     instagram_url = models.URLField(blank=True, null=True)
     crisp_website_id = models.CharField(max_length=100, blank=True, null=True, help_text="ID Token dari Crisp Chat")
-
+    
+    # New fields for Hero Stats & Footer
+    established_year = models.IntegerField(default=2022, help_text="Tahun berdiri toko")
+    branches_count = models.IntegerField(default=1, help_text="Jumlah cabang offline")
+    customers_count_label = models.CharField(max_length=50, default="1000+", help_text="Label jumlah pelanggan (e.g. 1000+)")
+    short_description = models.TextField(default="Toko Sepatu Sneakers Indonesia — Original & 100% Authentic", help_text="Deskripsi singkat untuk Hero Stats/Footer")
+    address = models.TextField(default="Jalan KH. Abdurahman Wahid Gg. Murbach, Kec Sungai Raya, Kabupaten Kubu Raya", help_text="Alamat lengkap toko")
     class Meta:
         verbose_name = "Pengaturan Toko"
         verbose_name_plural = "Pengaturan Toko"

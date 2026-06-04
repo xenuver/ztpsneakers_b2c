@@ -55,7 +55,11 @@ def catalog_view(request):
     if brand_id:
         products = products.filter(brand_id=brand_id)
     if category_id:
-        products = products.filter(category_id=category_id)
+        # Support both numeric ID and category name/slug
+        if str(category_id).isdigit():
+            products = products.filter(category_id=category_id)
+        else:
+            products = products.filter(category__name__iexact=category_id)
     if selected_colors:
         products = products.filter(color__in=selected_colors)
     if selected_sizes:
