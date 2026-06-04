@@ -1,0 +1,55 @@
+{% extends "admintoko/base_admin.html" %}
+
+{% block title %}{% if product %}Edit Produk{% else %}Tambah Produk{% endif %} - ZTP Admin Pro{% endblock %}
+{% block header_title %}{% if product %}Edit Produk{% else %}Tambah Produk{% endif %}{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="p-6">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">Nama Produk</label>
+                    <input type="text" name="name" value="{{ product.name|default:'' }}" required class="w-full bg-white border border-slate-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">Harga</label>
+                    <input type="number" name="price" value="{{ product.price|default:'' }}" required class="w-full bg-white border border-slate-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">Brand</label>
+                    <select name="brand" required class="w-full bg-white border border-slate-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition">
+                        <option value="">Pilih Brand</option>
+                        {% for b in brands %}
+                        <option value="{{ b.id }}" {% if product.brand_id == b.id %}selected{% endif %}>{{ b.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">Kategori</label>
+                    <select name="category" required class="w-full bg-white border border-slate-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition">
+                        <option value="">Pilih Kategori</option>
+                        {% for c in categories %}
+                        <option value="{{ c.id }}" {% if product.category_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">Deskripsi</label>
+                    <textarea name="description" rows="5" required class="w-full bg-white border border-slate-300 rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition">{{ product.description|default:'' }}</textarea>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end gap-4 border-t border-slate-100 pt-6">
+                <a href="{% url 'admintoko:products' %}" class="px-6 py-3 border border-slate-300 text-slate-700 font-bold rounded-md hover:bg-slate-50 transition uppercase tracking-wider text-sm">Batal</a>
+                <button type="submit" class="px-8 py-3 bg-primary text-white font-bold rounded-md hover:bg-green-800 transition uppercase tracking-wider text-sm">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

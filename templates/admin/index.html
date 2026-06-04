@@ -14,9 +14,7 @@
 
 {% block content %}
     {% get_side_menu using="app_list" as dashboard_list %}
-    {% if dashboard_list %}
-        {% assign app_list dashboard_list %}
-    {% endif %}
+    {% with target_app_list=dashboard_list|default:app_list %}
 
     <div class="row">
         <!-- Analytics and Export for Superusers -->
@@ -71,7 +69,7 @@
 
         <div class="col-lg-9 col-12">
             <div class="row">
-                {% for app in app_list %}
+                {% for app in target_app_list %}
                     {% for model in app.models %}
                         <div class="col-md-4 col-sm-6 col-12">
                             <div class="info-box bg-white shadow-sm">
@@ -138,4 +136,5 @@
             </div>
         </div>
     </div>
+    {% endwith %}
 {% endblock %}

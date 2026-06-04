@@ -7,7 +7,15 @@ from .models import User
 def auth_main(request):
     if request.user.is_authenticated:
         return redirect("storefront:home")
-    return render(request, "userauths/auth_base.html")
+    
+    active_tab = request.GET.get('tab', 'login')
+    if request.headers.get('HX-Request'):
+        if active_tab == 'login':
+            return render(request, "userauths/partials/login_form.html")
+        else:
+            return render(request, "userauths/partials/register_form.html")
+            
+    return render(request, "userauths/auth_main.html", {'active_tab': active_tab})
 
 def auth_check(request):
     if request.method == "POST":

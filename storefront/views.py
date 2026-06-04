@@ -90,8 +90,9 @@ def catalog_view(request):
         
     return render(request, "storefront/katalog.html", context)
 
+from django.shortcuts import get_object_or_404
 def product_detail_view(request, slug):
-    product = Product.objects.get(slug=slug, is_active=True)
+    product = get_object_or_404(Product, slug=slug, is_active=True)
     related_products = Product.objects.filter(brand=product.brand, is_active=True).exclude(id=product.id)[:4]
     
     wishlist_product_ids = []

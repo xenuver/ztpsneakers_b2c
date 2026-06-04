@@ -4,8 +4,11 @@ from . import views
 app_name = 'admintoko'
 
 urlpatterns = [
+    path('login/', views.login_view, name='login'),
     path('', views.dashboard_view, name='dashboard'),
     path('products/', views.products_view, name='products'),
+    path('products/add/', views.product_create_view, name='product_create'),
+    path('products/<int:product_id>/edit/', views.product_edit_view, name='product_edit'),
     path('products/<int:product_id>/toggle/', views.product_toggle_view, name='product_toggle'),
     path('orders/', views.orders_view, name='orders'),
     path('orders/<int:order_id>/update/', views.order_update_status, name='order_update'),

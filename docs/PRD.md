@@ -27,7 +27,7 @@ ZTP Sneakers adalah UMKM penjual sepatu second berbasis di Pontianak yang selama
 | Role | URL | Deskripsi |
 |---|---|---|
 | **Customer** | `/` | Pengunjung & pembeli terdaftar |
-| **Admin Toko** | `/admin-toko/` | Staf operasional, akses terbatas |
+| **Admin Toko** | `/admintoko/` | Staf operasional, akses terbatas |
 | **Jasmine (Owner)** | `/jasmine/` | Pemilik, full access, dashboard premium |
 
 ---

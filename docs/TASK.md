@@ -514,3 +514,129 @@ Kita perlu field warna yang terstandarisasi, bukan *free-text*, agar *filtering*
 - [x] Fix Salah deteksi environment Midtrans (Production vs Sandbox) akibat format kunci API tanpa awalan SB-
 - [x] Tambahkan fitur tombol Cek Status Pembayaran secara manual untuk transaksi Midtrans
 - [x] Hapus halaman Riwayat Pesanan ganda (orders:history) dan gabungkan sepenuhnya ke tab Pesanan Saya di halaman Profil
+
+---
+
+## 🔍 HASIL AUDIT PRD — Backlog Terstruktur
+
+> Dihasilkan dari audit menyeluruh terhadap codebase vs PRD pada 2026-06-04.
+> Pilih task yang akan dikerjakan dan tandai `[/]` saat mulai, `[x]` saat selesai.
+
+---
+
+## 🔴 SECURITY CRITICAL — Wajib sebelum production
+
+- [x] **[SEC-01]** Fix Midtrans webhook — tambahkan verifikasi signature SHA-512 (`order_id + status_code + gross_amount + server_key`) sebelum update status order. Saat ini siapapun bisa fake POST dan set order jadi `paid`.
+  - File: `orders/views.py` → `midtrans_webhook()`
+- [x] **[SEC-02]** Fix file upload review — tambahkan validasi tipe file (magic bytes), ekstensi (jpg/png/webp only), dan batas ukuran maksimum (5MB) pada form ulasan.
+  - File: `orders/views.py` → `create_review()` + buat `core/validators.py`
+- [x] **[SEC-03]** Fix file upload warranty — validasi yang sama untuk foto bukti klaim garansi (saat ini hanya `accept="image/*"` di HTML, mudah di-bypass via Postman/curl).
+  - File: `orders/views.py` → `create_warranty_claim()`
+- [x] **[SEC-04]** Tambahkan `@login_required` pada `checkout_view` — saat ini guest bisa POST form checkout dan membuat order tanpa akun.
+  - File: `orders/views.py` → `checkout_view()`
+
+---
+
+## 🔴 BUG CRITICAL — Fungsionalitas rusak/salah
+
+- [x] **[BUG-01]** Fix `province_name` dan `city_name` hardcoded `'Provinsi'` / `'Kota'` saat checkout. Data alamat pengiriman tidak terbaca oleh admin.
+  - File: `orders/views.py:221-223` + update template `checkout.html` dengan hidden input nama provinsi/kota
+- [x] **[BUG-02]** Hubungkan `merge_guest_cart()` ke signal `user_logged_in` — fungsi sudah ada di `orders/utils.py` tapi tidak pernah dipanggil. Guest cart hilang saat login.
+  - File: `orders/signals.py` → tambahkan receiver `user_logged_in`
+- [x] **[BUG-03]** Fix allauth deprecated settings — ganti 3 setting lama dengan format baru allauth. Muncul WARNING setiap `manage.py` dijalankan.
+  - File: `settings.py:191-193`
+  - Ganti `ACCOUNT_AUTHENTICATION_METHOD`, `ACCOUNT_EMAIL_REQUIRED`, `ACCOUNT_USERNAME_REQUIRED`
+  - Dengan: `ACCOUNT_LOGIN_METHODS = {'email'}` + `ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']`
+- [x] **[BUG-04]** Stok produk dikurangi saat checkout POST, bukan saat pembayaran dikonfirmasi Midtrans. Order pending yang expired/dibatalkan tetap mengurangi stok permanen.
+  - File: `orders/views.py:209-211` → pindahkan pengurangan stok ke dalam `midtrans_webhook()` saat status `settlement`/`capture`
+- [x] **[BUG-05]** Notifikasi klaim garansi dobel — `post_save` signal di `signals.py:78` DAN manual `Notification.objects.create()` di `views.py:536` keduanya berjalan saat klaim baru dibuat.
+  - File: `orders/views.py:533-541` → hapus manual notif di view, biarkan signal yang handle
+- [x] **[BUG-06]** Link notifikasi status order mengarah ke `/orders/history/<number>/` tapi URL pattern adalah `orders:order_detail` → pastikan konsisten.
+  - File: `orders/signals.py:39` → cek dan sesuaikan URL dengan `urls.py`
+- [x] **[BUG-07]** `product_detail_view` menggunakan `Product.objects.get()` tanpa `try/except` — akan raise `Http404` yang tidak tertangani jika slug tidak ditemukan.
+  - File: `storefront/views.py:94` → ganti ke `get_object_or_404()`
+
+---
+
+## 🟠 FEATURE MISSING — Fitur PRD belum ada
+
+- [x] **[FEAT-01]** Halaman Register + Login satu halaman (`/auth/`) dengan tab toggle HTMX — belum ada template `userauths/`. Ini entry point utama aplikasi.
+  - File: `templates/userauths/` + `userauths/views.py` + `userauths/urls.py`
+- [x] **[FEAT-02]** Halaman profil customer (`/profile/`) — edit nama, telepon, alamat default, ganti password, avatar, dan tab riwayat pesanan.
+  - File: `templates/userauths/profile.html` (perlu dicek apakah sudah ada)
+- [x] **[FEAT-03]** Admin Toko: Form tambah/edit produk — saat ini hanya bisa lihat list. Belum bisa input produk baru, upload gambar, atau kelola stok per ukuran.
+  - File: `admintoko/views.py` + `templates/admintoko/product_form.html`
+- [x] **[FEAT-04]** Admin Toko: Login page terpisah + redirect guard berbasis Django group `AdminToko` (bukan `is_staff`).
+  - File: `admintoko/views.py` → update `is_admin_toko()` + buat login page
+- [ ] **[FEAT-05]** Jasmine Dashboard: KPI cards (Total Revenue bulan ini, Total Order, Customer Baru, Produk Terlaris) + sparkline Chart.js.
+  - File: `templates/jasmine/dashboard.html` + `jasmine/views.py`
+- [ ] **[FEAT-06]** Jasmine: Grafik penjualan harian/bulanan/tahunan (HTMX swap + Chart.js bar/line chart).
+  - File: `templates/jasmine/` + endpoint di `jasmine/views.py`
+- [ ] **[FEAT-07]** Jasmine: CRUD Produk lengkap termasuk Kategori dan Brand.
+  - File: `jasmine/views.py` + templates
+- [ ] **[FEAT-08]** Jasmine: Export laporan Excel (openpyxl) — filter bulan-tahun → download `.xlsx`.
+  - File: `jasmine/views.py` → endpoint export + `requirements.txt` sudah ada openpyxl
+- [ ] **[FEAT-09]** Jasmine: Kelola Admin Toko — buat akun staff baru, set group permission, suspend/aktifkan.
+  - File: `jasmine/views.py` + `templates/jasmine/staff.html`
+- [ ] **[FEAT-10]** Lupa Password flow — input email → link reset → halaman reset password (allauth sudah support, tinggal template & routing).
+  - File: `templates/account/password_reset.html` dll (allauth templates)
+- [ ] **[FEAT-11]** Crisp Live Chat — aktifkan kembali widget (saat ini di-comment di `base.html`). Isi CRISP_WEBSITE_ID yang valid di `.env`.
+  - File: `templates/base.html:120-137`
+- [ ] **[FEAT-12]** Rating distribution progress bar (1★ s/d 5★) — data sudah dihitung di `storefront/views.py` tapi perlu dicek apakah ditampilkan di template `detail.html`.
+  - File: `templates/storefront/detail.html` → section tab Ulasan
+
+---
+
+## 🟠 DEVIASI DESIGN SYSTEM — Tidak sesuai PRD
+
+- [ ] **[DESIGN-03]** Navbar mobile — tambahkan hamburger menu button + slide-out drawer. Saat ini navigasi hilang total di layar ≤ md.
+  - File: `templates/partials/navbar.html`
+
+---
+
+## 🟡 UX IMPROVEMENT — Pengalaman pengguna lebih baik
+
+- [ ] **[UX-01]** Tambahkan `hx-indicator` pada semua HTMX request — filter katalog, pilih kota, hitung ongkir, search. User tidak tahu request sedang berjalan.
+  - File: `templates/storefront/katalog.html`, `templates/orders/checkout.html`, `templates/partials/navbar.html`
+- [ ] **[UX-02]** Search bar mobile — saat ini hidden di mobile. Tambahkan toggle search icon yang expand input saat diklik di mobile.
+  - File: `templates/partials/navbar.html`
+- [ ] **[UX-03]** Loading skeleton saat katalog difilter — tampilkan placeholder card abu-abu saat HTMX sedang fetch.
+  - File: `templates/storefront/partials/product_grid.html`
+- [ ] **[UX-04]** Empty state halaman wishlist — jika wishlist kosong, tampilkan ilustrasi + CTA ke katalog.
+  - File: `templates/orders/wishlist.html`
+- [ ] **[UX-05]** Empty state halaman keranjang — jika cart kosong, tampilkan ilustrasi + CTA ke katalog.
+  - File: `templates/orders/cart.html`
+- [ ] **[UX-06]** Tambah breadcrumb di halaman detail produk (Home > Katalog > Brand > Nama Produk).
+  - File: `templates/storefront/detail.html`
+- [ ] **[UX-07]** Tombol "Chat dengan Kami" (link buka Crisp) di halaman detail produk dan halaman detail pesanan.
+  - File: `templates/storefront/detail.html`, `templates/orders/detail.html`
+- [ ] **[UX-08]** Validasi form checkout client-side — tampilkan error inline (bukan redirect) jika field kosong saat submit.
+  - File: `templates/orders/checkout.html` → JS validation sebelum form submit
+
+---
+
+## 🟡 SEO & TECHNICAL POLISH
+
+- [ ] **[SEO-01]** Tambah `<meta name="description">` per halaman (homepage, katalog, detail produk).
+  - File: `templates/base.html` → tambah block `{% block meta_description %}`
+- [ ] **[SEO-02]** Tambah `<meta property="og:image">` untuk social share preview di halaman detail produk.
+  - File: `templates/storefront/detail.html`
+- [ ] **[SEO-03]** `<title>` tag sudah ada tapi konten kurang deskriptif. Update format: `[Nama Produk] - ZTP Sneakers | Sepatu Second Premium`.
+  - File: semua template → block title
+- [ ] **[TECH-02]** Tambahkan `ALLOWED_HOSTS` di `settings.py` — saat ini masih empty list `[]`, akan error saat deploy.
+  - File: `settings.py:31`
+
+---
+
+## 🟢 NICE-TO-HAVE — Bonus / Next Sprint
+
+- [ ] **[BONUS-02]** Sistem Voucher/Promo Code — model `Voucher`, HTMX endpoint `/api/apply-voucher/`, tampilkan diskon di total checkout.
+- [ ] **[BONUS-03]** Homepage section "Hot Items" — horizontal scroll CSS snap, query produk dengan rating ≥ 4.5 + badge "🔥 TRENDING".
+- [ ] **[BONUS-04]** Brand Strip section — logo brand horizontal, grayscale → full color saat hover, klik filter katalog by brand.
+- [ ] **[BONUS-05]** Trust Badge Strip animasi marquee otomatis di mobile.
+- [ ] **[BONUS-06]** Optimasi gambar produk — resize thumbnail via Pillow + lazy loading `loading="lazy"`.
+- [ ] **[BONUS-08]** Halaman `/notifications/` — list semua notifikasi + bulk mark as read.
+- [ ] **[BONUS-09]** Notifikasi email after-sales (7 hari setelah order Selesai) via SMTP Gmail jika hosting support.
+- [ ] **[BONUS-10]** Jasmine: Heatmap jam sibuk penjualan (Chart.js matrix plugin).
+- [ ] **[BONUS-11]** Admin Toko: Halaman laporan penjualan (tabel, no export button sesuai PRD §4.2).
+- [ ] **[BONUS-12]** Jasmine: Pengaturan toko — SMTP config, Crisp token, logo toko, teks header/footer.

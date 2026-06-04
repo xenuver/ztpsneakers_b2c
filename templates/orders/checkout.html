@@ -14,6 +14,8 @@
 
         <form id="checkout-form" method="POST" action="">
             {% csrf_token %}
+            <input type="hidden" name="province_name" id="hidden_province_name" value="">
+            <input type="hidden" name="city_name" id="hidden_city_name" value="">
             
             <div class="lg:grid lg:grid-cols-12 lg:gap-x-8 lg:items-start">
                 
@@ -201,8 +203,24 @@
 </style>
 
 <script>
-    // Update total when shipping is selected
+    // Update province and city names
     document.body.addEventListener('change', function(e) {
+        // Handle province name
+        if (e.target.closest('#province_container select')) {
+            const select = e.target;
+            if (select.options[select.selectedIndex]) {
+                document.getElementById('hidden_province_name').value = select.options[select.selectedIndex].text;
+            }
+        }
+        // Handle city name
+        if (e.target.id === 'city_select') {
+            const select = e.target;
+            if (select.options[select.selectedIndex]) {
+                document.getElementById('hidden_city_name').value = select.options[select.selectedIndex].text;
+            }
+        }
+        
+        // Update total when shipping is selected
         if (e.target.name === 'shipping_service') {
             const parts = e.target.value.split('|');
             const shippingCost = parseFloat(parts[1]) || 0;

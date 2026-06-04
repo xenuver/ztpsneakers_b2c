@@ -8,7 +8,7 @@
 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
     <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
         <h3 class="text-sm font-bold text-slate-800 tracking-tight">Daftar Produk</h3>
-        <a href="/admin/products/product/add/" target="_blank" class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-md shadow-primary/20 transition-all gap-2">
+        <a href="{% url 'admintoko:product_create' %}" class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-md shadow-primary/20 transition-all gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
             Tambah Baru
         </a>
@@ -60,7 +60,7 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
                         <div class="flex items-center justify-end gap-2">
-                            <a href="/admin/products/product/{{ product.id }}/change/" target="_blank" class="p-2 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-primary hover:border-primary/50 hover:bg-indigo-50 transition-all shadow-sm tooltip-trigger" title="Edit Lengkap">
+                            <a href="{% url 'admintoko:product_edit' product.id %}" class="p-2 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-primary hover:border-primary/50 hover:bg-indigo-50 transition-all shadow-sm tooltip-trigger" title="Edit Lengkap">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             </a>
                             <form method="POST" action="{% url 'admintoko:product_toggle' product.id %}" class="inline-block">
@@ -83,7 +83,7 @@
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                         </div>
                         <h4 class="text-slate-700 font-bold mb-1">Belum ada produk</h4>
-                        <p class="text-sm text-slate-500">Silakan tambahkan produk baru melalui Django Admin.</p>
+                        <p class="text-sm text-slate-500">Silakan tambahkan produk baru melalui fitur Tambah Baru.</p>
                     </td>
                 </tr>
                 {% endfor %}

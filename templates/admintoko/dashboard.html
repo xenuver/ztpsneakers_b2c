@@ -46,16 +46,14 @@
         </div>
     </div>
     
-    <!-- Empty Slot or Quick Links -->
-    <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 shadow-md text-white relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full"></div>
-        <h3 class="text-lg font-bold mb-4">Aksi Cepat</h3>
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 card-hover relative overflow-hidden">
+        <h3 class="text-lg font-bold mb-4 text-slate-800">Aksi Cepat</h3>
         <div class="space-y-3">
-            <a href="{% url 'admintoko:orders' %}?status=paid" class="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/20 transition backdrop-blur-sm">
-                <span class="text-sm font-medium text-slate-200">Proses Pengiriman</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            <a href="{% url 'admintoko:orders' %}?status=paid" class="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition border border-slate-100 text-slate-700">
+                <span class="text-sm font-medium">Proses Pengiriman</span>
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </a>
-            <a href="https://app.crisp.chat/" target="_blank" class="flex items-center justify-between p-3 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-500/30 hover:bg-blue-500/30 transition backdrop-blur-sm">
+            <a href="https://app.crisp.chat/" target="_blank" class="flex items-center justify-between p-3 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100 transition">
                 <span class="text-sm font-bold">Buka Layanan Chat</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
             </a>

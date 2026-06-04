@@ -143,6 +143,9 @@ def cart_view(request):
 from django.utils.crypto import get_random_string
 from .models import Order, OrderItem, ShippingAddress
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def checkout_view(request):
     cart = get_or_create_cart(request)
     if not cart.items.exists():
@@ -151,10 +154,6 @@ def checkout_view(request):
     from .utils import generate_midtrans_snap_token
     
     if request.method == 'POST':
-        if not request.user.is_authenticated:
-            # Harusnya dicegah dari awal atau diarahkan ke login, tapi ini fallback
-            return redirect('userauths:auth_main')
-            
         shipping_service_raw = request.POST.get('shipping_service', '')
         shipping_service = ""
         from decimal import Decimal
@@ -205,10 +204,6 @@ def checkout_view(request):
                 price=item.product.price,
                 quantity=item.quantity
             )
-            # Kurangi stok
-            if item.size.stock >= item.quantity:
-                item.size.stock -= item.quantity
-                item.size.save()
         
         # Buat ShippingAddress
         # For city_name and province_name we'd ideally fetch them from the API or select text,
@@ -218,9 +213,9 @@ def checkout_view(request):
             recipient_name=request.POST.get('recipient_name', ''),
             phone_number=request.POST.get('phone_number', ''),
             province_id=request.POST.get('province_id', ''),
-            province_name='Provinsi',
+            province_name=request.POST.get('province_name', 'Tidak Diketahui'),
             city_id=request.POST.get('city_id', ''),
-            city_name='Kota',
+            city_name=request.POST.get('city_name', 'Tidak Diketahui'),
             district_name=request.POST.get('district_name', ''),
             postal_code=request.POST.get('postal_code', ''),
             full_address=request.POST.get('full_address', '')
@@ -387,6 +382,8 @@ def checkout_success(request, order_number):
 
 from django.views.decorators.csrf import csrf_exempt
 import json
+import hashlib
+from django.conf import settings
 
 @csrf_exempt
 def midtrans_webhook(request):
@@ -395,15 +392,39 @@ def midtrans_webhook(request):
             data = json.loads(request.body)
             order_id = data.get('order_id')
             transaction_status = data.get('transaction_status')
+            status_code = data.get('status_code')
+            gross_amount = data.get('gross_amount')
+            
+            # Verifikasi signature
+            server_key = getattr(settings, 'MIDTRANS_SERVER_KEY', '')
+            signature_key = data.get('signature_key', '')
+            raw_string = f"{order_id}{status_code}{gross_amount}{server_key}"
+            computed_hash = hashlib.sha512(raw_string.encode()).hexdigest()
+            
+            if computed_hash != signature_key:
+                return HttpResponse("Invalid signature", status=403)
             
             if order_id:
                 order = Order.objects.filter(order_number=order_id).first()
                 if order:
                     if transaction_status in ['capture', 'settlement']:
-                        order.status = 'paid'
+                        if order.status != 'paid':
+                            order.status = 'paid'
+                            order.save()
+                            # Kurangi stok saat pembayaran berhasil
+                            for item in order.items.all():
+                                # Cari ProductSize yang sesuai
+                                from products.models import ProductSize
+                                try:
+                                    product_size = ProductSize.objects.get(product=item.product, size=item.size_str)
+                                    if product_size.stock >= item.quantity:
+                                        product_size.stock -= item.quantity
+                                        product_size.save()
+                                except ProductSize.DoesNotExist:
+                                    pass
                     elif transaction_status in ['deny', 'cancel', 'expire']:
                         order.status = 'cancelled'
-                    order.save()
+                        order.save()
             return HttpResponse("OK")
         except Exception as e:
             print(f"Webhook error: {e}")
@@ -459,6 +480,8 @@ def complete_order(request, order_number):
     return HttpResponseForbidden()
 
 from products.models import Review
+from core.validators import validate_image_file
+from django.core.exceptions import ValidationError
 
 @login_required
 def create_review(request, item_id):
@@ -475,9 +498,21 @@ def create_review(request, item_id):
     if request.method == 'POST':
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
-        image = request.FILES.get('image')
-        image2 = request.FILES.get('image2')
-        image3 = request.FILES.get('image3')
+        images = [
+            request.FILES.get('image'),
+            request.FILES.get('image2'),
+            request.FILES.get('image3')
+        ]
+        
+        # Validasi file gambar
+        from django.contrib import messages
+        for img in images:
+            if img:
+                try:
+                    validate_image_file(img)
+                except ValidationError as e:
+                    messages.error(request, str(e.message))
+                    return render(request, "orders/review_form.html", {'item': order_item})
         
         Review.objects.create(
             product=order_item.product,
@@ -485,12 +520,11 @@ def create_review(request, item_id):
             order_item=order_item,
             rating=rating,
             comment=comment,
-            image=image,
-            image2=image2,
-            image3=image3
+            image=images[0],
+            image2=images[1],
+            image3=images[2]
         )
         
-        from django.contrib import messages
         messages.success(request, "Ulasan berhasil dikirim. Terima kasih!")
         return redirect('orders:order_detail', order_number=order_item.order.order_number)
         
@@ -522,6 +556,16 @@ def create_warranty_claim(request, item_id):
         reason = request.POST.get('reason')
         evidence_image = request.FILES.get('evidence_image')
         
+        if evidence_image:
+            from core.validators import validate_image_file
+            from django.core.exceptions import ValidationError
+            try:
+                validate_image_file(evidence_image)
+            except ValidationError as e:
+                from django.contrib import messages
+                messages.error(request, str(e.message))
+                return render(request, "orders/warranty_form.html", {'item': order_item})
+        
         claim = WarrantyClaim.objects.create(
             order_item=order_item,
             user=request.user,
@@ -530,15 +574,7 @@ def create_warranty_claim(request, item_id):
             evidence_image=evidence_image
         )
         
-        # Kirim notifikasi in-app
-        from django.apps import apps
-        Notification = apps.get_model('core', 'Notification')
-        Notification.objects.create(
-            user=request.user,
-            title="Klaim Garansi Diterima",
-            message=f"Klaim garansi untuk produk {order_item.product_name} telah kami terima dan akan segera diproses.",
-            link=f"/orders/garansi/{claim.id}/"
-        )
+        # Notifikasi dihapus dari view ini karena sudah ditangani oleh signal di orders/signals.py
         
         from django.contrib import messages
         messages.success(request, "Klaim garansi berhasil diajukan dan akan segera kami proses.")

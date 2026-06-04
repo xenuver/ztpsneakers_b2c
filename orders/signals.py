@@ -32,11 +32,12 @@ def order_status_changed(sender, instance, **kwargs):
                 message = f"Pesanan {instance.order_number} telah dibatalkan."
                 
             if title and message:
+                from django.urls import reverse
                 Notification.objects.create(
                     user=instance.user,
                     title=title,
                     message=message,
-                    link=f"/orders/history/{instance.order_number}/"
+                    link=reverse('orders:order_detail', kwargs={'order_number': instance.order_number})
                 )
 
 
@@ -78,9 +79,18 @@ from django.db.models.signals import post_save
 def warranty_created(sender, instance, created, **kwargs):
     if created:
         Notification = apps.get_model('core', 'Notification')
+        from django.urls import reverse
         Notification.objects.create(
             user=instance.user,
             title="Klaim Garansi Diterima 🛡️",
             message=f"Laporan garansi untuk {instance.order_item.product_name} telah kami terima dan akan segera ditinjau.",
-            link=f"/orders/garansi/{instance.pk}/"
+            link=reverse('orders:warranty_tracking', kwargs={'claim_id': instance.pk})
         )
+
+from django.contrib.auth.signals import user_logged_in
+
+@receiver(user_logged_in)
+def merge_cart_on_login(sender, request, user, **kwargs):
+    """Merge guest cart ke user cart saat login."""
+    from orders.utils import merge_guest_cart
+    merge_guest_cart(request, user)

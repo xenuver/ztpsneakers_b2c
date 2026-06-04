@@ -8,7 +8,33 @@ from django.utils import timezone
 from datetime import timedelta
 
 def is_admin_toko(user):
-    return user.is_authenticated and (user.is_staff or user.is_superuser)
+    return user.is_authenticated and user.groups.filter(name='AdminToko').exists()
+
+def login_view(request):
+    if request.user.is_authenticated and request.user.groups.filter(name='AdminToko').exists():
+        return redirect('admintoko:dashboard')
+        
+    if request.method == 'POST':
+        from django.contrib.auth import authenticate, login
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        # user model uses email for auth via identifier logic, but authenticate needs correct kwargs
+        # since we have custom auth backend handling identifier, we can use that or simple username
+        user = authenticate(request, username=email, password=password)
+        if not user:
+            # fallback if authenticate doesn't handle email properly in custom setup
+            from userauths.models import User
+            user_obj = User.objects.filter(email=email).first()
+            if user_obj and user_obj.check_password(password):
+                user = user_obj
+                
+        if user and user.groups.filter(name='AdminToko').exists():
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect('admintoko:dashboard')
+        else:
+            messages.error(request, "Akses ditolak. Kredensial tidak valid atau Anda bukan Admin Toko.")
+            
+    return render(request, 'admintoko/login.html')
 
 @user_passes_test(is_admin_toko, login_url='/auth/')
 def dashboard_view(request):
@@ -34,13 +60,60 @@ def dashboard_view(request):
     }
     return render(request, 'admintoko/dashboard.html', context)
 
-@user_passes_test(is_admin_toko, login_url='/auth/')
+@user_passes_test(is_admin_toko, login_url='/admin-toko/login/')
 def products_view(request):
     products = Product.objects.all().order_by('-created_at')
     context = {
         'products': products
     }
     return render(request, 'admintoko/products.html', context)
+
+@user_passes_test(is_admin_toko, login_url='/admin-toko/login/')
+def product_create_view(request):
+    from products.models import Category, Brand
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        price = request.POST.get('price')
+        description = request.POST.get('description')
+        brand_id = request.POST.get('brand')
+        category_id = request.POST.get('category')
+        
+        product = Product.objects.create(
+            name=name,
+            price=price,
+            description=description,
+            brand_id=brand_id,
+            category_id=category_id
+        )
+        messages.success(request, f"Produk {product.name} berhasil ditambahkan.")
+        return redirect('admintoko:products')
+        
+    context = {
+        'brands': Brand.objects.all(),
+        'categories': Category.objects.all()
+    }
+    return render(request, 'admintoko/product_form.html', context)
+
+@user_passes_test(is_admin_toko, login_url='/admin-toko/login/')
+def product_edit_view(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    from products.models import Category, Brand
+    if request.method == 'POST':
+        product.name = request.POST.get('name')
+        product.price = request.POST.get('price')
+        product.description = request.POST.get('description')
+        product.brand_id = request.POST.get('brand')
+        product.category_id = request.POST.get('category')
+        product.save()
+        messages.success(request, f"Produk {product.name} berhasil diperbarui.")
+        return redirect('admintoko:products')
+        
+    context = {
+        'product': product,
+        'brands': Brand.objects.all(),
+        'categories': Category.objects.all()
+    }
+    return render(request, 'admintoko/product_form.html', context)
 
 @user_passes_test(is_admin_toko, login_url='/auth/')
 def orders_view(request):
