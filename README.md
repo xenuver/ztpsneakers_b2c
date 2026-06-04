@@ -1,8 +1,6 @@
 # 👟 ZTP Sneakers — Platform E-Commerce B2C
 
-<p align="center">
-  <img src="docs/screenshots/hero.png" alt="ZTP Sneakers Homepage" width="100%">
-</p>
+
 
 <p align="center">
   <strong>Platform penjualan sepatu second (preloved) berbasis web untuk UMKM ZTP Sneakers, Pontianak.</strong>
@@ -23,7 +21,7 @@
 - [Tentang Proyek](#-tentang-proyek)
 - [Fitur Utama](#-fitur-utama)
 - [Role Pengguna](#-role-pengguna)
-- [Halaman & Screenshot](#-halaman--screenshot)
+- [Daftar Halaman](#-halaman--screenshot)
   - [Storefront (Customer)](#storefront-customer)
   - [Admin Toko](#admin-toko-staf)
   - [Jasmine Dashboard (Owner)](#jasmine-dashboard-owner)
@@ -115,11 +113,8 @@ Platform ini dibangun mengikuti lima konsep e-commerce modern: **Automation, Int
 
 ---
 
-## 📸 Halaman & Screenshot
+## 📸 Daftar Halaman
 
-> Folder screenshot tersedia di [`docs/screenshots/`](docs/screenshots/). Silakan isi dengan screenshot hasil tampilan aktual.
-
----
 
 ### Storefront (Customer)
 
@@ -127,9 +122,7 @@ Platform ini dibangun mengikuti lima konsep e-commerce modern: **Automation, Int
 
 Halaman utama dengan hero carousel, trust badge strip, produk featured, dan rekomendasi produk berdasarkan rating tertinggi.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/01_homepage.png" alt="Homepage" width="80%">
-</p>
+
 
 **Komponen:**
 - Hero carousel full-width (auto-slide, numbered bullets, CTA "Lihat Koleksi")
@@ -143,9 +136,7 @@ Halaman utama dengan hero carousel, trust badge strip, produk featured, dan reko
 
 Halaman semua produk dengan filter sidebar, live search, dan infinite scroll.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/02_katalog.png" alt="Katalog" width="80%">
-</p>
+
 
 **Komponen:**
 - Filter sidebar: brand, ukuran (pill), kondisi, harga (range slider), reset filter
@@ -160,9 +151,7 @@ Halaman semua produk dengan filter sidebar, live search, dan infinite scroll.
 
 Halaman lengkap informasi produk dengan galeri foto, pilih ukuran, dan tab informasi.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/03_detail_produk.png" alt="Detail Produk" width="80%">
-</p>
+
 
 **Komponen:**
 - Galeri foto swipe + thumbnail row (klik ganti foto utama)
@@ -177,9 +166,7 @@ Halaman lengkap informasi produk dengan galeri foto, pilih ukuran, dan tab infor
 
 Halaman login dan registrasi dalam satu halaman dengan tab toggle.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/04_auth.png" alt="Auth Page" width="80%">
-</p>
+
 
 **Komponen:**
 - Layout split screen: foto lifestyle (kiri) + form area (kanan)
@@ -193,9 +180,7 @@ Halaman login dan registrasi dalam satu halaman dengan tab toggle.
 
 Daftar produk yang disimpan oleh customer.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/05_wishlist.png" alt="Wishlist" width="80%">
-</p>
+
 
 **Komponen:**
 - Grid produk tersimpan
@@ -209,9 +194,7 @@ Daftar produk yang disimpan oleh customer.
 
 Ringkasan item yang akan dibeli sebelum checkout.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/06_cart.png" alt="Keranjang" width="80%">
-</p>
+
 
 **Komponen:**
 - List item: foto, nama, ukuran, harga satuan
@@ -225,9 +208,7 @@ Ringkasan item yang akan dibeli sebelum checkout.
 
 Proses checkout tiga langkah.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/07_checkout.png" alt="Checkout" width="80%">
-</p>
+
 
 **Step 1 — Alamat:**
 - Form: nama penerima, no. telepon
@@ -248,9 +229,7 @@ Proses checkout tiga langkah.
 
 Halaman konfirmasi setelah pembayaran berhasil.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/08_checkout_success.png" alt="Checkout Success" width="80%">
-</p>
+
 
 ---
 
@@ -258,9 +237,7 @@ Halaman konfirmasi setelah pembayaran berhasil.
 
 Daftar semua pesanan customer dengan filter status.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/09_orders.png" alt="Riwayat Pesanan" width="80%">
-</p>
+
 
 **Komponen:**
 - Tab filter: Semua | Menunggu Bayar | Diproses | Dikirim | Selesai
@@ -273,9 +250,7 @@ Daftar semua pesanan customer dengan filter status.
 
 Detail lengkap satu pesanan dengan timeline status dan aksi purna jual.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/10_order_detail.png" alt="Detail Pesanan" width="80%">
-</p>
+
 
 **Komponen:**
 - Status timeline horizontal: Dibayar → Diproses → Dikirim → Selesai
@@ -290,9 +265,7 @@ Detail lengkap satu pesanan dengan timeline status dan aksi purna jual.
 
 Form penulisan ulasan produk setelah pesanan selesai.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/11_review_form.png" alt="Form Ulasan" width="80%">
-</p>
+
 
 **Komponen:**
 - Rating bintang interaktif (klik 1–5)
@@ -305,9 +278,7 @@ Form penulisan ulasan produk setelah pesanan selesai.
 
 Form pelaporan kendala/masalah produk.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/12_warranty_form.png" alt="Form Garansi" width="80%">
-</p>
+
 
 **Komponen:**
 - Dropdown pilih item bermasalah
@@ -321,9 +292,7 @@ Form pelaporan kendala/masalah produk.
 
 Halaman pelacakan status laporan garansi.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/13_warranty_tracking.png" alt="Tracking Garansi" width="80%">
-</p>
+
 
 **Komponen:**
 - Status badge + tanggal setiap perubahan
@@ -336,9 +305,7 @@ Halaman pelacakan status laporan garansi.
 
 Halaman pengelolaan akun customer.
 
-<p align="center">
-  <img src="docs/screenshots/storefront/14_profile.png" alt="Profil" width="80%">
-</p>
+
 
 **Komponen:**
 - Edit biodata: nama, email, nomor telepon, avatar
@@ -353,9 +320,7 @@ Halaman pengelolaan akun customer.
 
 #### 📊 Dashboard Admin — `/admin-toko/`
 
-<p align="center">
-  <img src="docs/screenshots/admintoko/01_dashboard.png" alt="Dashboard Admin" width="80%">
-</p>
+
 
 KPI hari ini: pesanan masuk, stok menipis, laporan garansi baru. Tabel pesanan terbaru dengan aksi cepat.
 
@@ -363,9 +328,7 @@ KPI hari ini: pesanan masuk, stok menipis, laporan garansi baru. Tabel pesanan t
 
 #### 📦 Daftar Produk — `/admin-toko/products/`
 
-<p align="center">
-  <img src="docs/screenshots/admintoko/02_products.png" alt="Produk Admin" width="80%">
-</p>
+
 
 Tabel produk dengan filter, pencarian, tombol tambah/edit/nonaktifkan.
 
@@ -373,9 +336,7 @@ Tabel produk dengan filter, pencarian, tombol tambah/edit/nonaktifkan.
 
 #### ➕ Form Produk — `/admin-toko/products/add/`
 
-<p align="center">
-  <img src="docs/screenshots/admintoko/03_product_form.png" alt="Form Produk" width="80%">
-</p>
+
 
 Form lengkap tambah/edit produk: nama, brand, kategori, harga, kondisi, foto, stok per ukuran.
 
@@ -383,9 +344,7 @@ Form lengkap tambah/edit produk: nama, brand, kategori, harga, kondisi, foto, st
 
 #### 🏷️ Brand & Kategori
 
-<p align="center">
-  <img src="docs/screenshots/admintoko/04_brands.png" alt="Brand" width="80%">
-</p>
+
 
 Manajemen daftar brand dan kategori produk.
 
@@ -393,9 +352,7 @@ Manajemen daftar brand dan kategori produk.
 
 #### 🛒 Pesanan — `/admin-toko/orders/`
 
-<p align="center">
-  <img src="docs/screenshots/admintoko/05_orders.png" alt="Pesanan Admin" width="80%">
-</p>
+
 
 Tabel semua pesanan dengan filter status, tombol proses, input resi pengiriman, dan update status.
 
@@ -403,9 +360,7 @@ Tabel semua pesanan dengan filter status, tombol proses, input resi pengiriman, 
 
 #### 👥 Pelanggan — `/admin-toko/customers/`
 
-<p align="center">
-  <img src="docs/screenshots/admintoko/06_customers.png" alt="Pelanggan" width="80%">
-</p>
+
 
 Daftar pelanggan terdaftar dengan riwayat pembelian. (Read-only)
 
@@ -413,9 +368,7 @@ Daftar pelanggan terdaftar dengan riwayat pembelian. (Read-only)
 
 #### 💬 Ulasan — `/admin-toko/reviews/`
 
-<p align="center">
-  <img src="docs/screenshots/admintoko/07_reviews.png" alt="Ulasan" width="80%">
-</p>
+
 
 Moderasi ulasan pelanggan: tampilkan/sembunyikan ulasan yang tidak pantas.
 
@@ -423,9 +376,7 @@ Moderasi ulasan pelanggan: tampilkan/sembunyikan ulasan yang tidak pantas.
 
 #### 🛡️ Laporan Garansi — `/admin-toko/warranty/`
 
-<p align="center">
-  <img src="docs/screenshots/admintoko/08_warranty.png" alt="Garansi" width="80%">
-</p>
+
 
 Daftar laporan garansi masuk dengan update status dan penulisan catatan resolusi.
 
@@ -437,9 +388,7 @@ Daftar laporan garansi masuk dengan update status dan penulisan catatan resolusi
 
 #### 📈 Dashboard Jasmine — `/jasmine/`
 
-<p align="center">
-  <img src="docs/screenshots/jasmine/01_dashboard.png" alt="Jasmine Dashboard" width="80%">
-</p>
+
 
 **Komponen:**
 - Greeting section: nama owner + tanggal hari ini
@@ -451,9 +400,7 @@ Daftar laporan garansi masuk dengan update status dan penulisan catatan resolusi
 
 #### 📊 Export Laporan — `/jasmine/export/`
 
-<p align="center">
-  <img src="docs/screenshots/jasmine/02_export.png" alt="Export Laporan" width="80%">
-</p>
+
 
 Filter laporan per bulan/tahun, preview tabel, dan download langsung file `.xlsx` (openpyxl).
 
