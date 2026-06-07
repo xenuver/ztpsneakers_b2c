@@ -25,8 +25,8 @@ def auth_check(request):
             response['HX-Retarget'] = '#auth-error'
             return response
             
-        if identifier.isdigit() and len(identifier) < 12:
-            response = HttpResponse('<div class="text-red-500 font-bold mb-4 text-center text-sm">Nomor HP harus minimal 12 digit</div>')
+        if identifier.isdigit() and len(identifier) < 10:
+            response = HttpResponse('<div class="text-red-500 font-bold mb-4 text-center text-sm">Nomor HP harus minimal 10 digit</div>')
             response['HX-Retarget'] = '#auth-error'
             return response
             
@@ -79,6 +79,9 @@ def auth_register(request):
         
         if not email or not phone_number:
             return HttpResponse("""<div class="text-red-500 text-sm mt-2">Email dan Nomor HP wajib diisi</div>""")
+            
+        if phone_number.isdigit() and len(phone_number) < 10:
+            return HttpResponse("""<div class="text-red-500 text-sm mt-2">Nomor HP harus minimal 10 digit</div>""")
             
         if User.objects.filter(Q(email=email) | Q(phone_number=phone_number)).exists():
             return HttpResponse("""<div class="text-red-500 text-sm mt-2">Email/No HP sudah terdaftar</div>""")
