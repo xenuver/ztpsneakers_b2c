@@ -28,7 +28,12 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-xnsr^6zcx)553--okzm@hpie(f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+# Bersihkan http:// atau https:// jika tidak sengaja dimasukkan di env var
+raw_allowed_hosts = os.getenv('ALLOWED_HOSTS', '*')
+ALLOWED_HOSTS = [
+    host.strip().replace('https://', '').replace('http://', '') 
+    for host in raw_allowed_hosts.split(',')
+]
 
 # Wajib untuk Django 4.0+ saat di balik HTTPS reverse proxy (Traefik/Coolify/Nginx)
 # Isi dengan domain Anda di env var, pisahkan koma jika lebih dari satu
