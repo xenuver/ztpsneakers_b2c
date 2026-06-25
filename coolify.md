@@ -157,6 +157,62 @@ Di tab **"Network"** atau **"Ports"**:
 
 ---
 
+## Langkah 8.5 — Persistent Storage
+
+### Apakah perlu setup tambahan?
+
+**Tidak perlu setup tambahan.** `docker-compose.yml` sudah mendefinisikan 2 named volumes yang otomatis persisten di server:
+
+| Volume | Mount Path di Container | Isi |
+|--------|------------------------|-----|
+| `postgres_data` | `/var/lib/postgresql/data` | Seluruh data database |
+| `media_data` | `/app/media` | Gambar produk, banner, logo brand |
+
+Named volumes ini **tidak akan dihapus saat redeploy** — data aman setiap kali push kode baru.
+
+### Cara kerja media files saat deploy pertama
+
+Karena folder `media/` ikut masuk ke Docker image (tidak di-exclude `.dockerignore`):
+
+1. **Build image** → foto produk/banner/brand sudah ada di dalam image
+2. **Container start pertama kali** → Docker otomatis copy isi `media/` dari image ke volume kosong `media_data`
+3. **Seed berjalan** → gambar ditemukan di `/app/media/...` → berhasil dibuat di database
+4. **Redeploy berikutnya** → volume sudah berisi data → tidak ditimpa ✅
+
+### Verifikasi volume di server (opsional)
+
+Setelah deploy, SSH ke server dan cek:
+
+```bash
+# Lihat semua volume Docker
+docker volume ls
+
+# Cek isi volume media
+docker volume inspect ztpsneakers_media_data
+
+# Masuk ke container untuk cek file
+docker exec -it <nama_container_web> ls /app/media/products/images/
+```
+
+### Opsi: Gunakan Coolify UI Persistent Storage (bind mount)
+
+Sebagai **alternatif lebih eksplisit** (tidak wajib), Coolify menyediakan UI untuk bind mount ke path tertentu di server:
+
+1. Di service `web`, buka tab **"Storages"** atau **"Persistent Storage"**
+2. Klik **"Add"**
+3. Isi:
+   - **Source Path (Host)**: `/data/coolify/ztpsneakers/media`
+   - **Destination Path (Container)**: `/app/media`
+4. Klik **Save**
+
+> [!WARNING]
+> Jika menggunakan bind mount via Coolify UI, **hapus** baris `- media_data:/app/media` dari `docker-compose.yml` terlebih dahulu agar tidak konflik. Gunakan salah satu cara — pilih named volume (sudah ada) **ATAU** bind mount UI, tidak keduanya.
+
+> [!TIP]
+> Untuk project ini, **named volume yang sudah ada di `docker-compose.yml` sudah cukup**. Tidak perlu konfigurasi tambahan di Coolify UI.
+
+---
+
 ## Langkah 9 — Deploy!
 
 1. Klik tombol **"Deploy"** (tombol biru/hijau di bagian atas)
