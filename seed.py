@@ -10,58 +10,73 @@ django.setup()
 
 from products.models import Category, Brand, Product, ProductSize, ProductImage, Banner
 
+
 def run():
-    print("Mulai reseeding data ZTP Sneakers...")
+    print("Memulai proses seeding ZTP Sneakers...")
 
-    # Bersihkan data lama
-    Product.objects.all().delete()
-    Brand.objects.all().delete()
-    Category.objects.all().delete()
-    Banner.objects.all().delete()
-
-    # 1. Buat Banners
-    banner_images = ['0a9593c5-4717-4510-8005-5c045290fd41_kE70NR1.jpg', 'New_Arrival.png']
+    # ============================================================
+    # 1. Buat Banners (skip jika sudah ada)
+    # ============================================================
+    banner_images = [
+        ('0a9593c5-4717-4510-8005-5c045290fd41_kE70NR1.jpg', 'Banner 1', 'Promo menarik untuk Banner 1'),
+        ('New_Arrival.png', 'Banner 2', 'Promo menarik untuk Banner 2'),
+    ]
     media_banners_path = os.path.join(settings.MEDIA_ROOT, 'banners')
-    for i, img_name in enumerate(banner_images):
+    for i, (img_name, title, subtitle) in enumerate(banner_images):
+        if Banner.objects.filter(title=title).exists():
+            print(f"[SKIP] Banner '{title}' sudah ada.")
+            continue
         img_path = os.path.join(media_banners_path, img_name)
         if os.path.exists(img_path):
             banner = Banner.objects.create(
-                title=f"Banner {i+1}",
-                subtitle=f"Promo menarik untuk Banner {i+1}",
+                title=title,
+                subtitle=subtitle,
                 link='/',
                 order=i,
                 is_active=True
             )
             with open(img_path, 'rb') as f:
                 banner.image.save(img_name, File(f))
-            print(f"Banner '{banner.title}' dibuat.")
+            print(f"[OK] Banner '{banner.title}' dibuat.")
         else:
-            print(f"File banner tidak ditemukan: {img_path}")
+            print(f"[WARN] File banner tidak ditemukan: {img_path}")
 
-    # 2. Buat Kategori
+    # ============================================================
+    # 2. Buat Kategori (skip jika sudah ada)
+    # ============================================================
     categories = ['Sneakers', 'Running', 'Casual', 'Basketball']
     for cat_name in categories:
-        Category.objects.create(name=cat_name)
-        print(f"Kategori '{cat_name}' dibuat.")
+        cat, created = Category.objects.get_or_create(name=cat_name)
+        if created:
+            print(f"[OK] Kategori '{cat_name}' dibuat.")
+        else:
+            print(f"[SKIP] Kategori '{cat_name}' sudah ada.")
 
-    # 3. Buat Brand beserta logo
+    # ============================================================
+    # 3. Buat Brand beserta logo (skip jika sudah ada)
+    # ============================================================
     brands_data = [
-        {"name": "Nike", "logo": "nike_logo.webp"},
-        {"name": "Adidas", "logo": "ABIBAS.jpeg"},
+        {"name": "Nike",        "logo": "nike_logo.webp"},
+        {"name": "Adidas",      "logo": "ABIBAS.jpeg"},
         {"name": "New Balance", "logo": "new_balance.webp"},
-        {"name": "Puma", "logo": "puma.png"},
-        {"name": "Converse", "logo": "Converse-logo.png"}
+        {"name": "Puma",        "logo": "puma.png"},
+        {"name": "Converse",    "logo": "Converse-logo.png"},
     ]
     media_brands_path = os.path.join(settings.MEDIA_ROOT, 'brands', 'logos')
     for bdata in brands_data:
-        brand = Brand.objects.create(name=bdata["name"])
+        brand, created = Brand.objects.get_or_create(name=bdata["name"])
+        if not created:
+            print(f"[SKIP] Brand '{brand.name}' sudah ada.")
+            continue
         logo_path = os.path.join(media_brands_path, bdata["logo"])
         if os.path.exists(logo_path):
             with open(logo_path, 'rb') as f:
                 brand.logo.save(bdata["logo"], File(f))
-        print(f"Brand '{brand.name}' dibuat dengan logo.")
+        print(f"[OK] Brand '{brand.name}' dibuat.")
 
-    # 4. Buat 6 Produk beserta gambar masing-masing (tidak acak)
+    # ============================================================
+    # 4. Buat Produk beserta gambar (skip jika sudah ada)
+    # ============================================================
     products_data = [
         {
             "name": "Nike Dunk Low Retro",
@@ -116,26 +131,37 @@ def run():
             "price": 2800000.00,
             "color": "grey",
             "image": "ON_CLOUD_SHOES.webp"
-        }
+        },
     ]
 
     media_products_path = os.path.join(settings.MEDIA_ROOT, 'products', 'images')
     for pdata in products_data:
+        if Product.objects.filter(name=pdata["name"]).exists():
+            print(f"[SKIP] Produk '{pdata['name']}' sudah ada.")
+            continue
+
+        try:
+            brand = Brand.objects.get(name=pdata["brand"])
+            category = Category.objects.get(name=pdata["category"])
+        except (Brand.DoesNotExist, Category.DoesNotExist) as e:
+            print(f"[ERROR] Gagal membuat produk '{pdata['name']}': {e}")
+            continue
+
         p = Product.objects.create(
             name=pdata["name"],
-            brand=Brand.objects.get(name=pdata["brand"]),
-            category=Category.objects.get(name=pdata["category"]),
+            brand=brand,
+            category=category,
             description=pdata["desc"],
             price=pdata["price"],
             color=pdata["color"],
             condition='new',
             is_featured=True
         )
-        
+
         # Buat ukuran dan stok
-        ProductSize.objects.create(product=p, size='40', stock=5)
-        ProductSize.objects.create(product=p, size='42', stock=10)
-        
+        ProductSize.objects.get_or_create(product=p, size='40', defaults={'stock': 5})
+        ProductSize.objects.get_or_create(product=p, size='42', defaults={'stock': 10})
+
         # Set gambar
         img_path = os.path.join(media_products_path, pdata["image"])
         if os.path.exists(img_path):
@@ -145,11 +171,11 @@ def run():
                     image=File(f, name=pdata["image"]),
                     is_primary=True
                 )
-            print(f"Produk '{p.name}' dibuat dengan gambar spesifik.")
+            print(f"[OK] Produk '{p.name}' dibuat dengan gambar.")
         else:
-            print(f"Gagal memuat gambar untuk {p.name}: {img_path}")
+            print(f"[WARN] Gambar tidak ditemukan untuk '{p.name}': {img_path}")
 
-    print("Reseeding selesai! Semua data lama telah diganti dengan data baru.")
+    print("\nSeeding selesai!")
 
 
 if __name__ == '__main__':

@@ -1,0 +1,23 @@
+# .dockerignore — exclude files yang tidak perlu masuk image
+.git
+.gitignore
+.DS_Store
+.env
+.env.example
+.venv
+env/
+venv/
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+.agent/
+docs/
+design-system/
+*.md
+*.log
+db.sqlite3
+.idea/
+.vscode/
+node_modules/
+staticfiles/

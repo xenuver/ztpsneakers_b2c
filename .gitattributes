@@ -1,0 +1,7 @@
+# Default: normalize line endings to LF on commit
+* text=auto eol=lf
+
+# Shell scripts MUST be LF (executed on Linux)
+*.sh text eol=lf
+
+# Windows-specific overrides (none needed for this project)
