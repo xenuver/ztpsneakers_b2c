@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Masuk atau Daftar - ZTPSneakers{% endblock %}
 
@@ -6,7 +7,10 @@
 <div class="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-sm border border-gray-100">
         <div class="text-center">
-            <h2 class="mt-6 text-3xl font-extrabold text-gray-900">Masuk atau Daftar</h2>
+            <div class="flex justify-center mb-4">
+                <a href="/"><img src="{% static 'images/logo.png' %}" alt="ZTP Sneakers" class="h-14 w-auto object-contain"></a>
+            </div>
+            <h2 class="text-3xl font-extrabold text-gray-900">Masuk atau Daftar</h2>
             <p class="mt-2 text-sm text-gray-600">
                 Lanjutkan ke ZTPSneakers
             </p>

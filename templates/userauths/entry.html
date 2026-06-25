@@ -1,28 +1,50 @@
-{% extends 'partials/base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block title %}Masuk atau Daftar - ZTP Sneakers{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'assets/css/up.css' %}">
+<div class="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-4xl bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="flex flex-col md:flex-row">
 
-<div class="container">
-    <div class="left-section">
-        <h1>Hello, Welcome!</h1>
-        <p>Selamat datang di ZTP Sneakers.</p>
-        <p>Silakan masukkan Email atau Nomor WhatsApp Anda untuk melanjutkan.</p>
-    </div>
-    
-    <div class="right-section">
-        <h2>Masuk / Daftar</h2>
-        <form method="POST">
-            {% csrf_token %}
-            <div class="input-group">
-                {{ form.identifier }}
-                <span class="icon">👤</span>
+            <!-- LEFT: Logo -->
+            <div class="md:w-1/2 bg-gray-50 flex flex-col items-center justify-center p-10 border-b md:border-b-0 md:border-r border-gray-100">
+                <a href="/">
+                    <img src="{% static 'images/logologinregister1.png' %}" alt="ZTP Sneakers" class="w-56 md:w-72 h-auto object-contain">
+                </a>
+                <p class="mt-6 text-sm font-semibold text-gray-500 text-center">
+                    Langkah baru dimulai di sini
+                </p>
+                <p class="mt-1 text-xs text-gray-400 text-center">
+                    Koleksi sneakers pilihan — berkualitas, terpercaya, pilihanmu.
+                </p>
             </div>
-            <button type="submit" class="btn">Lanjutkan</button>
-        </form>
+
+            <!-- RIGHT: Form -->
+            <div class="md:w-1/2 flex flex-col justify-center p-8 md:p-12">
+                <h2 class="text-2xl font-heading font-extrabold text-black mb-1">Hello, Welcome!</h2>
+                <p class="text-sm text-gray-500 mb-8">
+                    Selamat datang di ZTP Sneakers.<br>
+                    Masukkan Email atau Nomor WhatsApp untuk melanjutkan.
+                </p>
+
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        {{ form.identifier }}
+                    </div>
+                    <button type="submit"
+                        class="w-full py-3 bg-primary text-white text-sm font-bold rounded-md hover:bg-primary/90 transition flex justify-center items-center gap-2">
+                        Lanjutkan
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+
+        </div>
     </div>
 </div>
 {% endblock %}

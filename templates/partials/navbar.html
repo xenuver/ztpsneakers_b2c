@@ -23,8 +23,7 @@
 <div id="promo-banner"
     class="bg-[#111827] text-white text-xs font-bold py-2 uppercase tracking-wider relative overflow-hidden flex items-center justify-center">
     <div class="promo-marquee px-10 text-center font-extrabold tracking-widest">
-        PROMO TERBATAS HARI INI &nbsp;·&nbsp; BELANJA SEKARANG UNTUK DISKON SPESIAL! &nbsp;·&nbsp; GRATIS ONGKIR MIN.
-        PEMBELIAN &nbsp;·&nbsp; PROMO TERBATAS HARI INI &nbsp;·&nbsp; BELANJA SEKARANG UNTUK DISKON SPESIAL!
+        PROMO TERBATAS HARI INI &nbsp;·&nbsp; BELANJA SEKARANG UNTUK DISKON SPESIAL! &nbsp;·&nbsp; ONGKIR TERJANGKAU KE SELURUH INDONESIA &nbsp;·&nbsp; PROMO TERBATAS HARI INI &nbsp;·&nbsp; BELANJA SEKARANG UNTUK DISKON SPESIAL!
     </div>
     <button
         onclick="document.getElementById('promo-banner').style.display='none';"
@@ -257,8 +256,12 @@
 <!-- Mobile Drawer -->
 <div id="mobile-drawer"
     class="fixed top-0 right-0 h-full w-4/5 max-w-xs bg-white z-[70] transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
-    <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
-        <span class="font-heading text-xl font-extrabold">MENU</span>
+
+    <!-- Drawer Header: Logo + Close -->
+    <div class="px-5 py-4 flex justify-between items-center border-b border-gray-100">
+        <a href="/" onclick="document.getElementById('mobile-drawer').classList.add('translate-x-full'); document.getElementById('mobile-drawer-overlay').classList.add('hidden');">
+            <img src="{% static 'images/logo.png' %}" alt="ZTP Sneakers" class="h-9 w-auto object-contain">
+        </a>
         <button
             onclick="document.getElementById('mobile-drawer').classList.add('translate-x-full'); document.getElementById('mobile-drawer-overlay').classList.add('hidden');"
             class="text-gray-400 hover:text-black transition-colors p-1">
@@ -267,45 +270,145 @@
             </svg>
         </button>
     </div>
-    <div class="overflow-y-auto flex-1 px-6 py-6 space-y-6">
-        {% if user.is_authenticated %}
-        <div class="pb-6 border-b border-gray-100">
-            <a href="{% url 'userauths:profile' %}" class="flex items-center gap-3">
-                <div
-                    class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">
-                    {{ user.email|make_list|first|upper }}
-                </div>
-                <div>
-                    <p class="font-bold text-black text-sm">
-                        {% if user.username %}{{ user.username|truncatechars:20 }}{% else %}{{ user.email|truncatechars:20 }}{% endif %}
-                    </p>
-                    <p class="text-xs text-gray-500">Lihat Profil →</p>
-                </div>
-            </a>
-        </div>
-        {% endif %}
-        <div class="flex flex-col gap-5">
+
+    <!-- Main Nav Links -->
+    <div class="flex-1 overflow-y-auto">
+        <!-- Top Nav Items -->
+        <div class="divide-y divide-gray-100">
             <a href="{% url 'storefront:catalog' %}"
-                class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-black">Browse All</a>
+                class="flex items-center px-6 py-4 text-sm font-bold text-gray-900 uppercase tracking-wide hover:bg-gray-50 transition-colors">
+                Browse All
+            </a>
             <a href="{% url 'storefront:catalog' %}?sort=-created_at"
-                class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-black">Hot Items</a>
-            <a href="{% url 'orders:wishlist' %}"
-                class="text-sm font-bold text-gray-800 uppercase tracking-wide hover:text-black">Wishlist</a>
-            {% for cat in nav_categories %}
-            <a href="{% url 'storefront:catalog' %}?category={{ cat.id }}"
-                class="text-sm text-gray-600 hover:text-black">→ {{ cat.name }}</a>
-            {% endfor %}
+                class="flex items-center px-6 py-4 text-sm font-bold text-gray-900 uppercase tracking-wide hover:bg-gray-50 transition-colors">
+                Hot Item
+            </a>
+
+            <!-- Categories Accordion -->
+            <div>
+                <button type="button" id="mobile-cat-toggle"
+                    onclick="document.getElementById('mobile-cat-list').classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-180');"
+                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-bold text-gray-900 uppercase tracking-wide hover:bg-gray-50 transition-colors">
+                    Kategori
+                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+                <div id="mobile-cat-list" class="hidden bg-gray-50 divide-y divide-gray-100">
+                    {% for cat in nav_categories %}
+                    <a href="{% url 'storefront:catalog' %}?category={{ cat.id }}"
+                        class="flex items-center px-8 py-3 text-sm text-gray-700 hover:text-black hover:bg-gray-100 transition-colors">
+                        {{ cat.name }}
+                    </a>
+                    {% empty %}
+                    <a href="{% url 'storefront:catalog' %}"
+                        class="flex items-center px-8 py-3 text-sm text-gray-500">Semua Produk</a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- More Accordion (user info links) -->
+            <div>
+                <button type="button"
+                    onclick="document.getElementById('mobile-more-list').classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-180');"
+                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-bold text-gray-900 uppercase tracking-wide hover:bg-gray-50 transition-colors">
+                    More
+                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+                <div id="mobile-more-list" class="hidden bg-gray-50 divide-y divide-gray-100">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'userauths:profile' %}"
+                        class="flex items-center px-8 py-3 text-sm text-gray-700 hover:text-black hover:bg-gray-100 transition-colors">
+                        Profil Saya
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'core:about' %}"
+                        class="flex items-center px-8 py-3 text-sm text-gray-700 hover:text-black hover:bg-gray-100 transition-colors">
+                        Tentang Kami
+                    </a>
+                    <a href="{% url 'core:contact' %}"
+                        class="flex items-center px-8 py-3 text-sm text-gray-700 hover:text-black hover:bg-gray-100 transition-colors">
+                        Kontak
+                    </a>
+                    <a href="{% url 'core:faq' %}"
+                        class="flex items-center px-8 py-3 text-sm text-gray-700 hover:text-black hover:bg-gray-100 transition-colors">
+                        FAQ
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="pt-6 border-t border-gray-100">
-            {% if not user.is_authenticated %}
-            <a href="{% url 'userauths:auth_main' %}"
-                class="block w-full py-3 text-center bg-black text-white text-sm font-bold uppercase tracking-wider rounded-xl">Sign
-                In / Register</a>
-            {% else %}
-            <a href="{% url 'userauths:auth_logout' %}"
-                class="block w-full py-3 text-center bg-gray-100 text-red-600 text-sm font-bold uppercase tracking-wider rounded-xl hover:bg-gray-200 transition-colors">Logout</a>
+
+        <!-- Bottom Utility Links -->
+        <div class="mt-2 divide-y divide-gray-100 border-t border-gray-200">
+            <a href="{% url 'orders:cart_page' %}"
+                class="flex items-center justify-between px-6 py-4 text-sm text-gray-800 hover:bg-gray-50 transition-colors">
+                <span class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Keranjang Belanja
+                </span>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+            <a href="{% url 'orders:wishlist' %}"
+                class="flex items-center justify-between px-6 py-4 text-sm text-gray-800 hover:bg-gray-50 transition-colors">
+                <span class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    My Wishlist
+                </span>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'core:all_notifications' %}"
+                class="flex items-center justify-between px-6 py-4 text-sm text-gray-800 hover:bg-gray-50 transition-colors">
+                <span class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    Notifikasi
+                </span>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
             {% endif %}
         </div>
+    </div>
+
+    <!-- Drawer Footer: Login / Logout Button -->
+    <div class="px-5 py-4 border-t border-gray-200">
+        {% if not user.is_authenticated %}
+        <a href="{% url 'userauths:auth_main' %}"
+            class="block w-full py-3 text-center border border-gray-300 text-black text-sm font-bold rounded-xl hover:bg-gray-50 transition-colors">
+            Login
+        </a>
+        {% else %}
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                {{ user.email|make_list|first|upper }}
+            </div>
+            <div class="min-w-0">
+                <p class="font-bold text-black text-sm truncate">
+                    {% if user.username %}{{ user.username|truncatechars:20 }}{% else %}{{ user.email|truncatechars:20 }}{% endif %}
+                </p>
+            </div>
+        </div>
+        <a href="{% url 'userauths:auth_logout' %}"
+            class="block w-full py-2.5 text-center border border-red-200 text-red-600 text-sm font-bold rounded-xl hover:bg-red-50 transition-colors">
+            Logout
+        </a>
+        {% endif %}
     </div>
 </div>
 
