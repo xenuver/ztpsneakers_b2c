@@ -9,10 +9,26 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ztpsneakers.settings')
 django.setup()
 
 from products.models import Category, Brand, Product, ProductSize, ProductImage, Banner
+from django.contrib.auth import get_user_model
 
 
 def run():
     print("Memulai proses seeding ZTP Sneakers...")
+
+    # ============================================================
+    # 0. Buat Akun Admin (skip jika sudah ada)
+    # ============================================================
+    User = get_user_model()
+    # Cek apakah sudah ada user dengan username 'admin' atau email 'admin@admin.com'
+    if not User.objects.filter(username='admin').exists() and not User.objects.filter(email='admin@admin.com').exists():
+        User.objects.create_superuser(
+            username='admin',
+            email='admin@admin.com',
+            password='admin' # Default password admin
+        )
+        print("[OK] Akun Superuser dibuat (username: admin, email: admin@admin.com, pass: admin)")
+    else:
+        print("[SKIP] Akun Superuser 'admin' sudah ada.")
 
     # ============================================================
     # 1. Buat Banners (skip jika sudah ada)
