@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ERD — ZTP Sneakers B2C</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0e17;
+      --surface: #161826;
+      --surface2: #1c1f30;
+      --border: rgba(255,255,255,0.07);
+      --text: #dde1f0;
+      --muted: #5a5d78;
+      --pk: #fbbf24;
+      --fk: #60a5fa;
+      --uk: #34d399;
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+      user-select: none;
+    }
+
+    /* ── TOOLBAR ── */
+    #toolbar {
+      position: fixed; inset: 0 0 auto 0;
+      height: 52px;
+      background: rgba(10,11,18,0.97);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 20px; z-index: 200;
+    }
+    .t-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; font-weight: 700; color: #fff;
+    }
+    .t-logo-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+    }
+    .t-sep { width: 1px; height: 22px; background: var(--border); }
+    .t-info { font-size: 12px; color: var(--muted); }
+    .t-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+    .tbtn {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); padding: 0 13px; border-radius: 6px;
+      font-size: 13px; cursor: pointer; height: 32px;
+      display: flex; align-items: center; transition: background .15s, border-color .15s;
+      font-family: inherit;
+    }
+    .tbtn:hover { background: var(--surface); border-color: rgba(255,255,255,0.16); }
+    .tbtn.ic { padding: 0 11px; font-size: 18px; }
+    #zoom-label { font-size: 12px; color: var(--muted); min-width: 44px; text-align: center; }
+
+    /* ── WRAP ── */
+    #wrap {
+      position: fixed; top: 52px; bottom: 0; left: 0; right: 0;
+      overflow: hidden; cursor: grab;
+    }
+    #wrap.grabbing { cursor: grabbing; }
+    #wrap::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 26px 26px;
+    }
+
+    /* ── CANVAS ── */
+    #canvas { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+
+    /* ── SVG ── */
+    #svg {
+      position: absolute; top: 0; left: 0;
+      width: 2300px; height: 2100px;
+      overflow: visible; pointer-events: none; z-index: 0;
+    }
+
+    /* ── TABLE CARD ── */
+    .tc {
+      position: absolute; width: 265px;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06);
+      transition: box-shadow .2s, transform .15s;
+      z-index: 1;
+    }
+    .tc:hover {
+      box-shadow: 0 14px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.15);
+      transform: translateY(-1px);
+    }
+    .tc-head {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px; font-weight: 700;
+      color: #fff; letter-spacing: 0.2px;
+    }
+    .tc-head-name { flex: 1; }
+    .tc-head-badge {
+      font-size: 8.5px; font-weight: 600; opacity: .72;
+      background: rgba(0,0,0,0.22); padding: 2px 6px; border-radius: 4px;
+      letter-spacing: .7px; text-transform: uppercase;
+    }
+    .tc-body { background: var(--surface); }
+
+    .fr {
+      display: flex; align-items: center;
+      padding: 0 12px; height: 27px; gap: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; border-top: 1px solid var(--border);
+    }
+    .fr.is-pk { background: rgba(251,191,36,.05); }
+    .fr.is-fk { background: rgba(96,165,250,.04); }
+
+    .fr-ico { width: 13px; font-size: 9px; text-align: center; flex-shrink: 0; line-height: 1; }
+    .fr-n   { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fr-n.pk { color: var(--pk); }
+    .fr-n.fk { color: var(--fk); }
+    .fr-n.uk { color: var(--uk); }
+    .fr-t   { font-size: 9.5px; color: var(--muted); white-space: nowrap; margin-right: 3px; }
+    .fr-bs  { display: flex; gap: 2px; flex-shrink: 0; }
+    .b {
+      font-size: 7.5px; padding: 1px 4px; border-radius: 3px;
+      font-weight: 700; letter-spacing: .3px;
+    }
+    .b-pk { background: rgba(251,191,36,.18); color: #fbbf24; border: 1px solid rgba(251,191,36,.3); }
+    .b-fk { background: rgba(96,165,250,.18); color: #60a5fa; border: 1px solid rgba(96,165,250,.3); }
+    .b-uk { background: rgba(52,211,153,.18); color: #34d399; border: 1px solid rgba(52,211,153,.3); }
+    .b-nn { background: rgba(255,255,255,.04); color: var(--muted); border: 1px solid rgba(255,255,255,.08); }
+
+    /* ── LEGEND ── */
+    #legend {
+      position: fixed; bottom: 20px; left: 20px;
+      background: rgba(10,11,18,0.93); backdrop-filter: blur(14px);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; z-index: 200; font-size: 12px; min-width: 170px;
+    }
+    .lg-h { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .9px; color: var(--muted); margin-bottom: 9px; }
+    .lg-r { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+    .lg-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .lg-hr { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+    .lg-bs { display: flex; gap: 4px; flex-wrap: wrap; }
+    .lg-rel { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; color: var(--muted); font-size: 11px; }
+
+    /* ── MINIMAP indicator ── */
+    #zoom-wrap { position: fixed; bottom: 20px; right: 20px; z-index: 200; }
+  </style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div id="toolbar">
+  <div class="t-logo">
+    <div class="t-logo-icon">⬡</div>
+    ZTP Sneakers — ERD
+  </div>
+  <div class="t-sep"></div>
+  <div class="t-info">19 entities &nbsp;·&nbsp; 4 apps &nbsp;·&nbsp; 22 relations</div>
+  <div class="t-right">
+    <button class="tbtn ic" id="btn-out" title="Zoom Out">−</button>
+    <span id="zoom-label">75%</span>
+    <button class="tbtn ic" id="btn-in"  title="Zoom In">+</button>
+    <button class="tbtn" id="btn-fit">Fit All</button>
+    <button class="tbtn" id="btn-reset">Reset</button>
+  </div>
+</div>
+
+<!-- CANVAS WRAP -->
+<div id="wrap">
+  <div id="canvas">
+    <svg id="svg"></svg>
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div id="legend">
+  <div class="lg-h">Apps</div>
+  <div class="lg-r"><div class="lg-dot" style="background:#1d4ed8"></div> userauths</div>
+  <div class="lg-r"><div class="lg-dot" style="background:#15803d"></div> products</div>
+  <div class="lg-r"><div class="lg-dot" style="background:#7c3aed"></div> orders</div>
+  <div class="lg-r"><div class="lg-dot" style="background:#c2410c"></div> core</div>
+  <hr class="lg-hr">
+  <div class="lg-h">Field Tags</div>
+  <div class="lg-bs">
+    <span class="b b-pk">PK</span>
+    <span class="b b-fk">FK</span>
+    <span class="b b-uk">UK</span>
+    <span class="b b-nn">NN</span>
+  </div>
+  <hr class="lg-hr">
+  <div class="lg-h">Relations</div>
+  <div class="lg-rel">
+    <svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" stroke="rgba(130,150,220,.7)" stroke-width="2"/></svg>
+    1 : N (One-to-Many)
+  </div>
+  <div class="lg-rel">
+    <svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" stroke="rgba(200,140,255,.8)" stroke-width="2" stroke-dasharray="4,2"/></svg>
+    1 : 1 (One-to-One)
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// CONSTANTS
+// ─────────────────────────────────────────────
+const TW = 265;   // table card width
+const HH = 41;    // header height
+const FH = 27;    // field row height
+const PB = 8;     // bottom padding
+
+const APP = {
+  userauths: { hdr:'linear-gradient(135deg,#1e3a8a,#1d4ed8)', cc:'rgba(59,130,246,.55)' },
+  products:  { hdr:'linear-gradient(135deg,#14532d,#15803d)', cc:'rgba(34,197,94,.55)'  },
+  orders:    { hdr:'linear-gradient(135deg,#4c1d95,#7c3aed)', cc:'rgba(167,139,250,.6)' },
+  core:      { hdr:'linear-gradient(135deg,#7c2d12,#c2410c)', cc:'rgba(251,146,60,.6)'  },
+};
+
+// ─────────────────────────────────────────────
+// TABLE DATA
+// ─────────────────────────────────────────────
+// field keys: n=name, t=type, pk, fk, uk, nn (1=true)
+const TABLES = [
+
+  // ── CORE ──────────────────────────────────
+  { id:'Notification', app:'core', x:60, y:60, fields:[
+    {n:'id',         t:'integer',      pk:1,nn:1},
+    {n:'user_id',    t:'integer',  fk:1,nn:1},
+    {n:'title',      t:'varchar(255)',     nn:1},
+    {n:'message',    t:'text',            nn:1},
+    {n:'link',       t:'varchar(255)'},
+    {n:'is_read',    t:'boolean',         nn:1},
+    {n:'created_at', t:'datetime',        nn:1},
+  ]},
+  { id:'FooterIcon', app:'core', x:60, y:400, fields:[
+    {n:'id',    t:'integer',     pk:1,nn:1},
+    {n:'title', t:'varchar(50)',     nn:1},
+    {n:'image', t:'varchar(100)',    nn:1},
+    {n:'order', t:'integer',         nn:1},
+  ]},
+
+  // ── USERAUTHS ─────────────────────────────
+  { id:'User', app:'userauths', x:390, y:60, fields:[
+    {n:'id',           t:'integer',      pk:1,      nn:1},
+    {n:'email',        t:'varchar(254)', uk:1,      nn:1},
+    {n:'username',     t:'varchar(100)',            nn:1},
+    {n:'phone_number', t:'varchar(20)'},
+    {n:'address',      t:'text'},
+    {n:'avatar',       t:'varchar(100)'},
+    {n:'role',         t:'varchar(20)',             nn:1},
+    {n:'is_active',    t:'boolean',                 nn:1},
+    {n:'date_joined',  t:'datetime',                nn:1},
+  ]},
+  { id:'UserProfile', app:'userauths', x:390, y:460, fields:[
+    {n:'id',         t:'integer', pk:1,     nn:1},
+    {n:'user_id',    t:'integer', fk:1,     nn:1},
+    {n:'created_at', t:'datetime',          nn:1},
+    {n:'updated_at', t:'datetime',          nn:1},
+  ]},
+
+  // ── PRODUCTS ──────────────────────────────
+  { id:'Category', app:'products', x:720, y:60, fields:[
+    {n:'id',    t:'integer',      pk:1,    nn:1},
+    {n:'name',  t:'varchar(100)',          nn:1},
+    {n:'slug',  t:'varchar(100)', uk:1,   nn:1},
+    {n:'icon',  t:'varchar(100)'},
+    {n:'order', t:'integer',               nn:1},
+  ]},
+  { id:'Brand', app:'products', x:720, y:340, fields:[
+    {n:'id',   t:'integer',      pk:1,    nn:1},
+    {n:'name', t:'varchar(100)',          nn:1},
+    {n:'slug', t:'varchar(100)', uk:1,   nn:1},
+    {n:'logo', t:'varchar(100)'},
+  ]},
+  { id:'Banner', app:'products', x:720, y:580, fields:[
+    {n:'id',        t:'integer',      pk:1, nn:1},
+    {n:'title',     t:'varchar(200)',       nn:1},
+    {n:'subtitle',  t:'varchar(200)'},
+    {n:'image',     t:'varchar(100)',       nn:1},
+    {n:'link',      t:'varchar(200)'},
+    {n:'order',     t:'integer',           nn:1},
+    {n:'is_active', t:'boolean',           nn:1},
+  ]},
+  { id:'Product', app:'products', x:1050, y:60, fields:[
+    {n:'id',              t:'integer',       pk:1,     nn:1},
+    {n:'name',            t:'varchar(200)',            nn:1},
+    {n:'slug',            t:'varchar(200)',  uk:1,     nn:1},
+    {n:'brand_id',        t:'integer',  fk:1,     nn:1},
+    {n:'category_id',     t:'integer',  fk:1},
+    {n:'color',           t:'varchar(20)',            nn:1},
+    {n:'color_secondary', t:'varchar(20)'},
+    {n:'description',     t:'text',                    nn:1},
+    {n:'condition',       t:'varchar(20)',             nn:1},
+    {n:'price',           t:'decimal(12,2)',           nn:1},
+    {n:'crossed_price',   t:'decimal(12,2)'},
+    {n:'is_active',       t:'boolean',                 nn:1},
+    {n:'is_featured',     t:'boolean',                 nn:1},
+    {n:'created_at',      t:'datetime',                nn:1},
+  ]},
+  { id:'ProductImage', app:'products', x:1380, y:60, fields:[
+    {n:'id',         t:'integer',      pk:1,    nn:1},
+    {n:'product_id', t:'integer', fk:1,    nn:1},
+    {n:'image',      t:'varchar(100)',          nn:1},
+    {n:'is_primary', t:'boolean',              nn:1},
+    {n:'order',      t:'integer',              nn:1},
+  ]},
+  { id:'ProductSize', app:'products', x:1380, y:340, fields:[
+    {n:'id',         t:'integer',     pk:1,    nn:1},
+    {n:'product_id', t:'integer',fk:1,    nn:1},
+    {n:'size',       t:'varchar(10)',          nn:1},
+    {n:'stock',      t:'integer',             nn:1},
+  ]},
+  { id:'Review', app:'products', x:1380, y:590, fields:[
+    {n:'id',            t:'integer',     pk:1,      nn:1},
+    {n:'product_id',    t:'integer',fk:1,      nn:1},
+    {n:'user_id',       t:'integer',fk:1,      nn:1},
+    {n:'order_item_id', t:'integer',fk:1},
+    {n:'rating',        t:'smallint',             nn:1},
+    {n:'comment',       t:'text',                 nn:1},
+    {n:'image',         t:'varchar(100)'},
+    {n:'image2',        t:'varchar(100)'},
+    {n:'image3',        t:'varchar(100)'},
+    {n:'is_visible',    t:'boolean',              nn:1},
+    {n:'created_at',    t:'datetime',             nn:1},
+  ]},
+
+  // ── ORDERS ────────────────────────────────
+  { id:'Voucher', app:'orders', x:60, y:720, fields:[
+    {n:'id',             t:'integer',      pk:1,  nn:1},
+    {n:'code',           t:'varchar(20)',  uk:1,  nn:1},
+    {n:'discount_type',  t:'varchar(20)',         nn:1},
+    {n:'discount_value', t:'decimal(10,2)',       nn:1},
+    {n:'min_purchase',   t:'decimal(12,2)',       nn:1},
+    {n:'valid_from',     t:'datetime',            nn:1},
+    {n:'valid_to',       t:'datetime',            nn:1},
+    {n:'is_active',      t:'boolean',             nn:1},
+  ]},
+  { id:'Wishlist', app:'orders', x:390, y:720, fields:[
+    {n:'id',         t:'integer', pk:1,     nn:1},
+    {n:'user_id',    t:'integer', fk:1,     nn:1},
+    {n:'product_id', t:'integer', fk:1,     nn:1},
+    {n:'created_at', t:'datetime',          nn:1},
+  ]},
+  { id:'Cart', app:'orders', x:390, y:990, fields:[
+    {n:'id',          t:'integer',     pk:1,    nn:1},
+    {n:'user_id',     t:'integer',fk:1},
+    {n:'session_key', t:'varchar(40)'},
+    {n:'created_at',  t:'datetime',            nn:1},
+    {n:'updated_at',  t:'datetime',            nn:1},
+  ]},
+  { id:'CartItem', app:'orders', x:390, y:1250, fields:[
+    {n:'id',         t:'integer', pk:1,     nn:1},
+    {n:'cart_id',    t:'integer', fk:1,     nn:1},
+    {n:'product_id', t:'integer', fk:1,     nn:1},
+    {n:'size_id',    t:'integer', fk:1,     nn:1},
+    {n:'quantity',   t:'integer',           nn:1},
+  ]},
+  { id:'Order', app:'orders', x:1710, y:60, fields:[
+    {n:'id',                      t:'integer',      pk:1,    nn:1},
+    {n:'user_id',                 t:'integer', fk:1},
+    {n:'order_number',            t:'varchar(50)',  uk:1,   nn:1},
+    {n:'status',                  t:'varchar(20)',          nn:1},
+    {n:'midtrans_transaction_id', t:'varchar(100)'},
+    {n:'courier',                 t:'varchar(50)',          nn:1},
+    {n:'shipping_service',        t:'varchar(100)',         nn:1},
+    {n:'shipping_cost',           t:'decimal(10,2)',        nn:1},
+    {n:'tracking_number',         t:'varchar(100)'},
+    {n:'voucher_id',              t:'integer', fk:1},
+    {n:'discount_amount',         t:'decimal(10,2)',        nn:1},
+    {n:'subtotal',                t:'decimal(12,2)',        nn:1},
+    {n:'total',                   t:'decimal(12,2)',        nn:1},
+    {n:'created_at',              t:'datetime',             nn:1},
+    {n:'updated_at',              t:'datetime',             nn:1},
+  ]},
+  { id:'OrderItem', app:'orders', x:1710, y:680, fields:[
+    {n:'id',           t:'integer',      pk:1,    nn:1},
+    {n:'order_id',     t:'integer', fk:1,    nn:1},
+    {n:'product_id',   t:'integer', fk:1},
+    {n:'size_str',     t:'varchar(10)',          nn:1},
+    {n:'product_name', t:'varchar(200)',         nn:1},
+    {n:'price',        t:'decimal(12,2)',        nn:1},
+    {n:'quantity',     t:'integer',              nn:1},
+  ]},
+  { id:'ShippingAddress', app:'orders', x:1710, y:1050, fields:[
+    {n:'id',             t:'integer',      pk:1,  nn:1},
+    {n:'order_id',       t:'integer', fk:1,  nn:1},
+    {n:'recipient_name', t:'varchar(100)',        nn:1},
+    {n:'phone_number',   t:'varchar(20)',         nn:1},
+    {n:'province_id',    t:'varchar(50)',         nn:1},
+    {n:'province_name',  t:'varchar(100)',        nn:1},
+    {n:'city_id',        t:'varchar(50)',         nn:1},
+    {n:'city_name',      t:'varchar(100)',        nn:1},
+    {n:'district_name',  t:'varchar(100)',        nn:1},
+    {n:'postal_code',    t:'varchar(20)',         nn:1},
+    {n:'full_address',   t:'text',                nn:1},
+  ]},
+  { id:'WarrantyClaim', app:'orders', x:1710, y:1530, fields:[
+    {n:'id',             t:'integer',      pk:1, nn:1},
+    {n:'order_item_id',  t:'integer', fk:1, nn:1},
+    {n:'user_id',        t:'integer', fk:1, nn:1},
+    {n:'kategori',       t:'varchar(50)',        nn:1},
+    {n:'reason',         t:'text',               nn:1},
+    {n:'evidence_image', t:'varchar(100)',       nn:1},
+    {n:'status',         t:'varchar(20)',        nn:1},
+    {n:'admin_notes',    t:'text'},
+    {n:'created_at',     t:'datetime',           nn:1},
+    {n:'updated_at',     t:'datetime',           nn:1},
+  ]},
+];
+
+// ─────────────────────────────────────────────
+// CONNECTIONS  { from, ff, to, tf, rel }
+// ─────────────────────────────────────────────
+const CONNECTIONS = [
+  // userauths
+  {from:'User',        ff:'id',   to:'UserProfile',    tf:'user_id',        rel:'1:1'},
+  // products
+  {from:'Brand',       ff:'id',   to:'Product',         tf:'brand_id',       rel:'1:N'},
+  {from:'Category',    ff:'id',   to:'Product',         tf:'category_id',    rel:'1:N'},
+  {from:'Product',     ff:'id',   to:'ProductImage',    tf:'product_id',     rel:'1:N'},
+  {from:'Product',     ff:'id',   to:'ProductSize',     tf:'product_id',     rel:'1:N'},
+  {from:'Product',     ff:'id',   to:'Review',          tf:'product_id',     rel:'1:N'},
+  // reviews
+  {from:'User',        ff:'id',   to:'Review',          tf:'user_id',        rel:'1:N'},
+  {from:'OrderItem',   ff:'id',   to:'Review',          tf:'order_item_id',  rel:'1:1'},
+  // core
+  {from:'User',        ff:'id',   to:'Notification',    tf:'user_id',        rel:'1:N'},
+  // wishlist & cart
+  {from:'User',        ff:'id',   to:'Wishlist',        tf:'user_id',        rel:'1:N'},
+  {from:'Product',     ff:'id',   to:'Wishlist',        tf:'product_id',     rel:'1:N'},
+  {from:'User',        ff:'id',   to:'Cart',            tf:'user_id',        rel:'1:1'},
+  {from:'Cart',        ff:'id',   to:'CartItem',        tf:'cart_id',        rel:'1:N'},
+  {from:'Product',     ff:'id',   to:'CartItem',        tf:'product_id',     rel:'1:N'},
+  {from:'ProductSize', ff:'id',   to:'CartItem',        tf:'size_id',        rel:'1:N'},
+  // orders
+  {from:'User',        ff:'id',   to:'Order',           tf:'user_id',        rel:'1:N'},
+  {from:'Voucher',     ff:'id',   to:'Order',           tf:'voucher_id',     rel:'1:N'},
+  {from:'Order',       ff:'id',   to:'OrderItem',       tf:'order_id',       rel:'1:N'},
+  {from:'Product',     ff:'id',   to:'OrderItem',       tf:'product_id',     rel:'1:N'},
+  {from:'Order',       ff:'id',   to:'ShippingAddress', tf:'order_id',       rel:'1:1'},
+  {from:'OrderItem',   ff:'id',   to:'WarrantyClaim',   tf:'order_item_id',  rel:'1:1'},
+  {from:'User',        ff:'id',   to:'WarrantyClaim',   tf:'user_id',        rel:'1:N'},
+];
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+const tById = {};
+TABLES.forEach(t => tById[t.id] = t);
+
+function tableH(t) { return HH + t.fields.length * FH + PB; }
+function fieldY(t, fname) {
+  const i = t.fields.findIndex(f => f.n === fname);
+  return t.y + HH + i * FH + FH / 2;
+}
+
+// ─────────────────────────────────────────────
+// RENDER TABLES
+// ─────────────────────────────────────────────
+const canvas = document.getElementById('canvas');
+const svgEl  = document.getElementById('svg');
+
+function renderTables() {
+  TABLES.forEach(t => {
+    const ac = APP[t.app];
+    const div = document.createElement('div');
+    div.className = 'tc';
+    div.id = 'tc-' + t.id;
+    div.style.left = t.x + 'px';
+    div.style.top  = t.y + 'px';
+
+    const rows = t.fields.map(f => {
+      const cls = ['fr'];
+      if (f.pk) cls.push('is-pk');
+      else if (f.fk) cls.push('is-fk');
+
+      const nc  = f.pk ? 'pk' : f.fk ? 'fk' : f.uk ? 'uk' : '';
+      const ico = f.pk ? '◆' : f.fk ? '↗' : '';
+
+      const bs = [];
+      if (f.pk)        bs.push('<span class="b b-pk">PK</span>');
+      if (f.fk)        bs.push('<span class="b b-fk">FK</span>');
+      if (f.uk)        bs.push('<span class="b b-uk">UK</span>');
+      if (f.nn && !f.pk) bs.push('<span class="b b-nn">NN</span>');
+
+      return `<div class="${cls.join(' ')}">
+        <span class="fr-ico" style="color:${f.pk?'#fbbf24':f.fk?'#60a5fa':'transparent'}">${ico}</span>
+        <span class="fr-n ${nc}">${f.n}</span>
+        <span class="fr-t">${f.t}</span>
+        <div class="fr-bs">${bs.join('')}</div>
+      </div>`;
+    }).join('');
+
+    div.innerHTML = `
+      <div class="tc-head" style="background:${ac.hdr}">
+        <span class="tc-head-name">${t.id}</span>
+        <span class="tc-head-badge">${t.app}</span>
+      </div>
+      <div class="tc-body">${rows}</div>`;
+
+    canvas.appendChild(div);
+  });
+}
+
+// ─────────────────────────────────────────────
+// RENDER CONNECTIONS
+// ─────────────────────────────────────────────
+function renderConnections() {
+  const NS = 'http://www.w3.org/2000/svg';
+
+  // Arrow markers
+  const defs = document.createElementNS(NS, 'defs');
+
+  function mkMarker(id, color) {
+    const m = document.createElementNS(NS, 'marker');
+    m.setAttribute('id', id);
+    m.setAttribute('markerWidth', '8');
+    m.setAttribute('markerHeight', '7');
+    m.setAttribute('refX', '7');
+    m.setAttribute('refY', '3.5');
+    m.setAttribute('orient', 'auto');
+    const p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', 'M 0 0 L 8 3.5 L 0 7 Z');
+    p.setAttribute('fill', color);
+    m.appendChild(p); return m;
+  }
+
+  defs.appendChild(mkMarker('a1n', 'rgba(130,150,220,.8)'));
+  defs.appendChild(mkMarker('a11', 'rgba(200,140,255,.85)'));
+
+  // App-specific markers
+  const appCols = {
+    userauths:'rgba(96,165,250,.85)',
+    products: 'rgba(52,211,153,.75)',
+    orders:   'rgba(192,132,252,.85)',
+    core:     'rgba(251,146,60,.85)',
+  };
+  Object.entries(appCols).forEach(([app, col]) => {
+    defs.appendChild(mkMarker('a-' + app, col));
+  });
+
+  svgEl.appendChild(defs);
+
+  CONNECTIONS.forEach(c => {
+    const ft = tById[c.from];
+    const tt = tById[c.to];
+    if (!ft || !tt) return;
+
+    const fy = fieldY(ft, c.ff);
+    const ty = fieldY(tt, c.tf);
+
+    const sameCol = Math.abs(ft.x - tt.x) < 60;
+
+    let x1, x2;
+    if (sameCol) {
+      x1 = ft.x + TW;
+      x2 = tt.x + TW;
+    } else if (ft.x + TW <= tt.x) {
+      x1 = ft.x + TW; x2 = tt.x;
+    } else {
+      x1 = ft.x; x2 = tt.x + TW;
+    }
+
+    let d;
+    if (sameCol) {
+      const off = 80;
+      d = `M ${x1},${fy} C ${x1+off},${fy} ${x2+off},${ty} ${x2},${ty}`;
+    } else {
+      const mid = (x1 + x2) / 2;
+      d = `M ${x1},${fy} C ${mid},${fy} ${mid},${ty} ${x2},${ty}`;
+    }
+
+    const is11 = c.rel === '1:1';
+    const strokeColor = is11
+      ? 'rgba(192,132,252,.55)'
+      : (APP[ft.app]?.cc || 'rgba(130,140,200,.45)');
+    const markerId = is11 ? 'a11' : ('a-' + ft.app);
+
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('stroke', strokeColor);
+    path.setAttribute('stroke-width', '1.6');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-linecap', 'round');
+    if (is11) path.setAttribute('stroke-dasharray', '5,3');
+    path.setAttribute('marker-end', `url(#${markerId})`);
+    path.setAttribute('opacity', '.85');
+    svgEl.appendChild(path);
+  });
+}
+
+// ─────────────────────────────────────────────
+// PAN & ZOOM
+// ─────────────────────────────────────────────
+const wrap = document.getElementById('wrap');
+let scale = 0.72, tx = 40, ty = 20;
+
+function applyT() {
+  canvas.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+  document.getElementById('zoom-label').textContent = Math.round(scale * 100) + '%';
+}
+
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.1 : 0.9;
+  const ns = Math.max(0.2, Math.min(2.5, scale * factor));
+  const rect = wrap.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  tx = mx - (mx - tx) * (ns / scale);
+  ty = my - (my - ty) * (ns / scale);
+  scale = ns; applyT();
+}, { passive: false });
+
+let dragging = false, lx, ly;
+wrap.addEventListener('mousedown', e => {
+  dragging = true; lx = e.clientX; ly = e.clientY;
+  wrap.classList.add('grabbing');
+});
+document.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  tx += e.clientX - lx; ty += e.clientY - ly;
+  lx = e.clientX; ly = e.clientY; applyT();
+});
+document.addEventListener('mouseup', () => {
+  dragging = false; wrap.classList.remove('grabbing');
+});
+
+document.getElementById('btn-in').onclick  = () => { scale = Math.min(2.5, scale + 0.1); applyT(); };
+document.getElementById('btn-out').onclick = () => { scale = Math.max(0.2, scale - 0.1); applyT(); };
+document.getElementById('btn-reset').onclick = () => { scale = 1; tx = 40; ty = 20; applyT(); };
+document.getElementById('btn-fit').onclick = fitAll;
+
+function fitAll() {
+  let mnX=Infinity, mnY=Infinity, mxX=-Infinity, mxY=-Infinity;
+  TABLES.forEach(t => {
+    mnX = Math.min(mnX, t.x); mnY = Math.min(mnY, t.y);
+    mxX = Math.max(mxX, t.x + TW);
+    mxY = Math.max(mxY, t.y + tableH(t));
+  });
+  const pad = 60;
+  const cw = mxX - mnX + pad*2;
+  const ch = mxY - mnY + pad*2;
+  const vw = wrap.clientWidth;
+  const vh = wrap.clientHeight;
+  scale = Math.min(vw/cw, vh/ch, 1);
+  tx = (vw - cw*scale)/2 + pad*scale - mnX*scale;
+  ty = (vh - ch*scale)/2 + pad*scale - mnY*scale;
+  applyT();
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+renderTables();
+renderConnections();
+applyT();
+setTimeout(fitAll, 80);
+</script>
+</body>
+</html>

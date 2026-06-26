@@ -215,7 +215,7 @@ ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_LOGOUT_ON_GET = True
 
-LOGIN_URL = '/auth/'
+LOGIN_URL = '/user/auth/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
