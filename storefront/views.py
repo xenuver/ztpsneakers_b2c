@@ -49,11 +49,17 @@ def catalog_view(request):
     sort = request.GET.get('sort', '-created_at')
     page_number = request.GET.get('page', 1)
     
-    color_param = request.GET.get('color', '')
-    selected_colors = [c for c in color_param.split(',') if c]
-    
-    size_param = request.GET.get('size', '')
-    selected_sizes = [s for s in size_param.split(',') if s]
+    selected_colors = request.GET.getlist('color')
+    if len(selected_colors) == 1 and ',' in selected_colors[0]:
+        selected_colors = [c for c in selected_colors[0].split(',') if c]
+    else:
+        selected_colors = [c for c in selected_colors if c]
+        
+    selected_sizes = request.GET.getlist('size')
+    if len(selected_sizes) == 1 and ',' in selected_sizes[0]:
+        selected_sizes = [s for s in selected_sizes[0].split(',') if s]
+    else:
+        selected_sizes = [s for s in selected_sizes if s]
     
     condition = request.GET.get('condition', '')
 
