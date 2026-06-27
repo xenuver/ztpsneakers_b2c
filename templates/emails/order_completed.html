@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Pesanan Selesai — ZTP Sneakers</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5; color: #111; }
+        .wrapper { max-width: 600px; margin: 0 auto; padding: 32px 16px; }
+        .card { background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #ef8215 0%, #d4700e 100%); padding: 32px 40px; text-align: center; }
+        .header h1 { color: #fff; font-size: 28px; font-weight: 900; letter-spacing: -0.5px; }
+        .header p { color: rgba(255,255,255,0.85); font-size: 13px; margin-top: 6px; }
+        .body { padding: 36px 40px; }
+        .celebration { font-size: 52px; display: block; text-align: center; margin: 8px 0 20px; }
+        .greeting { font-size: 18px; font-weight: 700; margin-bottom: 12px; text-align: center; }
+        .message { font-size: 14px; color: #555; line-height: 1.8; text-align: center; margin-bottom: 24px; }
+        .info-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 16px 20px; margin: 16px 0; text-align: center; }
+        .info-box .order-num { font-size: 22px; font-weight: 900; color: #ef8215; }
+        .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; border-bottom: 1px solid #eee; padding-bottom: 8px; margin: 24px 0 12px; }
+        .review-cta { background: #111; border-radius: 10px; padding: 20px 24px; text-align: center; margin: 24px 0; }
+        .review-cta p { color: #aaa; font-size: 13px; margin-bottom: 12px; }
+        .review-cta .stars { font-size: 28px; margin-bottom: 8px; }
+        .review-btn { display: inline-block; background: #ef8215; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 700; font-size: 13px; }
+        .footer { background: #111; padding: 24px 40px; text-align: center; }
+        .footer p { color: #888; font-size: 11px; line-height: 1.7; }
+        .footer a { color: #ef8215; text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="card">
+        <div class="header">
+            <h1>ZTP SNEAKERS</h1>
+            <p>Pesanan Selesai</p>
+        </div>
+        <div class="body">
+            <div class="celebration">🎉</div>
+            <p class="greeting">Terima kasih, {{ customer_name }}!</p>
+            <p class="message">
+                Pesanan Anda telah berhasil diterima dan pesanan dinyatakan <strong>selesai</strong>.<br>
+                Kami harap produk yang Anda terima sesuai ekspektasi dan memuaskan!
+            </p>
+
+            <div class="info-box">
+                <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:#888; margin-bottom:4px;">Pesanan</div>
+                <div class="order-num">#{{ order.order_number }}</div>
+                <div style="font-size:12px; color:#aaa; margin-top:4px;">Total: Rp {{ order.total|floatformat:"0" }}</div>
+            </div>
+
+            <div class="review-cta">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p>Bagaimana pengalaman belanja Anda? Ulasan Anda sangat berarti bagi kami!</p>
+                <a href="https://ztpsneakers.com/orders/" class="review-btn">Tulis Ulasan Sekarang</a>
+            </div>
+
+            <p style="font-size:13px; color:#888; text-align:center; line-height:1.7;">
+                Ingat, klaim garansi & penukaran ukuran berlaku <strong>7 hari</strong> sejak pesanan selesai.<br>
+                Jika ada masalah dengan produk, segera hubungi kami.
+            </p>
+        </div>
+        <div class="footer">
+            <p>
+                &copy; ZTP Sneakers &bull; Jl. KH. Abdurahman Wahid, Kec. Sungai Raya, Kab. Kubu Raya<br>
+                <a href="https://ztpsneakers.com">ztpsneakers.com</a> &bull; +62 812 9999 5807
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

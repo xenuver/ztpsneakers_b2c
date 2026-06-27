@@ -2,13 +2,58 @@
 
 {% block title %}Tulis Ulasan - ZTPSneakers{% endblock %}
 
+{% block extra_head %}
+<style>
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        gap: 6px;
+        justify-content: flex-end;
+    }
+    .star-rating input[type="radio"] {
+        display: none;
+    }
+    .star-rating label {
+        font-size: 40px;
+        color: #d1d5db;
+        cursor: pointer;
+        transition: color 0.15s ease, transform 0.1s ease;
+        line-height: 1;
+        user-select: none;
+    }
+    /* Highlight semua bintang dari yang diklik ke kanan (karena flex row-reverse) */
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input[type="radio"]:checked ~ label {
+        color: #f59e0b;
+    }
+    .star-rating label:hover {
+        transform: scale(1.15);
+    }
+    .star-rating label:active {
+        transform: scale(0.95);
+    }
+    .rating-text {
+        font-size: 14px;
+        font-weight: 700;
+        color: #6b7280;
+        margin-top: 8px;
+        min-height: 20px;
+        transition: color 0.2s;
+    }
+    .rating-text.rated {
+        color: #f59e0b;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="bg-gray-50 min-h-screen py-12">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-extrabold text-black uppercase tracking-tight mb-8">Tulis Ulasan</h1>
         
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 flex items-center">
-            <div class="w-16 h-16 bg-gray-50 rounded-md border border-gray-100 flex items-center justify-center p-1 mr-4">
+            <div class="w-16 h-16 bg-gray-50 rounded-md border border-gray-100 flex items-center justify-center p-1 mr-4 flex-shrink-0">
                 {% if item.product and item.product.get_primary_image %}
                 <img src="{{ item.product.get_primary_image }}" alt="{{ item.product_name }}" class="w-full h-full object-contain">
                 {% endif %}
@@ -22,19 +67,28 @@
         <form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             {% csrf_token %}
             
-            <div class="mb-6">
-                <label class="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">Penilaian Bintang</label>
-                <div class="flex items-center gap-2">
-                    <!-- Simple implementation, in real app you might use JS for interactive stars -->
-                    <select name="rating" required class="rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-black">
-                        <option value="">Pilih Rating</option>
-                        <option value="5">5 Bintang - Sangat Baik</option>
-                        <option value="4">4 Bintang - Baik</option>
-                        <option value="3">3 Bintang - Cukup</option>
-                        <option value="2">2 Bintang - Buruk</option>
-                        <option value="1">1 Bintang - Sangat Buruk</option>
-                    </select>
+            <!-- Star Rating Interaktif -->
+            <div class="mb-8">
+                <label class="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Penilaian Bintang</label>
+                
+                <div class="star-rating" id="star-rating-container">
+                    <input type="radio" id="star5" name="rating" value="5">
+                    <label for="star5" title="5 Bintang — Sangat Baik">★</label>
+                    
+                    <input type="radio" id="star4" name="rating" value="4">
+                    <label for="star4" title="4 Bintang — Baik">★</label>
+                    
+                    <input type="radio" id="star3" name="rating" value="3">
+                    <label for="star3" title="3 Bintang — Cukup">★</label>
+                    
+                    <input type="radio" id="star2" name="rating" value="2">
+                    <label for="star2" title="2 Bintang — Buruk">★</label>
+                    
+                    <input type="radio" id="star1" name="rating" value="1">
+                    <label for="star1" title="1 Bintang — Sangat Buruk">★</label>
                 </div>
+                
+                <p class="rating-text" id="rating-text">Pilih rating Anda</p>
             </div>
             
             <div class="mb-6">
@@ -55,11 +109,53 @@
                 <a href="{% url 'orders:order_detail' item.order.order_number %}" class="inline-flex justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 transition uppercase tracking-wider">
                     Batal
                 </a>
-                <button type="submit" class="inline-flex justify-center px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-black hover:bg-gray-800 transition uppercase tracking-wider">
+                <button type="submit" id="submit-review-btn" class="inline-flex justify-center px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-black hover:bg-gray-800 transition uppercase tracking-wider opacity-50 cursor-not-allowed" disabled>
                     Kirim Ulasan
                 </button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    const ratingLabels = {
+        1: '1 Bintang — Sangat Buruk 😞',
+        2: '2 Bintang — Buruk 😐',
+        3: '3 Bintang — Cukup 🙂',
+        4: '4 Bintang — Baik 😊',
+        5: '5 Bintang — Sangat Baik 🤩',
+    };
+
+    const stars = document.querySelectorAll('#star-rating-container input[type="radio"]');
+    const ratingText = document.getElementById('rating-text');
+    const submitBtn = document.getElementById('submit-review-btn');
+
+    stars.forEach(star => {
+        star.addEventListener('change', function() {
+            const val = parseInt(this.value);
+            ratingText.textContent = ratingLabels[val] || '';
+            ratingText.classList.add('rated');
+            // Enable submit button once rating selected
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        });
+    });
+
+    // Hover effect label text
+    const labels = document.querySelectorAll('#star-rating-container label');
+    labels.forEach(label => {
+        label.addEventListener('mouseenter', function() {
+            const val = parseInt(this.getAttribute('for').replace('star', ''));
+            ratingText.textContent = ratingLabels[val] || '';
+        });
+        label.addEventListener('mouseleave', function() {
+            const checked = document.querySelector('#star-rating-container input[type="radio"]:checked');
+            if (checked) {
+                ratingText.textContent = ratingLabels[parseInt(checked.value)] || '';
+            } else {
+                ratingText.textContent = 'Pilih rating Anda';
+            }
+        });
+    });
+</script>
 {% endblock %}

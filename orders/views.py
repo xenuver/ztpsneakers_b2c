@@ -253,7 +253,12 @@ def checkout_view(request):
         if 'applied_voucher' in request.session:
             del request.session['applied_voucher']
         
+        # Kirim email konfirmasi pesanan
+        from .email_utils import send_order_confirmation_email
+        send_order_confirmation_email(order)
+        
         return redirect('orders:checkout_success', order_number=order.order_number)
+
     
     # Pass applied voucher to template
     applied_voucher = request.session.get('applied_voucher', None)
@@ -506,6 +511,22 @@ def order_detail_view(request, order_number):
 def print_invoice(request, order_number):
     order = get_object_or_404(Order, order_number=order_number, user=request.user)
     return render(request, "orders/invoice.html", {'order': order})
+
+@login_required
+def send_invoice_email_view(request, order_number):
+    """Kirim email invoice ke pembeli atas permintaan."""
+    if request.method != 'POST':
+        return HttpResponseForbidden()
+    order = get_object_or_404(Order, order_number=order_number, user=request.user)
+    from .email_utils import send_invoice_email
+    from django.contrib import messages
+    success = send_invoice_email(order)
+    if success:
+        messages.success(request, f"Invoice pesanan #{order.order_number} berhasil dikirim ke {order.user.email}.")
+    else:
+        messages.error(request, "Gagal mengirim email invoice. Pastikan konfigurasi email sudah benar.")
+    return redirect('orders:order_detail', order_number=order_number)
+
 
 @login_required
 def complete_order(request, order_number):

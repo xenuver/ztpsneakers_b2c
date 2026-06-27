@@ -8,10 +8,17 @@ from django.utils import timezone
 from datetime import timedelta
 
 def is_admin_toko(user):
+    """
+    Superuser punya akses penuh ke semua panel (admin & admintoko).
+    Karyawan dengan grup AdminToko hanya bisa masuk admintoko.
+    Staff biasa (is_staff=True tanpa grup) hanya bisa masuk /admin/ Django.
+    """
+    if user.is_superuser:
+        return True
     return user.is_authenticated and user.groups.filter(name='AdminToko').exists()
 
 def login_view(request):
-    if request.user.is_authenticated and request.user.groups.filter(name='AdminToko').exists():
+    if request.user.is_authenticated and is_admin_toko(request.user):
         return redirect('admintoko:dashboard')
         
     if request.method == 'POST':
@@ -28,11 +35,11 @@ def login_view(request):
             if user_obj and user_obj.check_password(password):
                 user = user_obj
                 
-        if user and user.groups.filter(name='AdminToko').exists():
+        if user and is_admin_toko(user):
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('admintoko:dashboard')
         else:
-            messages.error(request, "Akses ditolak. Kredensial tidak valid atau Anda bukan Admin Toko.")
+            messages.error(request, "Akses ditolak. Kredensial tidak valid atau Anda tidak memiliki akses ke panel ini.")
             
     return render(request, 'admintoko/login.html')
 
@@ -70,20 +77,26 @@ def products_view(request):
 
 @user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def product_create_view(request):
-    from products.models import Category, Brand
+    from products.models import Category, Brand, ProductImage
     if request.method == 'POST':
         name = request.POST.get('name')
         price = request.POST.get('price')
         description = request.POST.get('description')
         brand_id = request.POST.get('brand')
         category_id = request.POST.get('category')
+        condition = request.POST.get('condition', 'new')
+        crossed_price = request.POST.get('crossed_price') or None
+        is_featured = request.POST.get('is_featured') == 'on'
         
         product = Product.objects.create(
             name=name,
             price=price,
             description=description,
             brand_id=brand_id,
-            category_id=category_id
+            category_id=category_id,
+            condition=condition,
+            crossed_price=crossed_price,
+            is_featured=is_featured,
         )
         
         sizes = request.POST.getlist('sizes[]')
@@ -92,26 +105,41 @@ def product_create_view(request):
             if size.strip():
                 stock_val = int(stock) if stock.isdigit() else 0
                 ProductSize.objects.create(product=product, size=size.strip(), stock=stock_val)
+
+        # Proses upload gambar
+        images = request.FILES.getlist('images')
+        for i, img in enumerate(images):
+            ProductImage.objects.create(
+                product=product,
+                image=img,
+                is_primary=(i == 0),
+                order=i
+            )
                 
         messages.success(request, f"Produk {product.name} berhasil ditambahkan.")
         return redirect('admintoko:products')
         
     context = {
         'brands': Brand.objects.all(),
-        'categories': Category.objects.all()
+        'categories': Category.objects.all(),
+        'conditions': Product.CONDITION_CHOICES,
     }
     return render(request, 'admintoko/product_form.html', context)
+
 
 @user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def product_edit_view(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    from products.models import Category, Brand
+    from products.models import Category, Brand, ProductImage
     if request.method == 'POST':
         product.name = request.POST.get('name')
         product.price = request.POST.get('price')
         product.description = request.POST.get('description')
         product.brand_id = request.POST.get('brand')
         product.category_id = request.POST.get('category')
+        product.condition = request.POST.get('condition', 'new')
+        product.crossed_price = request.POST.get('crossed_price') or None
+        product.is_featured = request.POST.get('is_featured') == 'on'
         product.save()
         
         sizes = request.POST.getlist('sizes[]')
@@ -135,6 +163,30 @@ def product_edit_view(request, product_id):
             if size_str not in new_sizes:
                 ps.stock = 0
                 ps.save()
+
+        # Hapus gambar yang dipilih
+        delete_image_ids = request.POST.getlist('delete_images')
+        if delete_image_ids:
+            ProductImage.objects.filter(id__in=delete_image_ids, product=product).delete()
+
+        # Proses upload gambar baru
+        new_images = request.FILES.getlist('images')
+        existing_count = product.images.count()
+        has_primary = product.images.filter(is_primary=True).exists()
+        for i, img in enumerate(new_images):
+            is_primary = not has_primary and i == 0 and existing_count == 0
+            ProductImage.objects.create(
+                product=product,
+                image=img,
+                is_primary=is_primary,
+                order=existing_count + i
+            )
+
+        # Pastikan selalu ada gambar primary
+        if product.images.exists() and not product.images.filter(is_primary=True).exists():
+            first_img = product.images.first()
+            first_img.is_primary = True
+            first_img.save()
                 
         messages.success(request, f"Produk {product.name} berhasil diperbarui.")
         return redirect('admintoko:products')
@@ -142,9 +194,11 @@ def product_edit_view(request, product_id):
     context = {
         'product': product,
         'brands': Brand.objects.all(),
-        'categories': Category.objects.all()
+        'categories': Category.objects.all(),
+        'conditions': Product.CONDITION_CHOICES,
     }
     return render(request, 'admintoko/product_form.html', context)
+
 
 @user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def orders_view(request):
@@ -192,13 +246,29 @@ def order_update_status(request, order_id):
         new_status = request.POST.get('status')
         tracking_number = request.POST.get('tracking_number')
         
+        old_status = order.status
+        
         if new_status in dict(Order.STATUS_CHOICES):
             order.status = new_status
         if tracking_number:
             order.tracking_number = tracking_number
         order.save()
+        
+        # Kirim email notifikasi sesuai status baru
+        if new_status != old_status:
+            from orders.email_utils import send_order_shipped_email, send_order_completed_email
+            try:
+                if new_status == 'shipped':
+                    send_order_shipped_email(order)
+                elif new_status == 'completed':
+                    send_order_completed_email(order)
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).error(f"Email error for order {order.order_number}: {e}")
+        
         messages.success(request, f"Pesanan #{order.order_number} berhasil diperbarui.")
     return redirect('admintoko:orders')
+
 
 @user_passes_test(is_admin_toko, login_url='/admintoko/login/')
 def warranty_update_status(request, claim_id):

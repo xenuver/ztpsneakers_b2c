@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Pesanan Dikirim — ZTP Sneakers</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5; color: #111; }
+        .wrapper { max-width: 600px; margin: 0 auto; padding: 32px 16px; }
+        .card { background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .header { background-color: #111; padding: 32px 40px; text-align: center; }
+        .header h1 { color: #ef8215; font-size: 28px; font-weight: 900; letter-spacing: -0.5px; }
+        .header p { color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 6px; }
+        .truck-icon { font-size: 48px; display: block; margin: 20px auto 8px; text-align: center; }
+        .body { padding: 36px 40px; }
+        .greeting { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .tracking-box { background: linear-gradient(135deg, #111 0%, #1f1f1f 100%); border-radius: 10px; padding: 20px 24px; margin: 20px 0; text-align: center; }
+        .tracking-box .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 8px; }
+        .tracking-box .courier { font-size: 14px; font-weight: 700; color: #ef8215; text-transform: uppercase; letter-spacing: 2px; }
+        .tracking-box .resi { font-size: 22px; font-weight: 900; color: #fff; margin-top: 4px; letter-spacing: 2px; }
+        .info-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+        .info-row:last-child { border-bottom: none; }
+        .info-row .key { color: #888; }
+        .info-row .val { font-weight: 600; color: #111; }
+        .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; border-bottom: 1px solid #eee; padding-bottom: 8px; margin: 24px 0 12px; }
+        .footer { background: #111; padding: 24px 40px; text-align: center; }
+        .footer p { color: #888; font-size: 11px; line-height: 1.7; }
+        .footer a { color: #ef8215; text-decoration: none; }
+        .badge { display: inline-block; background: #DCFCE7; color: #16a34a; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="card">
+        <div class="header">
+            <h1>ZTP SNEAKERS</h1>
+            <p>Notifikasi Pengiriman</p>
+        </div>
+        <div class="body">
+            <div class="truck-icon">🚚</div>
+            <p class="greeting" style="text-align:center;">Pesanan Anda Sedang Dalam Perjalanan!</p>
+            <p style="font-size:14px; color:#555; line-height:1.7; margin-bottom:20px; text-align:center;">
+                Halo <strong>{{ customer_name }}</strong>, pesanan #<strong>{{ order.order_number }}</strong> Anda sudah kami kirimkan. Pantau status pengiriman dengan nomor resi di bawah ini.
+            </p>
+
+            <div class="tracking-box">
+                <div class="label">Nomor Resi Pengiriman</div>
+                <div class="courier">{{ courier }}</div>
+                <div class="resi">{{ tracking_number }}</div>
+            </div>
+
+            <div class="section-title">Detail Pesanan</div>
+            {% for item in order.items.all %}
+            <div class="info-row">
+                <span class="key">{{ item.product_name }} (Size {{ item.size_str }}) &times;{{ item.quantity }}</span>
+                <span class="val">Rp {{ item.price|floatformat:"0" }}</span>
+            </div>
+            {% endfor %}
+            <div class="info-row" style="margin-top:8px;">
+                <span class="key" style="font-weight:700;">Total Pembayaran</span>
+                <span class="val" style="color:#ef8215; font-size:15px;">Rp {{ order.total|floatformat:"0" }}</span>
+            </div>
+
+            <div style="text-align:center; margin-top:24px;">
+                <span class="badge">Status: Dikirim ✓</span>
+            </div>
+
+            <p style="font-size:13px; color:#555; line-height:1.7; margin-top:20px; text-align:center;">
+                Jika ada pertanyaan tentang pengiriman, hubungi kami via WhatsApp atau Live Chat.
+            </p>
+        </div>
+        <div class="footer">
+            <p>
+                &copy; ZTP Sneakers &bull; Jl. KH. Abdurahman Wahid, Kec. Sungai Raya, Kab. Kubu Raya<br>
+                <a href="https://ztpsneakers.com">ztpsneakers.com</a> &bull; +62 812 9999 5807
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesanan Berhasil Dibuat — ZTP Sneakers</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5; color: #111; }
+        .wrapper { max-width: 600px; margin: 0 auto; padding: 32px 16px; }
+        .card { background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .header { background-color: #ef8215; padding: 32px 40px; text-align: center; }
+        .header h1 { color: #fff; font-size: 28px; font-weight: 900; letter-spacing: -0.5px; }
+        .header p { color: rgba(255,255,255,0.85); font-size: 13px; margin-top: 6px; }
+        .body { padding: 36px 40px; }
+        .greeting { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .info-box { background: #f9f9f9; border-radius: 8px; padding: 16px 20px; margin: 20px 0; }
+        .info-box .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 4px; }
+        .info-box .value { font-size: 20px; font-weight: 900; color: #111; }
+        .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; border-bottom: 1px solid #eee; padding-bottom: 8px; margin: 24px 0 12px; }
+        .order-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .order-item:last-child { border-bottom: none; }
+        .item-name { font-size: 13px; font-weight: 600; color: #111; }
+        .item-meta { font-size: 11px; color: #999; margin-top: 2px; }
+        .item-price { font-size: 13px; font-weight: 700; color: #111; text-align: right; }
+        .totals { margin-top: 16px; }
+        .total-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; padding: 4px 0; }
+        .total-row.final { font-size: 16px; font-weight: 900; color: #ef8215; border-top: 2px solid #eee; padding-top: 10px; margin-top: 6px; }
+        .address-box { background: #f9f9f9; border-radius: 8px; padding: 16px 20px; font-size: 13px; line-height: 1.7; }
+        .cta-btn { display: inline-block; margin: 24px auto; background: #ef8215; color: #fff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 14px; text-align: center; letter-spacing: 0.5px; }
+        .footer { background: #111; padding: 24px 40px; text-align: center; }
+        .footer p { color: #888; font-size: 11px; line-height: 1.7; }
+        .footer a { color: #ef8215; text-decoration: none; }
+        .badge { display: inline-block; background: #FFF3E0; color: #ef8215; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="card">
+        <div class="header">
+            <h1>ZTP SNEAKERS</h1>
+            <p>Konfirmasi Pesanan</p>
+        </div>
+        <div class="body">
+            <p class="greeting">Halo, {{ customer_name }}! 👋</p>
+            <p style="font-size:14px; color:#555; line-height:1.7; margin-bottom:20px;">
+                Pesanan Anda telah berhasil kami terima. Kami sedang memproses pesanan Anda dan akan segera menghubungi Anda.
+            </p>
+
+            <div class="info-box">
+                <div class="label">Nomor Pesanan</div>
+                <div class="value">#{{ order.order_number }}</div>
+            </div>
+
+            <div class="section-title">Produk yang Dipesan</div>
+            {% for item in order.items.all %}
+            <div class="order-item">
+                <div>
+                    <div class="item-name">{{ item.product_name }}</div>
+                    <div class="item-meta">Size: {{ item.size_str }} &bull; Qty: {{ item.quantity }}</div>
+                </div>
+                <div class="item-price">Rp {{ item.price|floatformat:"0" }}</div>
+            </div>
+            {% endfor %}
+
+            <div class="totals">
+                <div class="total-row">
+                    <span>Subtotal Produk</span>
+                    <span>Rp {{ order.subtotal|floatformat:"0" }}</span>
+                </div>
+                <div class="total-row">
+                    <span>Ongkos Kirim ({{ order.courier|upper }} - {{ order.shipping_service }})</span>
+                    <span>Rp {{ order.shipping_cost|floatformat:"0" }}</span>
+                </div>
+                {% if order.discount_amount > 0 %}
+                <div class="total-row" style="color:#22c55e;">
+                    <span>Diskon Voucher</span>
+                    <span>- Rp {{ order.discount_amount|floatformat:"0" }}</span>
+                </div>
+                {% endif %}
+                <div class="total-row final">
+                    <span>Total Pembayaran</span>
+                    <span>Rp {{ order.total|floatformat:"0" }}</span>
+                </div>
+            </div>
+
+            {% if order.has_shipping_address %}
+            <div class="section-title">Alamat Pengiriman</div>
+            <div class="address-box">
+                <strong>{{ order.shipping_address.recipient_name }}</strong><br>
+                {{ order.shipping_address.phone_number }}<br>
+                {{ order.shipping_address.full_address }}<br>
+                {{ order.shipping_address.district_name }}, {{ order.shipping_address.city_name }}<br>
+                {{ order.shipping_address.province_name }}, {{ order.shipping_address.postal_code }}
+            </div>
+            {% endif %}
+
+            <div style="text-align:center; margin-top:28px;">
+                <span class="badge">Status: Menunggu Pembayaran</span>
+            </div>
+
+            <p style="font-size:13px; color:#555; line-height:1.7; margin-top:20px; text-align:center;">
+                Segera selesaikan pembayaran untuk memproses pesanan Anda.<br>
+                Butuh bantuan? Hubungi kami via WhatsApp atau Live Chat.
+            </p>
+        </div>
+        <div class="footer">
+            <p>
+                &copy; ZTP Sneakers &bull; Jl. KH. Abdurahman Wahid, Kec. Sungai Raya, Kab. Kubu Raya<br>
+                <a href="https://ztpsneakers.com">ztpsneakers.com</a> &bull; +62 812 9999 5807
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
