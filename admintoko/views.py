@@ -161,8 +161,8 @@ def product_edit_view(request, product_id):
                     
         for size_str, ps in existing_sizes.items():
             if size_str not in new_sizes:
-                ps.stock = 0
-                ps.save()
+                ps.delete()
+
 
         # Hapus gambar yang dipilih
         delete_image_ids = request.POST.getlist('delete_images')
