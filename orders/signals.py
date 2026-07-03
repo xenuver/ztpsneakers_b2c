@@ -39,6 +39,46 @@ def order_status_changed(sender, instance, **kwargs):
                     message=message,
                     link=reverse('orders:order_detail', kwargs={'order_number': instance.order_number})
                 )
+            
+            # Voucher loyalitas: setelah 5 transaksi selesai, beri voucher 20%
+            if instance.status == 'completed' and instance.user:
+                completed_count = Order.objects.filter(
+                    user=instance.user, status='completed'
+                ).count() + 1  # +1 karena instance belum tersimpan
+                
+                if completed_count == 5:
+                    from .models import Voucher
+                    from django.utils import timezone
+                    from datetime import timedelta
+                    import uuid
+                    
+                    # Cek apakah sudah pernah dapat voucher loyalty
+                    existing_loyalty = Voucher.objects.filter(
+                        user=instance.user,
+                        code__startswith='LOYAL-',
+                        is_used=False
+                    ).exists()
+                    
+                    if not existing_loyalty:
+                        voucher_code = f"LOYAL-{uuid.uuid4().hex[:8].upper()}"
+                        Voucher.objects.create(
+                            code=voucher_code,
+                            discount_type='percentage',
+                            discount_value=20,
+                            max_discount=150000,
+                            min_purchase=100000,
+                            valid_from=timezone.now(),
+                            valid_to=timezone.now() + timedelta(days=60),
+                            is_active=True,
+                            user=instance.user,
+                        )
+                        
+                        Notification.objects.create(
+                            user=instance.user,
+                            title="Voucher Loyalitas 🎉",
+                            message=f"Selamat! Kamu telah menyelesaikan 5 transaksi. Dapatkan voucher diskon 20% (maks Rp 150.000) dengan kode {voucher_code}!",
+                            link="/"
+                        )
 
 
 @receiver(pre_save, sender=WarrantyClaim)

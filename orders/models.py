@@ -11,6 +11,7 @@ class Voucher(models.Model):
     code = models.CharField(max_length=20, unique=True)
     discount_type = models.CharField(max_length=20, choices=DISCOUNT_TYPES)
     discount_value = models.DecimalField(max_digits=10, decimal_places=2)
+    max_discount = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Batas maksimum diskon (0 = tanpa batas)")
     min_purchase = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     valid_from = models.DateTimeField()
     valid_to = models.DateTimeField()
@@ -32,7 +33,10 @@ class Voucher(models.Model):
         
     def calculate_discount(self, purchase_amount):
         if self.discount_type == 'percentage':
-            return (purchase_amount * self.discount_value) / 100
+            discount = (purchase_amount * self.discount_value) / 100
+            if self.max_discount > 0:
+                discount = min(discount, self.max_discount)
+            return discount
         return min(self.discount_value, purchase_amount)
 
     def __str__(self):

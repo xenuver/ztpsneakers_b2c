@@ -273,6 +273,11 @@ def checkout_view(request):
         if 'applied_voucher' in request.session:
             del request.session['applied_voucher']
         
+        # Tandai voucher sebagai sudah digunakan
+        if voucher_obj and voucher_obj.user:
+            voucher_obj.is_used = True
+            voucher_obj.save()
+        
         # Kirim email konfirmasi pesanan
         from .email_utils import send_order_confirmation_email
         send_order_confirmation_email(order)
