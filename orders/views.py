@@ -288,9 +288,23 @@ def checkout_view(request):
     # Pass applied voucher to template
     applied_voucher = request.session.get('applied_voucher', None)
     
+    from django.utils import timezone
+    from django.db.models import Q
+    from .models import Voucher
+    now = timezone.now()
+    available_vouchers = Voucher.objects.filter(
+        is_active=True,
+        is_used=False,
+        valid_from__lte=now,
+        valid_to__gte=now
+    ).filter(
+        Q(user__isnull=True) | Q(user=request.user)
+    )
+    
     context = {
         'cart': cart,
         'applied_voucher': applied_voucher,
+        'available_vouchers': available_vouchers,
     }
     return render(request, "orders/checkout.html", context)
 
