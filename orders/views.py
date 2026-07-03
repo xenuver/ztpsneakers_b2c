@@ -18,6 +18,11 @@ def get_or_create_cart(request):
 
 def toggle_wishlist(request, product_id):
     if not request.user.is_authenticated:
+        request.session['pending_wishlist_item'] = product_id
+        if request.META.get('HTTP_HX_REQUEST'):
+            response = HttpResponse()
+            response['HX-Redirect'] = '/auth/'
+            return response
         return HttpResponse("""<script>window.location.href='/auth/';</script>""")
         
     product = get_object_or_404(Product, id=product_id)
@@ -46,6 +51,17 @@ def toggle_wishlist(request, product_id):
 
 def add_to_cart(request, product_id):
     if request.method == 'POST':
+        if not request.user.is_authenticated:
+            request.session['pending_cart_item'] = {
+                'product_id': product_id,
+                'size_id': request.POST.get('size_choice'),
+            }
+            if request.META.get('HTTP_HX_REQUEST'):
+                response = HttpResponse()
+                response['HX-Redirect'] = '/auth/'
+                return response
+            return redirect('userauths:auth_main')
+            
         product = get_object_or_404(Product, id=product_id)
         size_id = request.POST.get('size_choice')
         

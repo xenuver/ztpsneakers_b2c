@@ -3,192 +3,185 @@
 > **Versi:** 1.0  
 > **Tanggal:** 2026  
 > **Author:** Wahyu Ahmad Cahyadi (221103805)  
-> **Tool:** PlantUML  
+> **Tool:** Mermaid  
 
-> **Cara Render:** Copy kode di bawah ini lalu paste di [PlantUML Online](https://www.plantuml.com/plantuml/uml/) atau gunakan ekstensi PlantUML di VSCode.
+> **Cara Render:** Copy kode di bawah ini lalu paste di [Mermaid Live Editor](https://mermaid.live/) atau gunakan ekstensi Mermaid di VSCode.
 
 ---
 
-```plantuml
-@startuml ClassDiagram_ZTPSneakers
-title Class Diagram - ZTP Sneakers B2C Platform
+```mermaid
+classDiagram
+    class User {
+        +int id
+        +String email
+        +String username
+        +String phone_number
+        +text address
+        +String role
+        +boolean is_active
+        +boolean is_staff
+    }
 
-skinparam classAttributeIconSize 0
-skinparam roundcorner 5
-skinparam classBackgroundColor #FFFFFF
-skinparam classBorderColor #555555
-skinparam arrowColor #333333
+    class UserProfile {
+        +int id
+        +datetime created_at
+        +datetime updated_at
+    }
 
-class User {
-  +id: int
-  +email: String
-  +username: String
-  +phone_number: String
-  +address: text
-  +role: String
-  +is_active: boolean
-  +is_staff: boolean
-}
+    class Category {
+        +int id
+        +String name
+        +String slug
+        +int order
+    }
 
-class UserProfile {
-  +id: int
-  +created_at: datetime
-  +updated_at: datetime
-}
+    class Brand {
+        +int id
+        +String name
+        +String slug
+    }
 
-class Category {
-  +id: int
-  +name: String
-  +slug: String
-  +order: int
-}
+    class Product {
+        +int id
+        +String name
+        +String slug
+        +String color
+        +String condition
+        +decimal price
+        +decimal crossed_price
+        +boolean is_active
+        +boolean is_featured
+        +datetime created_at
+        +get_primary_image() String
+        +average_rating() float
+        +total_stock() int
+    }
 
-class Brand {
-  +id: int
-  +name: String
-  +slug: String
-}
+    class ProductImage {
+        +int id
+        +String image
+        +boolean is_primary
+        +int order
+    }
 
-class Product {
-  +id: int
-  +name: String
-  +slug: String
-  +color: String
-  +condition: String
-  +price: decimal
-  +crossed_price: decimal
-  +is_active: boolean
-  +is_featured: boolean
-  +created_at: datetime
-  +get_primary_image(): String
-  +average_rating(): float
-  +total_stock(): int
-}
+    class ProductSize {
+        +int id
+        +String size
+        +int stock
+    }
 
-class ProductImage {
-  +id: int
-  +image: String
-  +is_primary: boolean
-  +order: int
-}
+    class Review {
+        +int id
+        +int rating
+        +text comment
+        +boolean is_visible
+        +datetime created_at
+    }
 
-class ProductSize {
-  +id: int
-  +size: String
-  +stock: int
-}
+    class Wishlist {
+        +int id
+        +datetime created_at
+    }
 
-class Review {
-  +id: int
-  +rating: int
-  +comment: text
-  +is_visible: boolean
-  +created_at: datetime
-}
+    class Voucher {
+        +int id
+        +String code
+        +String discount_type
+        +decimal discount_value
+        +decimal min_purchase
+        +datetime valid_from
+        +datetime valid_to
+        +boolean is_active
+        +is_valid(amount) boolean
+        +calculate_discount(amount) decimal
+    }
 
-class Wishlist {
-  +id: int
-  +created_at: datetime
-}
+    class Cart {
+        +int id
+        +String session_key
+        +datetime created_at
+        +datetime updated_at
+        +get_total_price() decimal
+    }
 
-class Voucher {
-  +id: int
-  +code: String
-  +discount_type: String
-  +discount_value: decimal
-  +min_purchase: decimal
-  +valid_from: datetime
-  +valid_to: datetime
-  +is_active: boolean
-  +is_valid(amount): boolean
-  +calculate_discount(amount): decimal
-}
+    class CartItem {
+        +int id
+        +int quantity
+        +get_cost() decimal
+    }
 
-class Cart {
-  +id: int
-  +session_key: String
-  +created_at: datetime
-  +updated_at: datetime
-  +get_total_price(): decimal
-}
+    class Order {
+        +int id
+        +String order_number
+        +String status
+        +String midtrans_transaction_id
+        +String courier
+        +String shipping_service
+        +decimal shipping_cost
+        +String tracking_number
+        +decimal subtotal
+        +decimal total
+        +datetime created_at
+    }
 
-class CartItem {
-  +id: int
-  +quantity: int
-  +get_cost(): decimal
-}
+    class OrderItem {
+        +int id
+        +String product_name
+        +String size_str
+        +decimal price
+        +int quantity
+        +get_cost() decimal
+    }
 
-class Order {
-  +id: int
-  +order_number: String
-  +status: String
-  +midtrans_transaction_id: String
-  +courier: String
-  +shipping_service: String
-  +shipping_cost: decimal
-  +tracking_number: String
-  +subtotal: decimal
-  +total: decimal
-  +created_at: datetime
-}
+    class ShippingAddress {
+        +int id
+        +String recipient_name
+        +String phone_number
+        +String province_name
+        +String city_name
+        +String district_name
+        +text full_address
+    }
 
-class OrderItem {
-  +id: int
-  +product_name: String
-  +size_str: String
-  +price: decimal
-  +quantity: int
-  +get_cost(): decimal
-}
+    class WarrantyClaim {
+        +int id
+        +String kategori
+        +text reason
+        +String status
+        +text admin_notes
+        +datetime created_at
+    }
 
-class ShippingAddress {
-  +id: int
-  +recipient_name: String
-  +phone_number: String
-  +province_name: String
-  +city_name: String
-  +district_name: String
-  +full_address: text
-}
+    direction TB
 
-class WarrantyClaim {
-  +id: int
-  +kategori: String
-  +reason: text
-  +status: String
-  +admin_notes: text
-  +created_at: datetime
-}
+    %% 1. Relasi User (Level Atas)
+    User "1" --> "0..1" UserProfile : memiliki
+    User "1" --> "0..1" Cart : memiliki
+    User "1" --> "*" Order : melakukan
+    User "1" --> "*" Wishlist : menyimpan
+    User "1" --> "*" Review : menulis
+    User "1" --> "*" WarrantyClaim : mengajukan
 
-' Relasi User
-User "1" -- "0..1" UserProfile : memiliki >
-User "1" -- "*" Order : melakukan >
-User "1" -- "0..1" Cart : memiliki >
-User "1" -- "*" Wishlist : menyimpan >
-User "1" -- "*" Review : menulis >
-User "1" -- "*" WarrantyClaim : mengajukan >
+    %% 2. Relasi Transaksi (Level Menengah)
+    Cart "1" *--> "*" CartItem : berisi
+    Order "1" *--> "*" OrderItem : terdiri dari
+    Order "1" --> "1" ShippingAddress : memiliki
+    Order "*" --> "0..1" Voucher : menggunakan
 
-' Relasi Produk
-Product "*" -- "1" Category : dikelompokkan dalam >
-Product "*" -- "1" Brand : diproduksi oleh >
-Product "1" *-- "*" ProductImage : memiliki >
-Product "1" *-- "*" ProductSize : ukuran >
-Product "1" -- "*" Review : menerima >
-Product "1" -- "*" Wishlist : disimpan di >
+    %% 3. Relasi ke Produk (Level Bawah)
+    Category "1" --> "*" Product : mengelompokkan
+    Brand "1" --> "*" Product : memproduksi
+    Wishlist "*" --> "1" Product : menautkan
+    CartItem "*" --> "1" Product : merujuk
+    OrderItem "*" --> "0..1" Product : mereferensikan
+    Review "*" --> "1" Product : menilai
 
-' Relasi Keranjang
-Cart "1" *-- "*" CartItem : berisi >
-CartItem "*" -- "1" Product : merujuk >
-CartItem "*" -- "1" ProductSize : merujuk >
+    %% 4. Detail Produk (Level Paling Bawah)
+    Product "1" *--> "*" ProductImage : memiliki foto
+    Product "1" *--> "*" ProductSize : memiliki ukuran
+    CartItem "*" --> "1" ProductSize : memilih ukuran
 
-' Relasi Pesanan
-Order "1" *-- "*" OrderItem : terdiri dari >
-Order "1" -- "1" ShippingAddress : memiliki >
-Order "*" -- "0..1" Voucher : menggunakan >
-
-OrderItem "*" -- "0..1" Product : mereferensikan >
-OrderItem "1" -- "0..1" Review : diulas >
-OrderItem "1" -- "0..1" WarrantyClaim : diklaim >
-
-@enduml
+    %% 5. Relasi Lintas OrderItem
+    OrderItem "1" --> "0..1" Review : diulas pada
+    OrderItem "1" --> "0..1" WarrantyClaim : diklaim pada
 ```

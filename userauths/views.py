@@ -58,6 +58,28 @@ def auth_login(request):
             from orders.utils import merge_guest_cart
             merge_guest_cart(request, user)
             
+            pending_cart = request.session.pop('pending_cart_item', None)
+            if pending_cart:
+                from orders.models import Cart, CartItem
+                from products.models import Product, ProductSize
+                try:
+                    product = Product.objects.get(id=pending_cart['product_id'])
+                    size = ProductSize.objects.get(id=pending_cart['size_id'], product=product)
+                    cart, _ = Cart.objects.get_or_create(user=user)
+                    CartItem.objects.get_or_create(cart=cart, product=product, size=size)
+                except (Product.DoesNotExist, ProductSize.DoesNotExist):
+                    pass
+            
+            pending_wishlist = request.session.pop('pending_wishlist_item', None)
+            if pending_wishlist:
+                from orders.models import Wishlist
+                from products.models import Product
+                try:
+                    product = Product.objects.get(id=pending_wishlist)
+                    Wishlist.objects.get_or_create(user=user, product=product)
+                except Product.DoesNotExist:
+                    pass
+            
             response = HttpResponse("Berhasil masuk")
             response['HX-Redirect'] = '/'
             return response
@@ -96,8 +118,46 @@ def auth_register(request):
         
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         
+        from orders.models import Voucher
+        from django.utils import timezone
+        from datetime import timedelta
+        import uuid
+        voucher_code = f"WELCOME-{uuid.uuid4().hex[:8].upper()}"
+        Voucher.objects.create(
+            code=voucher_code,
+            discount_type='percentage',
+            discount_value=10,
+            min_purchase=0,
+            valid_from=timezone.now(),
+            valid_to=timezone.now() + timedelta(days=30),
+            is_active=True,
+            user=user,
+        )
+        
         from orders.utils import merge_guest_cart
         merge_guest_cart(request, user)
+        
+        pending_cart = request.session.pop('pending_cart_item', None)
+        if pending_cart:
+            from orders.models import Cart, CartItem
+            from products.models import Product, ProductSize
+            try:
+                product = Product.objects.get(id=pending_cart['product_id'])
+                size = ProductSize.objects.get(id=pending_cart['size_id'], product=product)
+                cart, _ = Cart.objects.get_or_create(user=user)
+                CartItem.objects.get_or_create(cart=cart, product=product, size=size)
+            except (Product.DoesNotExist, ProductSize.DoesNotExist):
+                pass
+        
+        pending_wishlist = request.session.pop('pending_wishlist_item', None)
+        if pending_wishlist:
+            from orders.models import Wishlist
+            from products.models import Product
+            try:
+                product = Product.objects.get(id=pending_wishlist)
+                Wishlist.objects.get_or_create(user=user, product=product)
+            except Product.DoesNotExist:
+                pass
         
         response = HttpResponse("Berhasil daftar")
         response['HX-Redirect'] = '/'

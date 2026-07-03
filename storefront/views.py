@@ -28,9 +28,20 @@ def home_view(request):
     
     # Brands for strip
     brands = Brand.objects.all().order_by('name')
+    
+    registration_voucher = None
+    if request.user.is_authenticated:
+        from orders.models import Voucher
+        registration_voucher = Voucher.objects.filter(
+            user=request.user, 
+            is_active=True, 
+            is_used=False,
+            code__startswith='WELCOME-'
+        ).first()
 
     context = {
         'banners': banners,
+        'registration_voucher': registration_voucher,
         'bestseller_products': bestseller_products,
         'new_products': new_products,
         'hot_items': hot_items,

@@ -15,10 +15,14 @@ class Voucher(models.Model):
     valid_from = models.DateTimeField()
     valid_to = models.DateTimeField()
     is_active = models.BooleanField(default=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='vouchers')
+    is_used = models.BooleanField(default=False)
 
     def is_valid(self, purchase_amount):
         now = timezone.now()
         if not self.is_active:
+            return False
+        if self.is_used:
             return False
         if now < self.valid_from or now > self.valid_to:
             return False

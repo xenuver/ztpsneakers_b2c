@@ -16,7 +16,8 @@
                         dark: '#0F172A', // Slate 900
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Outfit', 'sans-serif'],
+                        heading: ['Space Grotesk', 'sans-serif'],
                     }
                 }
             }
@@ -25,9 +26,11 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #334155; }
+        body { font-family: 'Outfit', sans-serif; background-color: #F8FAFC; color: #334155; }
         
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -46,8 +49,8 @@
         
         /* Active Link */
         .nav-link { transition: all 0.3s ease; }
-        .nav-link:hover { background: rgba(79, 70, 229, 0.05); color: #4F46E5; transform: translateX(4px); }
-        .nav-active { background: linear-gradient(90deg, rgba(79, 70, 229, 0.1) 0%, rgba(79, 70, 229, 0) 100%); color: #4F46E5; border-left: 3px solid #4F46E5; font-weight: 600; }
+        .nav-link:hover { background: rgba(239, 130, 21, 0.05); color: #ef8215; transform: translateX(4px); }
+        .nav-active { background: linear-gradient(90deg, rgba(239, 130, 21, 0.1) 0%, rgba(239, 130, 21, 0) 100%); color: #ef8215; border-left: 3px solid #ef8215; font-weight: 600; }
         
         /* Micro-animations */
         .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -65,7 +68,7 @@
         <!-- Logo -->
         <div class="flex items-center justify-center h-20 border-b border-slate-100/50">
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-indigo-400 flex items-center justify-center shadow-lg shadow-primary/30">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-amber-400 flex items-center justify-center shadow-lg shadow-primary/30">
                     <span class="text-white font-bold text-sm">Z</span>
                 </div>
                 <h1 class="text-xl font-extrabold tracking-tight text-slate-900">ZTP<span class="text-slate-400 font-medium">Admin</span></h1>
@@ -127,7 +130,7 @@
             </a>
             <div class="mt-4 flex items-center justify-between px-2">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-primary font-bold text-xs ring-2 ring-white">
+                    <div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-primary font-bold text-xs ring-2 ring-white">
                         {{ request.user.email|make_list|first|upper }}
                     </div>
                     <div class="flex flex-col">
@@ -146,7 +149,7 @@
     <div class="flex-1 flex flex-col h-full overflow-hidden relative">
         
         <!-- Header Background Decorative -->
-        <div class="absolute top-0 left-0 right-0 h-64 bg-gradient-to-br from-primary/5 via-indigo-50/50 to-transparent -z-10"></div>
+        <div class="absolute top-0 left-0 right-0 h-64 bg-gradient-to-br from-primary/5 via-amber-50/50 to-transparent -z-10"></div>
         
         <!-- Top Header -->
         <header class="h-20 px-6 flex items-center justify-between flex-shrink-0 z-10 glass-panel border-b-0 border-transparent lg:bg-transparent lg:backdrop-blur-none lg:shadow-none">
