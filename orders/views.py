@@ -18,12 +18,14 @@ def get_or_create_cart(request):
 
 def toggle_wishlist(request, product_id):
     if not request.user.is_authenticated:
+        from django.urls import reverse
         request.session['pending_wishlist_item'] = product_id
+        auth_url = reverse('userauths:auth_main')
         if request.META.get('HTTP_HX_REQUEST'):
             response = HttpResponse()
-            response['HX-Redirect'] = '/auth/'
+            response['HX-Redirect'] = auth_url
             return response
-        return HttpResponse("""<script>window.location.href='/auth/';</script>""")
+        return HttpResponse(f"""<script>window.location.href='{auth_url}';</script>""")
         
     product = get_object_or_404(Product, id=product_id)
     wishlist, created = Wishlist.objects.get_or_create(user=request.user, product=product)
@@ -52,13 +54,15 @@ def toggle_wishlist(request, product_id):
 def add_to_cart(request, product_id):
     if request.method == 'POST':
         if not request.user.is_authenticated:
+            from django.urls import reverse
             request.session['pending_cart_item'] = {
                 'product_id': product_id,
                 'size_id': request.POST.get('size_choice'),
             }
+            auth_url = reverse('userauths:auth_main')
             if request.META.get('HTTP_HX_REQUEST'):
                 response = HttpResponse()
-                response['HX-Redirect'] = '/auth/'
+                response['HX-Redirect'] = auth_url
                 return response
             return redirect('userauths:auth_main')
             
@@ -551,6 +555,13 @@ def complete_order(request, order_number):
         if order.status == 'shipped':
             order.status = 'completed'
             order.save()
+            
+            from orders.email_utils import send_order_completed_email
+            try:
+                send_order_completed_email(order)
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).error(f"Email error for order {order.order_number}: {e}")
             
             from django.contrib import messages
             messages.success(request, f"Pesanan {order.order_number} telah ditandai selesai.")
