@@ -156,6 +156,12 @@
                                     <dt>Ongkos Kirim</dt>
                                     <dd class="text-gray-400 italic text-xs">Belum dipilih</dd>
                                 </div>
+                                {% if applied_voucher %}
+                                <div class="flex justify-between text-green-600">
+                                    <dt>Diskon Voucher</dt>
+                                    <dd class="font-semibold">-Rp {{ applied_voucher.discount_amount|floatformat:"0"|intcomma }}</dd>
+                                </div>
+                                {% endif %}
                             </dl>
                             
                             <!-- Voucher -->
@@ -231,7 +237,7 @@
                             
                             <div id="total-payment" class="border-t border-gray-200 pt-4 mb-6 flex justify-between items-center">
                                 <span class="text-base font-bold text-black uppercase tracking-wider">Total</span>
-                                <span class="text-2xl font-extrabold text-primary">Rp {{ cart.get_total_price|floatformat:"0"|intcomma }}</span>
+                                <span class="text-2xl font-extrabold text-primary">Rp {{ initial_total|floatformat:"0"|intcomma }}</span>
                             </div>
 
                             <button type="submit" id="btn-checkout" 

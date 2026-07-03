@@ -301,10 +301,16 @@ def checkout_view(request):
         Q(user__isnull=True) | Q(user=request.user)
     )
     
+    discount_amount = 0
+    if applied_voucher:
+        discount_amount = applied_voucher.get('discount_amount', 0)
+    initial_total = cart.get_total_price() - int(discount_amount)
+    
     context = {
         'cart': cart,
         'applied_voucher': applied_voucher,
         'available_vouchers': available_vouchers,
+        'initial_total': initial_total,
     }
     return render(request, "orders/checkout.html", context)
 
