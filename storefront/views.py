@@ -74,7 +74,22 @@ def catalog_view(request):
     
     condition = request.GET.get('condition', '')
 
-    products = Product.objects.filter(is_active=True)
+    from django.db.models import Case, When, Value, IntegerField, OuterRef, Subquery
+    from products.models import ProductSize
+    
+    stock_subquery = ProductSize.objects.filter(product=OuterRef('pk')).values('product').annotate(
+        total=Sum('stock')
+    ).values('total')
+
+    products = Product.objects.filter(is_active=True).annotate(
+        annotated_stock=Coalesce(Subquery(stock_subquery, output_field=IntegerField()), 0)
+    ).annotate(
+        is_sold_out=Case(
+            When(annotated_stock__gt=0, then=Value(0)),
+            default=Value(1),
+            output_field=IntegerField()
+        )
+    )
     
     if query:
         products = products.filter(name__icontains=query)
@@ -94,22 +109,26 @@ def catalog_view(request):
         products = products.filter(condition=condition)
         
     if sort == 'featured':
-        products = products.filter(is_featured=True)
+        products = products.filter(is_featured=True).order_by('is_sold_out', '-created_at')
     elif sort == 'newest':
-        products = products.order_by('-created_at')
+        products = products.order_by('is_sold_out', '-created_at')
     elif sort == 'hot':
         from django.db.models import Avg
         products = products.annotate(
             avg_rating=Avg('reviews__rating')
-        ).filter(avg_rating__gte=4.0).order_by('-avg_rating')
+        ).filter(avg_rating__gte=4.0).order_by('is_sold_out', '-avg_rating')
     elif sort == 'bestseller':
-        from django.db.models import Sum
-        from django.db.models.functions import Coalesce
+        from orders.models import OrderItem
+        sold_subquery = OrderItem.objects.filter(product=OuterRef('pk')).values('product').annotate(
+            total=Sum('quantity')
+        ).values('total')
         products = products.annotate(
-            total_sold=Coalesce(Sum('orderitem__quantity'), 0)
-        ).order_by('-total_sold')
+            total_sold=Coalesce(Subquery(sold_subquery, output_field=IntegerField()), 0)
+        ).order_by('is_sold_out', '-total_sold')
     elif sort in ['-created_at', 'price', '-price']:
-        products = products.order_by(sort)
+        products = products.order_by('is_sold_out', sort)
+    else:
+        products = products.order_by('is_sold_out', '-created_at')
 
     paginator = Paginator(products, 12) # 12 items per page
     page_obj = paginator.get_page(page_number)
