@@ -102,6 +102,12 @@ def catalog_view(request):
         products = products.annotate(
             avg_rating=Avg('reviews__rating')
         ).filter(avg_rating__gte=4.0).order_by('-avg_rating')
+    elif sort == 'bestseller':
+        from django.db.models import Sum
+        from django.db.models.functions import Coalesce
+        products = products.annotate(
+            total_sold=Coalesce(Sum('orderitem__quantity'), 0)
+        ).order_by('-total_sold')
     elif sort in ['-created_at', 'price', '-price']:
         products = products.order_by(sort)
 

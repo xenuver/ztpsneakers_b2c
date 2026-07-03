@@ -62,7 +62,7 @@
                     class="nav-link text-sm font-bold uppercase tracking-wider whitespace-nowrap">
                     Browse All
                 </a>
-                <a href="{% url 'storefront:catalog' %}?sort=-created_at"
+                <a href="{% url 'storefront:catalog' %}?sort=bestseller"
                     class="nav-link text-sm font-bold uppercase tracking-wider whitespace-nowrap">
                     Hot Item
                 </a>
@@ -279,7 +279,7 @@
                 class="flex items-center px-6 py-4 text-sm font-bold text-gray-900 uppercase tracking-wide hover:bg-gray-50 transition-colors">
                 Browse All
             </a>
-            <a href="{% url 'storefront:catalog' %}?sort=-created_at"
+            <a href="{% url 'storefront:catalog' %}?sort=bestseller"
                 class="flex items-center px-6 py-4 text-sm font-bold text-gray-900 uppercase tracking-wide hover:bg-gray-50 transition-colors">
                 Hot Item
             </a>
