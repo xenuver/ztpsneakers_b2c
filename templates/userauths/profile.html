@@ -110,11 +110,13 @@
                                     {% elif order.status == 'paid' %}
                                         <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-800 uppercase">Dibayar</span>
                                     {% elif order.status == 'processing' %}
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 uppercase">Diproses</span>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800 uppercase">Diproses</span>
                                     {% elif order.status == 'shipped' %}
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 uppercase">Dikirim</span>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800 uppercase">Dikirim</span>
+                                    {% elif order.status == 'delivered' %}
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800 uppercase">Diterima</span>
                                     {% elif order.status == 'completed' %}
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-800 uppercase">Selesai</span>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-800 uppercase">Selesai</span>
                                     {% else %}
                                         <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-800 uppercase">Dibatalkan</span>
                                     {% endif %}
