@@ -7,11 +7,25 @@ from django.db.models.functions import Coalesce
 def home_view(request):
     banners = Banner.objects.filter(is_active=True).order_by('order', '-id')
     
-    bestseller_products = Product.objects.filter(is_active=True).annotate(
-        total_sold=Coalesce(Sum('orderitem__quantity'), 0)
-    ).order_by('-total_sold')[:10]
+    from django.db.models import Case, When, Value, IntegerField, OuterRef, Subquery
+    from products.models import ProductSize
+
+    stock_subquery = ProductSize.objects.filter(product=OuterRef('pk')).values('product').annotate(
+        total=Sum('stock')
+    ).values('total')
     
-    new_products = Product.objects.filter(is_active=True).order_by('-created_at')[:10]
+    bestseller_products = Product.objects.filter(is_active=True).annotate(
+        total_sold=Coalesce(Sum('orderitem__quantity'), 0),
+        annotated_stock=Coalesce(Subquery(stock_subquery, output_field=IntegerField()), 0)
+    ).annotate(
+        is_sold_out=Case(When(annotated_stock__gt=0, then=Value(0)), default=Value(1), output_field=IntegerField())
+    ).order_by('is_sold_out', '-total_sold')[:10]
+    
+    new_products = Product.objects.filter(is_active=True).annotate(
+        annotated_stock=Coalesce(Subquery(stock_subquery, output_field=IntegerField()), 0)
+    ).annotate(
+        is_sold_out=Case(When(annotated_stock__gt=0, then=Value(0)), default=Value(1), output_field=IntegerField())
+    ).order_by('is_sold_out', '-created_at')[:10]
     categories = Category.objects.all().order_by('order')
 
     wishlist_product_ids = []
@@ -23,8 +37,12 @@ def home_view(request):
     
     # Hot items (rating >= 4.5)
     hot_items = Product.objects.filter(is_active=True).annotate(
+        annotated_stock=Coalesce(Subquery(stock_subquery, output_field=IntegerField()), 0)
+    ).annotate(
+        is_sold_out=Case(When(annotated_stock__gt=0, then=Value(0)), default=Value(1), output_field=IntegerField())
+    ).annotate(
         avg_rating=Avg('reviews__rating')
-    ).filter(avg_rating__gte=4.5).order_by('-avg_rating')[:8]
+    ).filter(avg_rating__gte=4.5).order_by('is_sold_out', '-avg_rating')[:8]
     
     # Brands for strip
     brands = Brand.objects.all().order_by('name')
